@@ -1,0 +1,161 @@
+/* =====================================================================
+   SSB Boshqaruv — yagona asosiy rang qatlami (eng oxirida yuklanadi).
+   Rang kompaniya bo'yicha bitta: <html style="--accent-custom:#...">, standart — iOS System Blue.
+   Faqat direktor (Asoschi) o'zgartiradi. Tugmalar, ikonkalar, faol menyu, kartalar, progress,
+   fokus halqalari, chat, grafiklar — barchasi shu rangdan olinadi. Holat ranglari (bajarildi /
+   tekshiruvda / bloklangan) iOS'dagidek ma'no beradi va o'zgarmaydi.
+   ===================================================================== */
+
+:root:not(#_){
+  --accent:var(--accent-custom,#007aff)!important;
+  --accent-strong:var(--accent-hover,color-mix(in srgb,var(--accent) 86%,#000))!important;
+  --accent-lift:var(--accent-bright,color-mix(in srgb,var(--accent) 88%,#fff))!important;
+  --accent-tint:color-mix(in srgb,var(--accent) 12%,transparent)!important;
+  --accent-tint-2:color-mix(in srgb,var(--accent) 20%,transparent)!important;
+  --accent-ink:#fff!important;
+  --accent-shadow:0 10px 22px -10px color-mix(in srgb,var(--accent) 70%,transparent)!important;
+}
+:root[data-theme="dark"]:not(#_){
+  --accent-tint:color-mix(in srgb,var(--accent) 20%,transparent)!important;
+  --accent-tint-2:color-mix(in srgb,var(--accent) 30%,transparent)!important;
+}
+
+/* Eski tokenlar ham shu rangga bog'lanadi (eski qatlamlar shularni ishlatadi) */
+html:not(#_),html body[data-app]:not(#_),html:not(#_) .app-rail{
+  --apple-blue:var(--accent)!important;
+  --apple-blue-hover:var(--accent-strong)!important;
+  --apple-blue-light:var(--accent-soft,color-mix(in srgb,var(--accent) 12%,#fff))!important;
+  --ios-blue:var(--accent)!important;
+  --mac-accent:var(--accent)!important;
+  --g-accent:var(--accent)!important;--g-accent-ink:#fff!important;
+  --g-black:var(--accent)!important;--g-black-ink:#fff!important;
+  --n-accent:#fff!important;--n-accent-ink:var(--accent)!important;
+  --n-active:var(--accent)!important;--n-active-ink:#fff!important;
+}
+html[data-theme="dark"]:not(#_),html[data-theme="dark"] body[data-app]:not(#_){
+  --apple-blue-light:var(--accent-soft-dark,color-mix(in srgb,var(--accent) 22%,#1c1c1e))!important;
+}
+html body[data-app] ::selection{background:var(--accent-tint-2)}
+
+/* Fon: yumshoq asosiy rang yorug'ligi */
+html body[data-app]:not(#_){
+  background:radial-gradient(900px 560px at 88% -8%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 70%),var(--g-base,var(--canvas))!important;
+  background-attachment:fixed!important;
+}
+html[data-theme="dark"] body[data-app]:not(#_){
+  background:radial-gradient(900px 560px at 88% -8%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 70%),var(--g-base,var(--canvas))!important;
+  background-attachment:fixed!important;
+}
+
+/* ---------- Tugmalar */
+html body[data-app] .button.primary:not(#_),
+html body[data-app] .topbar-actions>.button.primary:not(#_),
+html body[data-app] .ov-btn-primary:not(#_),
+html body[data-app] .login-modal-submit:not(#_){
+  background:linear-gradient(180deg,var(--accent-lift),var(--accent))!important;color:#fff!important;border-color:transparent!important;
+  box-shadow:var(--accent-shadow),inset 0 1px 0 rgb(255 255 255/.22)!important;
+}
+html body[data-app] .button.primary:not(#_):hover,html body[data-app] .ov-btn-primary:not(#_):hover{background:var(--accent-strong)!important;filter:none!important}
+html body[data-app] .button.primary:not(#_) .ui-icon,
+html[data-theme="dark"] body[data-app] .button.primary:not(#_) .ui-icon{color:#fff!important}
+html body[data-app] .confirm-modal.is-danger .button.primary:not(#_),
+html body[data-app] .button.primary.danger:not(#_),
+html body[data-app] .button.danger:not(#_){background:var(--danger,#ff3b30)!important;color:#fff!important;box-shadow:0 10px 22px -10px color-mix(in srgb,var(--danger,#ff3b30) 70%,transparent)!important}
+html body[data-app] .button:not(#_):not(.primary):not(.danger):not([class*="danger"]) .ui-icon{color:var(--accent)}
+html body[data-app] .ov-btn:not(#_):not(.ov-btn-primary){color:var(--accent)!important}
+html body[data-app] :is(.text-link,.link,.ov-link,.ov-row-link strong):not(#_){color:var(--accent)!important}
+html body[data-app] .text-link:not(#_):hover{text-decoration:underline;text-underline-offset:3px}
+
+/* Yuqori panel ikonkalari — iOS tool bar kabi asosiy rangda */
+html body[data-app] .topbar-icons:not(#_) .ui-icon,
+html body[data-app] .topbar-icons:not(#_) :is(.command-button,.notification-button,.appearance-menu>summary){color:var(--accent)!important}
+html body[data-app] .topbar-icons:not(#_) .notification-button b{background:#ff3b30!important;color:#fff!important}
+html body[data-app] .app-topbar:not(#_) .breadcrumbs a:hover{color:var(--accent)!important}
+html body[data-app] .account-menu:not(#_)>summary .avatar{background:var(--accent-tint)!important;color:var(--accent)!important}
+html body[data-app] .appearance-popover:not(#_) button[aria-pressed="true"],html body[data-app] .appearance-popover:not(#_) button[aria-pressed="true"] svg{color:var(--accent)!important}
+html body[data-app] .appearance-popover:not(#_) button[aria-pressed="true"]{background:var(--accent-tint)!important}
+
+/* ---------- Yon menyu */
+html body[data-app] .app-rail:not(#_) .brand-mark{background:linear-gradient(160deg,var(--accent-lift),var(--accent))!important;color:#fff!important;box-shadow:var(--accent-shadow),inset 0 1px 0 rgb(255 255 255/.3)!important}
+html body[data-app] .app-rail:not(#_) .nav-group>a>.ui-icon,
+html body[data-app] .app-rail:not(#_) .rail-bottom>a:not(.account)>.ui-icon:first-child{color:var(--accent)!important}
+html body[data-app] .app-rail:not(#_) .nav-group>a[aria-current="page"],
+html body[data-app] .app-rail:not(#_) .app-navigation a.is-pending{background:linear-gradient(180deg,var(--accent-lift),var(--accent))!important;color:#fff!important;box-shadow:var(--accent-shadow)!important}
+html body[data-app] .app-rail:not(#_) .nav-group>a[aria-current="page"]>.ui-icon,
+html body[data-app] .app-rail:not(#_) .app-navigation a.is-pending>.ui-icon{background:rgb(255 255 255/.22)!important;border-color:transparent!important;color:#fff!important}
+html body[data-app] .app-rail:not(#_) .app-navigation:has(.is-pending) a[aria-current="page"]:not(.is-pending){background:none!important;color:var(--n-ink)!important;box-shadow:none!important}
+html body[data-app] .app-rail:not(#_) .app-navigation:has(.is-pending) a[aria-current="page"]:not(.is-pending)>.ui-icon{background:var(--n-chip)!important;color:var(--accent)!important}
+html body[data-app] .app-rail:not(#_) .chat-nav-badge,
+html body[data-app] .app-navigation:not(#_) .chat-nav-badge{background:var(--accent)!important;color:#fff!important}
+html body[data-app] .app-rail:not(#_) a[aria-current="page"] .chat-nav-badge{background:#fff!important;color:var(--accent)!important}
+html body[data-app] .app-rail:not(#_) .rail-search:focus-within{border-color:var(--accent)!important;box-shadow:0 0 0 4px var(--accent-tint)!important}
+html body[data-app] .app-rail:not(#_) .rail-search .ui-icon{color:var(--accent)!important}
+html body[data-app] .app-rail:not(#_) .rail-bottom .account .avatar{background:var(--accent-tint)!important;color:var(--accent)!important}
+html body[data-app] .app-rail .nav-group>a[aria-current="page"]::before{background:var(--accent)!important;box-shadow:none!important}
+
+/* ---------- Kartalar va KPI */
+html body[data-app] .stat-strip:not(#_) .stat-label .ui-icon{background:var(--accent-tint)!important;color:var(--accent)!important}
+html body[data-app] .stat-strip:not(#_) .stat-cell:first-child{background:linear-gradient(155deg,var(--accent-lift),var(--accent) 55%,var(--accent-strong))!important;box-shadow:0 26px 44px -26px color-mix(in srgb,var(--accent) 80%,transparent)!important}
+html body[data-app] .stat-strip:not(#_) .stat-cell:first-child :is(strong,.stat-label){color:#fff!important}
+html body[data-app] .stat-strip:not(#_) .stat-cell:first-child small{color:rgb(255 255 255/.75)!important}
+html body[data-app] .stat-strip:not(#_) .stat-cell:first-child .stat-label .ui-icon{background:rgb(255 255 255/.22)!important;color:#fff!important}
+html body[data-app] .action-list:not(#_) a .ui-icon:first-child{background:var(--accent-tint)!important;color:var(--accent)!important}
+html body[data-app] .action-list:not(#_) a:hover{background:var(--accent-tint)!important}
+
+/* ---------- Bosh sahifa (dashboard .ov) */
+html body[data-app] .ov:not(#_){--ov-blue:var(--accent);--ov-indigo:var(--accent)}
+html body[data-app] .ov-stat:not(#_):not([data-tone=red]){--tone:var(--accent)}
+html body[data-app] .ov-stat:not([data-tone=red]) .ov-stat-icon:not(#_){background:linear-gradient(160deg,var(--accent-lift),var(--accent))!important;box-shadow:0 6px 12px -6px color-mix(in srgb,var(--accent) 70%,transparent)}
+html body[data-app] .ov-avatar:not(#_){background:linear-gradient(160deg,var(--accent-lift),var(--accent))!important}
+html body[data-app] .ov-pill[data-status=new]:not(#_){--c:var(--accent)}
+html body[data-app] .ov-customize[open]>summary{color:var(--accent)!important;background:var(--accent-tint)!important}
+
+/* ---------- Segmentlar, tablar, ko'rinishlar */
+html body[data-app] :is(.segmented-control,.tabs):not(#_) :is(a.active,button.active,[aria-current="page"],[aria-selected="true"],[aria-pressed="true"]){background:var(--accent)!important;color:#fff!important;box-shadow:var(--accent-shadow)!important}
+html body[data-app] .work-views:not(#_)>a[aria-current="page"]{background:linear-gradient(160deg,var(--accent-lift),var(--accent))!important;color:#fff!important;box-shadow:0 20px 34px -22px color-mix(in srgb,var(--accent) 80%,transparent)!important}
+html body[data-app] .work-views:not(#_)>a[aria-current="page"] .ui-icon,
+html[data-theme="dark"] body[data-app] .work-views:not(#_)>a[aria-current="page"] .ui-icon{color:#fff!important}
+html body[data-app] .work-views:not(#_)>a:not([aria-current="page"]) .ui-icon{color:var(--accent)!important}
+
+/* ---------- Progress, belgilash, maydonlar, fokus */
+html body[data-app] .progress-track:not(#_)>span,
+html body[data-app] .ov-bar:not(#_) i{background:linear-gradient(90deg,var(--accent),var(--accent-lift))!important;box-shadow:none!important}
+html body[data-app] :is(input[type="checkbox"],input[type="radio"],input[type="range"],progress):not(#_){accent-color:var(--accent)!important}
+html body[data-app] :is(.field,.filter-bar,.pf-grid,.command-dialog,.record-dialog) :is(input,select,textarea):not(#_):focus,
+html body[data-app] .people-picker .people-search:not(#_):focus-within{border-color:var(--accent)!important;box-shadow:0 0 0 4px var(--accent-tint)!important}
+html body[data-app] :is(a,button,summary,input,select,textarea,[tabindex]):not(#_):focus-visible{outline-color:var(--accent)!important}
+html body[data-app] :is(.archive-modal a,.archive-modal button,.archive-drop,.chat-contact,.chat-workspace button,.chat-dialog button,.profile-photo-edit,.profile-link,.settings-brand):not(#_):focus-visible,
+html body[data-app] .archive-drop:not(#_):focus-within{outline:3px solid color-mix(in srgb,var(--accent) 60%,transparent)!important}
+html body[data-app] .pf-step:not(#_){background:var(--accent)!important}
+html body[data-app] .pf-head:not(#_){background:color-mix(in srgb,var(--accent) 4%,var(--surface))!important}
+
+/* ---------- Dialoglar */
+html body[data-app] .confirm-modal:not(.is-danger):not(#_) .confirm-icon{background:var(--accent-tint)!important;color:var(--accent)!important}
+html body[data-app] .record-dialog:not(#_) .eyebrow{color:var(--accent)!important}
+
+/* ---------- Avatarlar (eski qatlamdagi och ko'k gradient o'rniga) */
+html body[data-app] .avatar:not(#_):not(:has(img)){background:linear-gradient(160deg,var(--accent-soft,#e8f1ff),color-mix(in srgb,var(--accent) 22%,#fff))!important;color:var(--accent-strong)!important}
+html[data-theme="dark"] body[data-app] .avatar:not(#_):not(:has(img)){background:color-mix(in srgb,var(--accent) 26%,#1c1c1e)!important;color:#fff!important}
+
+/* ---------- Chat */
+html body[data-app] .chat-workspace:not(#_){--chat-mine:var(--accent-soft,color-mix(in srgb,var(--accent) 14%,#fff));--chat-mine-ink:#0b1b33;--chat-mine-soft:var(--accent-strong);--chat-accent:var(--accent);--chat-wall:color-mix(in srgb,var(--canvas) 94%,var(--accent) 6%)}
+html[data-theme="dark"] body[data-app] .chat-workspace:not(#_){--chat-mine:color-mix(in srgb,var(--accent) 55%,#1c1c1e);--chat-mine-ink:#fff;--chat-mine-soft:color-mix(in srgb,var(--accent) 45%,#fff);--chat-accent:var(--accent);--chat-wall:color-mix(in srgb,var(--canvas) 95%,var(--accent) 5%)}
+html[data-theme="dark"] body[data-app] .chat-contact[aria-current=page]:not(#_){background:color-mix(in srgb,var(--accent) 45%,#1c1c1e)!important}
+html[data-theme="dark"] body[data-app] :is(.chat-contacts h2 b,.chat-contact-bottom>b):not(#_){color:#fff!important}
+
+/* ---------- Mustaqil kirish sahifasi */
+html body[data-app] .auth-modern .auth-brand:not(#_){background:radial-gradient(90% 60% at 100% 0%,rgb(255 255 255/.18),transparent 60%),linear-gradient(160deg,var(--accent-lift),var(--accent) 50%,var(--accent-strong))!important}
+html body[data-app] .auth-modern:not(#_) :is(.auth-brand h2,.auth-brand .app-brand){color:#fff!important}
+html body[data-app] .auth-modern:not(#_) .brand-symbol{color:var(--accent)!important}
+html body[data-app] .auth-modern:not(#_) .auth-form-symbol{background:var(--accent-tint)!important;color:var(--accent)!important}
+html body[data-app] .auth-modern:not(#_) .auth-appearance button[aria-pressed="true"]{background:var(--accent)!important;color:#fff!important}
+html body[data-app] .auth-modern:not(#_) #auth-password-toggle{color:var(--accent)!important}
+
+/* ---------- Panel rangi tanlagichi (faqat direktor ko'radi) */
+html body[data-app] .account-menu .accent-current{background:var(--accent)!important}
+html body[data-app] .account-menu .accent-sub{margin:4px 0 10px;line-height:1.4}
+html body[data-app] .account-menu .accent-swatches{gap:10px}
+html body[data-app] .account-menu .accent-swatches button,
+html body[data-app] .account-menu .accent-add{width:24px;height:24px}
+html body[data-app] .account-menu .accent-reset{display:block;width:100%;margin-top:12px;padding:8px 10px;border:0;border-radius:10px!important;background:var(--accent-tint);color:var(--accent);font:inherit;font-size:12.5px;font-weight:600;text-align:center;cursor:pointer}
+html body[data-app] .account-menu .accent-reset:hover{background:var(--accent-tint-2)}

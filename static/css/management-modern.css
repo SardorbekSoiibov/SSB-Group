@@ -1,0 +1,6 @@
+@font-face{font-family:"JetBrains Mono";src:url("../fonts/jetbrains-mono-wght.woff2") format("woff2-variations");font-style:normal;font-weight:100 800;font-display:swap}
+
+/* The management UI keeps its original humanist font; only numeric data is monospaced. */
+body[data-app]{font-family:var(--font-sans)!important}
+body[data-app] :is(.number,[data-number],.stat-cell strong,.metric-card strong,.finance-summary>strong,.wallet-hero-amount,.wallet-sub-item strong,.score,.podium-score,.code,code,time,input[type="number"],input[type="date"],input[type="time"],.pagination,.notification-button b,.chat-nav-badge,.progress-value,.secure-count){font-family:"JetBrains Mono",ui-monospace,monospace!important;font-variant-numeric:tabular-nums}
+

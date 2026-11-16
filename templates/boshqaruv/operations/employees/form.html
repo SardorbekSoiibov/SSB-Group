@@ -1,0 +1,83 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}{% if employee %}Xodimni tahrirlash{% else %}Yangi xodim qo‘shish{% endif %}{% endblock %}
+{% block head %}<style>
+.contract-current{grid-column:1/-1;display:flex;align-items:center;gap:12px;margin:0;padding:12px 14px;border-radius:14px;background:var(--ios-fill,rgb(118 118 128/.12))}
+.contract-current>div{flex:1;min-width:0}.contract-current small{display:block;color:var(--ink-secondary)}
+.contract-file{display:grid;place-items:center;flex:none;width:44px;height:52px;border-radius:8px;background:var(--accent,#007aff);color:#fff;font-size:11px;font-weight:700;letter-spacing:.03em}
+.contract-remove{display:flex;align-items:center;gap:8px;grid-column:1/-1;font-size:14px;color:var(--danger,#ff3b30)}
+</style>{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / XODIMLAR</span>
+    <h1>{% if employee %}Xodimni tahrirlash: {{ employee.display_name }}{% else %}Yangi xodim qo‘shish{% endif %}</h1>
+    <p>Xodimning ma’lumotlari va uning kabinetida qaysi funksiyalar bo‘lishini belgilang.</p>
+  </div>
+  <div class="heading-actions">
+    <a href="{% if employee %}{{ employee.get_absolute_url }}{% else %}{% url 'crm:employees' %}{% endif %}" class="button">Bekor qilish</a>
+  </div>
+</header>
+<form data-modal-source method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <section class="panel">
+    <header class="panel-head"><h2>Xodim ma’lumotlari</h2><span class="chart-key">* bilan belgilangan maydonlar to‘ldirilishi shart</span></header>
+    <div class="form-grid">
+      {% if form.non_field_errors %}<div class="form-alert" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form.main_fields %}{% if field.is_hidden %}{{ field }}{% else %}
+      <div class="field {% if field.errors %}invalid{% endif %}" data-field="{{ field.name }}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span>*</span>{% endif %}</label>{{ field }}
+        {% if field.help_text %}<small>{{ field.help_text|safe }}</small>{% endif %}
+        {% for error in field.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+      </div>{% endif %}{% endfor %}
+    </div>
+  </section>
+
+  <section class="panel contract-panel" style="margin-top:20px" id="shartnoma">
+    <header class="panel-head"><h2>Mehnat shartnomasi</h2><span class="chart-key">Ixtiyoriy · faqat xodimning o‘zi va rahbariyat ko‘radi</span></header>
+    <div class="form-grid">
+      {% if employee and employee.contract %}
+      <div class="contract-current">
+        <span class="contract-file" aria-hidden="true">{{ employee.contract_extension }}</span>
+        <div><strong>Joriy shartnoma{% if employee.contract_number %} № {{ employee.contract_number }}{% endif %}</strong>
+          <small>{% if employee.contract_signed_on %}{{ employee.contract_signed_on|date:'d.m.Y' }} da imzolangan · {% endif %}{% if employee.contract_ends_on %}{{ employee.contract_ends_on|date:'d.m.Y' }} gacha{% else %}muddatsiz{% endif %}</small></div>
+        <a class="button compact" href="{% url 'crm:employee_contract' employee.pk %}">{% ui_icon 'download' %} Yuklab olish</a>
+      </div>
+      {% endif %}
+        {% for field in form.contract_fields %}
+        <div class="field {% if field.errors %}invalid{% endif %}" data-field="{{ field.name }}">
+          <label for="{{ field.id_for_label }}">{% if field.name == 'contract' and employee.contract %}Yangi fayl bilan almashtirish{% else %}{{ field.label }}{% endif %}</label>{{ field }}
+          {% if field.help_text %}<small>{{ field.help_text|safe }}</small>{% endif %}
+          {% for error in field.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+        {% if employee and employee.contract %}
+        <label class="contract-remove"><input type="checkbox" name="{{ form.remove_contract.html_name }}" {% if form.remove_contract.value %}checked{% endif %}> Shartnoma faylini olib tashlash</label>
+        {% endif %}
+    </div>
+  </section>
+
+  {% if form.can_set_capabilities %}
+  <section class="panel" style="margin-top:20px">
+    <header class="panel-head"><h2>Kabinetdagi funksiyalar</h2><span class="perm-count" data-perm-count></span></header>
+    <div class="panel-body">
+      <p class="perm-intro">Xodimning kabinetida faqat shu yerda belgilangan funksiyalar ko‘rinadi va ishlaydi. Hech narsa belgilanmasa, xodim faqat bosh sahifa va bildirishnomalarni ko‘radi.</p>
+      <div class="perm-tools"><button type="button" class="button compact" data-perm-all>Hammasini belgilash</button><button type="button" class="button compact" data-perm-none>Hammasini olib tashlash</button></div>
+      <div class="perm-groups">
+        {% for title, widgets in form.grouped_capabilities %}{% if widgets %}
+        <section class="perm-group" data-perm-group>
+          <header><strong>{{ title }}</strong><button type="button" data-perm-toggle>Barchasi</button></header>
+          <ul>{% for w in widgets %}<li><label><input type="checkbox" name="{{ w.data.name }}" value="{{ w.data.value }}" {% if w.data.selected %}checked{% endif %}><span>{{ w.data.label }}</span></label></li>{% endfor %}</ul>
+        </section>
+        {% endif %}{% endfor %}
+      </div>
+      {% for error in form.capabilities.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <div class="form-footer" style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+    <a href="{% if employee %}{{ employee.get_absolute_url }}{% else %}{% url 'crm:employees' %}{% endif %}" class="button">Bekor qilish</a>
+    <button class="button primary" type="submit">{% ui_icon 'check' %} Xodimni saqlash</button>
+  </div>
+</form>
+{% endblock %}

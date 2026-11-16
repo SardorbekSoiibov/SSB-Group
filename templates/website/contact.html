@@ -1,0 +1,31 @@
+{% extends "base_public.html" %}
+{% block title %}Aloqa va loyiha boshlash — {{ site.company_name }}{% endblock %}
+{% block content %}
+{% include "website/_page_head.html" with heading="Loyiha boshlash" lede="Loyihangizni qisqacha yozing. Bir ish kuni ichida siz bilan bog'lanamiz va keyingi qadamlarni kelishamiz." %}
+<section class="section pt-0">
+  <div class="wrap detail-grid">
+    <div class="glass-card form-card" data-reveal>{% include "website/_inquiry_form.html" %}</div>
+    <aside class="detail-aside stack-md">
+      {% if site.phone or site.email or site.address %}
+      <div class="glass-card" data-reveal>
+        <h2 class="card-title">To‘g‘ridan-to‘g‘ri aloqa</h2>
+        <dl class="list-group contact-list">
+          {% if site.phone %}<div class="contact-row"><span class="app-icon xs">{% include "website/_icon.html" with name="phone" %}</span><div><dt>Telefon</dt><dd><a href="tel:{{ site.phone|cut:' ' }}">{{ site.phone }}</a></dd></div></div>{% endif %}
+          {% if site.email %}<div class="contact-row"><span class="app-icon xs">{% include "website/_icon.html" with name="mail" %}</span><div><dt>Elektron pochta</dt><dd><a href="mailto:{{ site.email }}">{{ site.email }}</a></dd></div></div>{% endif %}
+          {% if site.address %}<div class="contact-row"><span class="app-icon xs">{% include "website/_icon.html" with name="pin" %}</span><div><dt>Manzil</dt><dd>{{ site.address }}</dd></div></div>{% endif %}
+          {% if site.working_hours %}<div class="contact-row"><span class="app-icon xs">{% include "website/_icon.html" with name="clock" %}</span><div><dt>Ish vaqti</dt><dd>{{ site.working_hours }}</dd></div></div>{% endif %}
+        </dl>
+      </div>
+      {% endif %}
+      <div class="glass-card" data-reveal>
+        <h2 class="card-title">Keyin nima bo‘ladi</h2>
+        <ol class="next-steps">
+          <li><span class="step-num sm">1</span><span>Murojaatingizni o‘qib, bir ish kuni ichida bog‘lanamiz.</span></li>
+          <li><span class="step-num sm">2</span><span>Qisqa uchrashuvda vazifani aniqlashtiramiz.</span></li>
+          <li><span class="step-num sm">3</span><span>Muddat va narx bilan yozma taklif yuboramiz.</span></li>
+        </ol>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

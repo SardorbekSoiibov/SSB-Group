@@ -1,0 +1,4 @@
+@import "tailwindcss" source(none);
+@import "./boshqaruv-design.css";
+@import "../static/css/management-modern.css";
+@source "../templates/boshqaruv";

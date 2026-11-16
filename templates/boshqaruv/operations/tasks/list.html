@@ -1,0 +1,78 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}{% if scope == 'meniki' %}Mening vazifalarim{% else %}Vazifalar{% endif %}{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / {{ app_section }}</span>
+    <h1>{% if scope == 'meniki' %}Mening vazifalarim{% elif scope == 'tekshiruv' %}Tekshiruv kutayotgan ishlar{% else %}Barcha vazifalar{% endif %}</h1>
+    <p>{% if scope == 'meniki' %}Sizga biriktirilgan ishlar. Vazifani ochib, ko‘rsatmalarni o‘qing va natijani topshiring.{% else %}Ko‘rishga ruxsat berilgan vazifalar.{% endif %}</p>
+  </div>
+  <div class="heading-actions">{% if can_create_task %}<a href="{% url 'crm:task_create' %}" class="button primary">{% ui_icon 'plus' %} Yangi vazifa</a>{% endif %}</div>
+</header>
+
+{% if can_review_any %}
+<div class="segmented-control ws-scope">
+  <a href="?korinish=meniki&ko={{ view }}" {% if scope == 'meniki' %}class="active" aria-current="page"{% endif %}>Mening ishlarim</a>
+  <a href="?korinish=barchasi&ko={{ view }}" {% if scope == 'barchasi' %}class="active" aria-current="page"{% endif %}>Barcha ruxsatli ishlar</a>
+  <a href="?korinish=tekshiruv&ko={{ view }}" {% if scope == 'tekshiruv' %}class="active" aria-current="page"{% endif %}>Tekshiruv</a>
+</div>
+{% endif %}
+
+<nav class="ws-tabs" aria-label="Vazifa holatlari">
+  {% for item in tabs %}<a href="?korinish={{ scope }}&bolim={{ item.code }}&ko={{ view }}" class="{% if item.code == 'kechikkan' and item.count %}is-alert{% endif %}" {% if item.code == tab and not request.GET.holat %}aria-current="page"{% endif %}>{{ item.label }}<b>{{ item.count }}</b></a>{% endfor %}
+</nav>
+
+<form class="filter-bar">
+  <input type="hidden" name="korinish" value="{{ scope }}"><input type="hidden" name="bolim" value="{{ tab }}"><input type="hidden" name="ko" value="{{ view }}">
+  <label>Qidirish<input name="q" value="{{ request.GET.q }}" placeholder="Vazifa yoki loyiha nomi…"></label>
+  <label>Holat<select name="holat"><option value="">Barchasi</option>{% for code,label in statuses %}<option value="{{ code }}" {% if request.GET.holat == code %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  <label>Ustuvorlik<select name="ustuvorlik"><option value="">Barchasi</option>{% for code,label in priorities %}<option value="{{ code }}" {% if request.GET.ustuvorlik == code %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  <label>Muddat<select name="muddat"><option value="">Barchasi</option>{% for code,label in deadlines %}<option value="{{ code }}" {% if request.GET.muddat == code %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  <label>Tartib<select name="tartib">{% for code,label in sorts %}<option value="{{ code }}" {% if sort == code %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  <button class="button">Filtrlash</button>
+</form>
+
+<div class="ws-bar">
+  <span>{{ total }} ta vazifa</span>
+  <nav class="ws-views" aria-label="Ko‘rinish">{% for code,label,icon in views %}<a href="?{% for key,value in request.GET.items %}{% if key != 'ko' and key != 'page' %}{{ key }}={{ value|urlencode }}&{% endif %}{% endfor %}ko={{ code }}" {% if view == code %}aria-current="page"{% endif %}>{% ui_icon icon %}{{ label }}</a>{% endfor %}</nav>
+</div>
+
+{% if view == 'kanban' %}
+{% csrf_token %}
+<div class="ws-kanban">
+  {% for column in columns %}
+  <section class="board-column" data-board-column="{{ column.status }}">
+    <header><strong>{{ column.label }}</strong><span class="badge-number">{{ column.items|length }}</span></header>
+    {% for task in column.items %}{% include 'boshqaruv/operations/tasks/_card.html' with draggable=True show_assignee=False %}{% empty %}<p class="empty-inline">Bu yerda ish yo‘q.</p>{% endfor %}
+  </section>
+  {% endfor %}
+</div>
+{% elif view == 'jadval' %}
+<section class="panel">
+  <div class="table-wrap"><table class="data-table">
+    <thead><tr><th>Vazifa</th><th>Holat</th><th>Ustuvorlik</th><th>Ijrochi</th><th>Bajarilishi</th><th>Berilgan</th><th>Muddat</th></tr></thead>
+    <tbody>
+      {% for task in page %}
+      <tr>
+        <td><a class="row-title" href="{{ task.get_absolute_url }}">{{ task.title }}</a><small>{{ task.project.name }}</small></td>
+        <td><span class="status" data-status="{{ task.status }}">{{ task.get_status_display }}</span></td>
+        <td><span class="ws-priority" data-priority="{{ task.priority }}">{{ task.get_priority_display }}</span></td>
+        <td>{{ task.assignee.display_name|default:'—' }}</td>
+        <td>{{ task.shown_progress }}%</td>
+        <td>{{ task.assigned_at|date:app_date_format|default:'—' }}</td>
+        <td{% if task.is_overdue %} class="ws-late"{% endif %}>{{ task.deadline|date:app_date_format|default:'—' }}</td>
+      </tr>
+      {% empty %}<tr><td colspan="7">Mos vazifa topilmadi.</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% include "boshqaruv/components/pagination.html" %}
+{% else %}
+{% if page.object_list %}
+<div class="ws-grid">{% for task in page %}{% if scope == 'meniki' %}{% include 'boshqaruv/operations/tasks/_card.html' with show_assignee=False %}{% else %}{% include 'boshqaruv/operations/tasks/_card.html' with show_assignee=True %}{% endif %}{% endfor %}</div>
+{% else %}
+{% include 'boshqaruv/components/empty.html' with empty_title='Mos vazifa topilmadi' empty_text='Boshqa bo‘limni tanlang yoki filtrlarni tozalang.' %}
+{% endif %}
+{% include "boshqaruv/components/pagination.html" %}
+{% endif %}
+{% endblock %}

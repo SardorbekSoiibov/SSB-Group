@@ -1,0 +1,163 @@
+/* Kompaniya e'lonlari — iOS uslubidagi lenta va yozish oynasi. */
+.ann-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,380px);gap:24px;align-items:start}
+.ann-feed{display:grid;gap:18px;min-width:0}
+.ann-side{position:sticky;top:96px}
+
+/* ---------- E'lon kartasi */
+.ann-card{position:relative;display:grid;gap:12px;padding:20px 22px 22px;border:1px solid var(--line);border-radius:28px;background:var(--surface);box-shadow:var(--ios-sh-2,0 18px 40px -18px rgb(15 23 42/.22));transition:transform .45s cubic-bezier(.34,1.4,.5,1),box-shadow .35s ease}
+.ann-card:hover{transform:translateY(-2px);box-shadow:var(--ios-sh-3,0 40px 80px -32px rgb(15 23 42/.34))}
+:root[data-theme="dark"] .ann-card{border-color:rgb(255 255 255/.06)}
+.ann-card.is-pinned{background:linear-gradient(160deg,color-mix(in srgb,var(--accent,#007aff) 7%,var(--surface)) 0%,var(--surface) 55%);border-color:color-mix(in srgb,var(--accent,#007aff) 28%,var(--line))}
+.ann-head{display:flex;align-items:center;gap:12px}
+.ann-avatar{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;background:linear-gradient(160deg,var(--accent-lift,#3395ff),var(--accent,#007aff));color:#fff;font-size:14px;font-weight:700;box-shadow:0 6px 14px -6px color-mix(in srgb,var(--accent,#007aff) 70%,transparent)}
+.ann-meta{display:grid;min-width:0;line-height:1.25}
+.ann-meta strong{font-size:14.5px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ann-meta small{color:var(--ink-tertiary);font-size:12.5px}
+.ann-pin{display:inline-flex;align-items:center;gap:5px;margin-left:auto;padding:5px 10px;border-radius:999px;background:var(--accent-tint,rgb(0 122 255/.12));color:var(--accent,#007aff);font-size:12px;font-weight:650;white-space:nowrap}
+.ann-pin .ui-icon{width:13px;height:13px}
+.ann-delete{margin:0 0 0 6px}
+.ann-delete.is-alone{margin-left:auto}
+.ann-delete button{display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;border-radius:50%;background:var(--ios-fill,rgb(118 118 128/.12));color:var(--ink-tertiary);cursor:pointer;transition:background .2s,color .2s,transform .25s cubic-bezier(.34,1.4,.5,1)}
+.ann-delete button:hover{background:rgb(255 59 48/.12);color:#ff3b30}
+.ann-delete button:active{transform:scale(.9)}
+.ann-delete .ui-icon{width:16px;height:16px}
+html body[data-app] .ann-card .ann-title{margin:4px 0 0;font-size:21px;font-weight:700;letter-spacing:-.025em;line-height:1.25}
+.ann-body{color:var(--ink);font-size:15.5px;line-height:1.6;overflow-wrap:anywhere}
+.ann-body a{color:var(--accent,#007aff);text-decoration:underline;text-underline-offset:3px}
+
+/* Galereya: 1 / 2 / 3 / 4+ rasm uchun moslashadi */
+.ann-gallery{display:grid;gap:4px;margin-top:4px;overflow:hidden;border-radius:20px}
+.ann-gallery[data-count="1"]{grid-template-columns:1fr}
+.ann-gallery[data-count="2"]{grid-template-columns:1fr 1fr}
+.ann-gallery[data-count="3"]{grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr}
+.ann-gallery[data-count="3"] .ann-photo:first-child{grid-row:span 2}
+.ann-gallery[data-count="4"]{grid-template-columns:1fr 1fr}
+.ann-photo{position:relative;display:block;padding:0;border:0;background:var(--ios-fill,rgb(118 118 128/.12));cursor:zoom-in;overflow:hidden;aspect-ratio:4/3}
+.ann-gallery[data-count="1"] .ann-photo{aspect-ratio:auto;max-height:520px}
+.ann-gallery[data-count="3"] .ann-photo:first-child{aspect-ratio:auto}
+.ann-photo img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.ann-gallery[data-count="1"] .ann-photo img{max-height:520px}
+.ann-photo:hover img{transform:scale(1.04)}
+.ann-more{position:absolute;inset:0;display:grid;place-items:center;background:rgb(0 0 0/.45);color:#fff;font-size:28px;font-weight:700;letter-spacing:-.02em;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+
+/* Havola tugmasi */
+.ann-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;justify-self:start;min-height:44px;margin-top:4px;padding:0 20px;border-radius:999px;background:linear-gradient(180deg,var(--accent-lift,#3395ff),var(--accent,#007aff));color:#fff!important;font-size:15px;font-weight:600;text-decoration:none!important;box-shadow:0 10px 22px -10px color-mix(in srgb,var(--accent,#007aff) 70%,transparent),inset 0 1px 0 rgb(255 255 255/.25);transition:transform .25s cubic-bezier(.34,1.4,.5,1),filter .2s}
+.ann-link:hover{filter:brightness(1.06)}
+.ann-link:active{transform:scale(.96)}
+.ann-link svg{width:17px;height:17px}
+
+.ann-empty{display:grid;justify-items:center;gap:6px;padding:48px 24px;border:1px solid var(--line);border-radius:28px;background:var(--surface);text-align:center}
+.ann-empty-icon{display:grid;place-items:center;width:56px;height:56px;margin-bottom:8px;border-radius:50%;background:var(--accent-tint,rgb(0 122 255/.12));color:var(--accent,#007aff)}
+.ann-empty h2{margin:0;font-size:19px}
+.ann-empty p{margin:0;color:var(--ink-secondary)}
+
+/* ---------- Yozish paneli (o'ng tomonda) */
+.announcement-composer{overflow:hidden}
+.announcement-composer>.panel-head{flex-wrap:wrap;row-gap:4px}
+.announcement-composer>.panel-head>div{display:flex;align-items:center;gap:10px}
+.announcement-composer>.panel-head h2{white-space:nowrap}
+.announcement-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;color:var(--accent,#007aff);background:var(--accent-tint,rgb(0 122 255/.12))}
+.announcement-icon .ui-icon{width:17px;height:17px}
+.announcement-composer .record-open-action{width:calc(100% - 40px);margin:18px 20px 20px;min-height:48px}
+
+/* ---------- Forma (modal oynada) */
+.ann-compose{display:grid!important;gap:18px!important;grid-template-columns:1fr!important}
+.ann-compose .field{position:relative;display:grid;gap:7px;margin:0}
+.ann-compose .field>label,.ann-compose .field-label{color:var(--ink-secondary);font-size:13px;font-weight:600}
+.ann-compose .field-label em{margin-left:4px;font-style:normal;font-weight:500;color:var(--ink-tertiary)}
+.ann-compose .field>small{color:var(--ink-tertiary);font-size:12px;padding-right:80px}
+.ann-compose .field input:not([type=checkbox]):not([type=file]),.ann-compose .field textarea{width:100%;min-height:48px;padding:12px 14px;font-size:16px!important;line-height:1.5}
+.ann-compose .field textarea{min-height:150px;resize:vertical}
+.announcement-count{position:absolute;right:2px;top:1px;color:var(--ink-tertiary)!important;font-size:11.5px!important;font-variant-numeric:tabular-nums}
+.ann-group{display:grid;gap:14px;padding:16px;border-radius:22px;background:color-mix(in srgb,var(--ink) 3%,transparent)}
+:root[data-theme="dark"] .ann-group{background:rgb(255 255 255/.03)}
+html body[data-app] .ann-group:not(#_) :is(input:not([type=checkbox]):not([type=file]),textarea){background-color:var(--surface)!important;box-shadow:0 1px 2px rgb(0 0 0/.05),inset 0 0 0 1px var(--line)!important}
+html body[data-app] .ann-group:not(#_) :is(input,textarea):focus{box-shadow:0 0 0 4px var(--accent-tint,rgb(0 122 255/.14))!important}
+html[data-theme="dark"] body[data-app] .ann-group:not(#_) :is(input:not([type=checkbox]):not([type=file]),textarea){background-color:#2c2c2e!important}
+
+.ann-drop{position:relative;display:flex;align-items:center;gap:14px;padding:16px;border:1.5px dashed color-mix(in srgb,var(--accent,#007aff) 45%,var(--line));border-radius:20px;background:color-mix(in srgb,var(--accent,#007aff) 5%,transparent);cursor:pointer;transition:background .2s,border-color .2s,transform .3s cubic-bezier(.34,1.4,.5,1)}
+.ann-drop:hover,.ann-drop.is-over{background:color-mix(in srgb,var(--accent,#007aff) 11%,transparent);border-color:var(--accent,#007aff)}
+.ann-drop.is-over{transform:scale(1.01)}
+.ann-drop:focus-within{outline:3px solid color-mix(in srgb,var(--accent,#007aff) 45%,transparent);outline-offset:2px}
+.ann-drop input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.ann-drop-icon{display:grid;place-items:center;flex:none;width:46px;height:46px;border-radius:50%;background:linear-gradient(160deg,var(--accent-lift,#3395ff),var(--accent,#007aff));color:#fff;box-shadow:0 8px 16px -8px color-mix(in srgb,var(--accent,#007aff) 75%,transparent)}
+html body[data-app] .ann-drop-icon svg{width:22px;height:22px;color:#fff!important;stroke:#fff!important;fill:none!important}
+.ann-drop-text{display:grid;gap:2px;line-height:1.3}
+.ann-drop-text strong{color:var(--accent,#007aff);font-size:15px;font-weight:650}
+.ann-drop-text small{color:var(--ink-tertiary);font-size:12.5px}
+.ann-previews{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.ann-previews[data-count="0"]{display:none}
+.ann-preview{position:relative;aspect-ratio:1;overflow:hidden;border-radius:16px;background:var(--ios-fill,rgb(118 118 128/.12));animation:ann-pop .35s cubic-bezier(.34,1.4,.5,1)}
+.ann-preview img{width:100%;height:100%;object-fit:cover}
+.ann-preview-n{position:absolute;left:6px;bottom:6px;min-width:20px;height:20px;padding:0 6px;display:grid;place-items:center;border-radius:999px;background:rgb(0 0 0/.55);color:#fff;font-size:11px;font-weight:650}
+.ann-preview-remove{position:absolute;top:6px;right:6px;display:grid;place-items:center;width:24px;height:24px;padding:0;border:0;border-radius:50%;background:rgb(0 0 0/.6);color:#fff;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:transform .2s,background .2s}
+.ann-preview-remove:hover{background:#ff3b30;transform:scale(1.1)}
+.ann-preview-remove svg{width:12px;height:12px}
+@keyframes ann-pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+
+.ann-link-preview{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ann-link-preview[hidden]{display:none}
+.ann-link-preview small{color:var(--ink-tertiary);font-size:12.5px}
+.ann-link.is-preview{margin:0;pointer-events:none}
+
+/* iOS kaliti (Yuqorida qadash) */
+.ann-switch{display:flex!important;align-items:center;gap:14px;padding:14px 16px;border-radius:20px;background:color-mix(in srgb,var(--ink) 3%,transparent)}
+:root[data-theme="dark"] .ann-switch{background:rgb(255 255 255/.03)}
+html body[data-app] .ann-switch:not(#_) input[type=checkbox]{appearance:none!important;-webkit-appearance:none!important;position:relative;flex:none;width:51px!important;height:31px!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:999px!important;background:var(--ios-fill-2,rgb(118 118 128/.2))!important;box-shadow:none!important;cursor:pointer;transition:background .25s ease}
+html body[data-app] .ann-switch:not(#_) input[type=checkbox]::before{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgb(0 0 0/.15),0 3px 1px rgb(0 0 0/.06);transition:transform .3s cubic-bezier(.34,1.4,.5,1)}
+html body[data-app] .ann-switch:not(#_) input[type=checkbox]:checked{background:var(--success,#34c759)!important}
+html body[data-app] .ann-switch:not(#_) input[type=checkbox]:checked::before{transform:translateX(20px)}
+html body[data-app] .ann-switch:not(#_)>label{display:grid;gap:2px;margin:0;color:var(--ink)!important;font-size:15px!important;font-weight:600;cursor:pointer}
+.ann-switch>label small{color:var(--ink-tertiary);font-size:12.5px;font-weight:450}
+
+.announcement-actions{display:flex;justify-content:flex-end;margin:0;padding-top:4px!important;border:0!important}
+.announcement-actions .button.primary{min-height:48px;padding-inline:24px}
+.record-dialog:has(.ann-compose){width:min(640px,calc(100vw - 32px));max-height:min(880px,calc(100dvh - 32px))}
+html body[data-app] .record-dialog:has(.ann-compose):not(#_){background:var(--surface)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.record-dialog:has(.ann-compose) .record-body .ann-compose{padding:4px 22px 22px}
+
+/* ---------- Rasm ko'rish oynasi */
+.ann-viewer{width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;background:rgb(0 0 0/.92);color:#fff;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.ann-viewer[open]{display:grid;place-items:center;animation:ann-fade .25s ease}
+.ann-viewer::backdrop{background:transparent}
+.ann-viewer img{max-width:calc(100vw - 140px);max-height:calc(100dvh - 120px);border-radius:14px;object-fit:contain;box-shadow:0 30px 80px rgb(0 0 0/.5);animation:ann-pop .35s cubic-bezier(.34,1.4,.5,1)}
+.ann-viewer-close,.ann-viewer-nav{position:fixed;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgb(255 255 255/.14);color:#fff;cursor:pointer;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);transition:background .2s,transform .25s cubic-bezier(.34,1.4,.5,1)}
+.ann-viewer-close:hover,.ann-viewer-nav:hover{background:rgb(255 255 255/.26)}
+.ann-viewer-close:active,.ann-viewer-nav:active{transform:scale(.9)}
+.ann-viewer-close{top:18px;right:18px}
+.ann-viewer-close .ui-icon{width:18px;height:18px}
+.ann-viewer-nav{top:50%;margin-top:-22px}
+.ann-viewer-nav svg{width:20px;height:20px}
+.ann-viewer-nav.is-prev{left:18px}.ann-viewer-nav.is-next{right:18px}
+.ann-viewer.is-single .ann-viewer-nav{display:none}
+.ann-viewer-count{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);padding:6px 12px;border-radius:999px;background:rgb(255 255 255/.14);font-size:13px;font-weight:600}
+.ann-viewer-count:empty{display:none}
+@keyframes ann-fade{from{opacity:0}to{opacity:1}}
+
+@media(max-width:1100px){.ann-layout{grid-template-columns:1fr}.ann-side{position:static;order:-1}}
+@media(max-width:640px){
+  .ann-card{padding:16px;border-radius:24px}
+  .ann-title{font-size:19px}
+  .ann-viewer img{max-width:100vw;border-radius:0}
+  .ann-viewer-nav{top:auto;bottom:16px;margin:0}
+  .record-dialog:has(.ann-compose){width:100%;max-height:94dvh}
+  .announcement-actions .button.primary{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.ann-card,.ann-photo img,.ann-preview,.ann-viewer img,.ann-switch input::before{transition:none;animation:none}}
+
+/* ---------- Hackaton e'lonlari: kartadagi tafsilotlar va formadagi maydonlar ---------- */
+.hk-facts{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:10px 0 12px;padding:0}
+.hk-facts li{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--ios-fill,rgb(118 118 128/.12))}
+.hk-facts li>span{grid-row:1/4;font-size:20px;line-height:1}
+.hk-facts small{font-size:11px;color:var(--ink-tertiary);text-transform:uppercase;letter-spacing:.03em}
+.hk-facts strong{font-size:14px;font-weight:650;color:var(--ink);overflow-wrap:anywhere}
+.hk-facts em{font-style:normal;font-size:12px;font-weight:600;color:var(--accent,#007aff)}
+.hk-facts li.is-urgent{background:color-mix(in srgb,var(--warning,#ff9500) 16%,transparent)}
+.hk-facts li.is-urgent em{color:var(--warning,#ff9500)}
+.hk-facts li.is-muted{opacity:.6}
+.hk-facts li.is-muted em{color:var(--ink-tertiary)}
+.hk-facts li.is-prize{background:color-mix(in srgb,#ffcc00 16%,transparent)}
+.hk-details .hk-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.hk-details .hk-grid .field{margin:0;min-width:0}
+.hk-details .hk-grid input{width:100%;box-sizing:border-box}
+@media (max-width:520px){.hk-details .hk-grid{grid-template-columns:1fr}}

@@ -1,0 +1,234 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}{{ employee.display_name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/employee-detail.css' %}?v=8"><link rel="stylesheet" href="{% static 'boshqaruv/badge.css' %}?v=6"><link rel="stylesheet" href="{% static 'boshqaruv/equipment.css' %}?v=4"><style>
+.ep-sec-block{display:grid;gap:10px;align-content:start;padding:16px 20px 18px}
+.ep-sec-block+.ep-sec-block{border-top:1px solid var(--line)}
+.ep-sec-block h3{margin:0;font-size:13px;font-weight:650;letter-spacing:.02em;text-transform:uppercase;color:var(--ink-tertiary)}
+.ep-sec-note{margin:0;color:var(--ink-tertiary);font-size:12.5px;line-height:1.5}
+.ep-sec-form{display:grid;gap:8px;margin:0}
+.ep-sec-form .button{width:100%;justify-content:center}
+.ep-sec-hint{color:var(--ink-tertiary);font-size:12px;line-height:1.45}
+.ep-sec-link{display:grid;gap:8px;padding:12px;border:1px solid color-mix(in srgb,var(--accent-custom,#007aff) 40%,transparent);border-radius:14px;background:color-mix(in srgb,var(--accent-custom,#007aff) 8%,transparent)}
+.ep-sec-link strong{font-size:13px}
+.ep-sec-link code{display:block;padding:8px 10px;border-radius:10px;background:var(--surface);font-size:11.5px;line-height:1.45;overflow-wrap:anywhere;user-select:all}
+.ep-sec-link small{color:var(--ink-tertiary);font-size:12px}
+.ep-sec-more{border:1px solid var(--line);border-radius:14px}
+.ep-sec-more summary{padding:11px 14px;font-size:13px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.ep-sec-more summary::-webkit-details-marker{display:none}
+.ep-sec-more summary::after{content:"";width:7px;height:7px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(45deg);transition:transform .2s;opacity:.6}
+.ep-sec-more[open] summary::after{transform:rotate(225deg)}
+.ep-sec-more .ep-sec-form{padding:0 14px 14px}
+.ep-sec input:not([type=hidden]):not([type=radio]){width:100%;min-width:0;height:42px;padding:0 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:14px;box-sizing:border-box}
+.ep-pass-field{display:flex;gap:8px}.ep-pass-field .button{flex:none;width:auto}
+.ep-sec .ep-seg{width:100%}
+.ep-sec{margin-top:0}
+.ep-sec-body{display:grid}
+@media(min-width:900px){.ep-sec-body{grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}.ep-sec-block+.ep-sec-block{border-top:0;border-left:1px solid var(--line)}.ep-sec-body>.ep-sec-block:only-child{grid-column:1/-1}}
+</style>{% endblock %}
+{% block content %}
+<div class="ep">
+  {% if invite %}
+  <div class="ep-invite"><strong>Xodim uchun taklif havolasi</strong><code>{{ invite.link }}</code><small class="chart-key">Havolani faqat shu xodimga yuboring — u orqali parol o‘rnatadi.</small></div>
+  {% endif %}
+
+  {# ---------------- Kontakt kartasi #}
+  <section class="ep-card ep-hero">
+    <div class="ep-cover" aria-hidden="true"><span></span><span></span></div>
+    <div class="ep-hero-body">
+      <div class="ep-photo">{% include 'boshqaruv/components/avatar.html' with person=employee avatar_class='large' %}<i class="ep-presence" data-status="{{ employee.status }}" title="{{ employee.get_status_display }}"></i></div>
+      <div class="ep-who">
+        <h1>{{ employee.display_name }}{% if employee.is_verified %}<span class="ep-verified" title="Tasdiqlangan hisob">{% ui_icon 'check' %}</span>{% endif %}</h1>
+        <p>{{ employee.job_title|default:"Lavozim belgilanmagan" }}{% if employee.department %} · {{ employee.department }}{% endif %}</p>
+        <div class="ep-tags">
+          <span class="ep-tag is-id">ID {{ badge_id }}</span>
+          <span class="ep-tag is-role">{% if employee.is_owner %}Asoschi{% else %}Xodim{% endif %}</span>
+          <span class="ep-tag" data-status="{{ employee.status }}">{{ employee.get_status_display }}</span>
+          {% for skill in employee.skills|slice:":4" %}<span class="ep-tag">{{ skill }}</span>{% endfor %}
+        </div>
+      </div>
+      <div class="ep-actions">
+        {% if user.is_owner %}<form method="post" action="{% url 'crm:employee_verify' employee.pk %}">{% csrf_token %}<button class="button">{% ui_icon 'check' %} {% if employee.is_verified %}Tasdiqni olib tashlash{% else %}Tasdiqlash{% endif %}</button></form>{% endif %}
+        {% if can_erase %}<form method="post" action="{% url 'crm:employee_erase' employee.pk %}" data-secure-delete="{{ erase_items }}" data-secure-title="{{ employee.display_name }} butunlay o‘chirilsinmi?">{% csrf_token %}<button class="button danger">{% ui_icon 'trash' %} O‘chirish</button></form>{% endif %}
+        {% if can_manage %}<a class="button primary" href="{% url 'crm:employee_edit' employee.pk %}">{% ui_icon 'edit' %} Tahrirlash</a>{% endif %}
+      </div>
+    </div>
+    <nav class="ep-quick" aria-label="Tezkor aloqa">
+      {% if employee.phone %}<a href="tel:{{ employee.phone|cut:' ' }}"><span>{% ui_icon 'phone' %}</span>Qo‘ng‘iroq</a>{% else %}<span class="is-off"><span>{% ui_icon 'phone' %}</span>Qo‘ng‘iroq</span>{% endif %}
+      {% if employee.telegram %}<a href="https://t.me/{{ employee.telegram|cut:'@'|cut:'https://t.me/' }}" target="_blank" rel="noopener"><span>{% ui_icon 'send' %}</span>Telegram</a>{% else %}<span class="is-off"><span>{% ui_icon 'send' %}</span>Telegram</span>{% endif %}
+      {% if employee.email %}<a href="mailto:{{ employee.email }}"><span>{% ui_icon 'mail' %}</span>Pochta</a>{% else %}<span class="is-off"><span>{% ui_icon 'mail' %}</span>Pochta</span>{% endif %}
+      <a href="#bedjik" data-badge-jump><span>{% ui_icon 'shield' %}</span>Bedjik</a>
+    </nav>
+  </section>
+
+  {# ---------------- Ko'rsatkichlar #}
+  <div class="ep-stats">
+    <div class="ep-stat"><span class="ep-stat-icon">{% ui_icon 'project' %}</span><small>Faol loyihalar</small><strong>{{ active_count }}</strong></div>
+    <div class="ep-stat"><span class="ep-stat-icon">{% ui_icon 'check' %}</span><small>Ishga tushirilgan</small><strong>{{ done_count }}</strong></div>
+    <div class="ep-stat"><span class="ep-stat-icon">{% ui_icon 'calendar' %}</span><small>Ochiq vazifalar</small><strong>{{ open_task_count }}</strong></div>
+    <div class="ep-stat"><span class="ep-stat-icon">{% ui_icon 'shield' %}</span><small>Ochiq funksiyalar</small><strong>{% if employee.is_owner %}Hammasi{% else %}{{ function_count }}{% endif %}</strong></div>
+  </div>
+
+  {# ---------------- Ish: loyihalar va vazifalar yonma-yon #}
+  <div class="ep-work">
+      <section class="ep-card">
+        <header><h2>Biriktirilgan loyihalar</h2><span class="ep-count">{{ projects|length }}</span></header>
+        {% if projects %}
+        <ul class="ep-proj">{% for p in projects %}<li><a href="{{ p.get_absolute_url }}">
+          <span class="ep-proj-main"><strong>{{ p.name }}</strong><small>{{ p.code }} · {% if p.manager_id == employee.pk %}Mas’ul xodim{% else %}Jamoa a’zosi{% endif %} · {{ p.deadline|date:app_date_format|default:'Muddatsiz' }}</small></span>
+          <span class="status" data-status="{{ p.status }}">{{ p.get_status_display }}</span>
+          <span class="ep-bar"><i><b style="width:{{ p.progress }}%"></b></i><em>{{ p.progress }}%</em></span>
+        </a></li>{% endfor %}</ul>
+        {% else %}<div class="ep-empty"><span>{% ui_icon 'project' %}</span>Hozircha biriktirilgan loyiha yo‘q.</div>{% endif %}
+      </section>
+
+      <section class="ep-card">
+        <header><h2>Ochiq vazifalar</h2><span class="ep-count">{{ open_task_count }}</span></header>
+        {% if open_tasks %}
+        <ul class="ep-tasks">{% for t in open_tasks|slice:":8" %}<li><a href="{% url 'crm:task_detail' t.pk %}">
+          <span class="ep-task-dot" data-priority="{{ t.priority }}"></span>
+          <span class="ep-proj-main"><strong>{{ t.title }}</strong><small>{{ t.project.name }}</small></span>
+          <span class="ep-due{% if t.deadline and t.deadline < app_today %} is-late{% endif %}">{{ t.deadline|date:app_date_format|default:'Muddatsiz' }}</span>
+        </a></li>{% endfor %}</ul>
+        {% else %}<div class="ep-empty"><span>{% ui_icon 'check' %}</span>Ochiq vazifa yo‘q.</div>{% endif %}
+      </section>
+  </div>
+
+  {# ---------------- Ma'lumot va boshqaruv (chap) · bedjik (o'ng) #}
+  <div class="ep-grid">
+    <div class="ep-col">
+      <section class="ep-card">
+        <header><h2>Aloqa va ma’lumotlar</h2></header>
+        <dl class="ep-dl">
+          <div><dt>{% ui_icon 'phone' %}</dt><dd><small>Telefon</small><span>{% if employee.phone %}<a href="tel:{{ employee.phone|cut:' ' }}">{{ employee.phone }}</a>{% else %}—{% endif %}</span></dd></div>
+          <div><dt>{% ui_icon 'mail' %}</dt><dd><small>Pochta</small><span>{% if employee.email %}<a href="mailto:{{ employee.email }}">{{ employee.email }}</a>{% else %}—{% endif %}</span></dd></div>
+          <div><dt>{% ui_icon 'send' %}</dt><dd><small>Telegram</small><span>{{ employee.telegram|default:'—' }}</span></dd></div>
+          <div><dt>{% ui_icon 'people' %}</dt><dd><small>Bo‘lim</small><span>{{ employee.department|default:'—' }}</span></dd></div>
+          <div><dt>{% ui_icon 'calendar' %}</dt><dd><small>Ish boshlagan</small><span>{{ employee.joined_on|date:app_date_format|default:'—' }}</span></dd></div>
+          {% if can_view_contract %}
+          <div><dt>{% ui_icon 'file' %}</dt><dd><small>Mehnat shartnomasi</small><span>{% if employee.contract %}<a href="{% url 'crm:employee_contract' employee.pk %}">{% if employee.contract_number %}№ {{ employee.contract_number }}{% else %}Yuklab olish{% endif %} · {{ employee.contract_extension }}</a>
+            <em class="ep-contract ep-contract-{{ employee.contract_state }}">{% if employee.contract_state == 'expired' %}Muddati tugagan{% elif employee.contract_ends_on %}{{ employee.contract_ends_on|date:app_date_format }} gacha{% else %}Muddatsiz{% endif %}</em>{% elif can_manage %}<a href="{% url 'crm:employee_edit' employee.pk %}#shartnoma">+ Shartnoma qo‘shish</a>{% else %}Yuklanmagan{% endif %}</span></dd></div>
+          {% endif %}
+        </dl>
+      </section>
+
+      <section class="ep-card">
+        <header><h2>Kabinetdagi funksiyalar</h2>{% if can_manage and user.is_owner %}<a class="ep-link" href="{% url 'crm:employee_edit' employee.pk %}">O‘zgartirish {% ui_icon 'arrow' %}</a>{% endif %}</header>
+        <div class="ep-fn">
+          {% for title, items in granted %}
+          <h3>{{ title }}</h3>
+          <div class="ep-chips">{% for label in items %}<span class="ep-chip">{% ui_icon 'check' %}{{ label }}</span>{% endfor %}</div>
+          {% empty %}
+          <p class="ep-fn-empty"><span>{% ui_icon 'shield' %}</span><span>Hech qanday funksiya ochilmagan. Xodim kabinetida faqat bosh sahifa va bildirishnomalar ko‘rinadi.{% if can_manage and user.is_owner %} <a class="ep-link" href="{% url 'crm:employee_edit' employee.pk %}">Funksiya ochish</a>{% endif %}</span></p>
+          {% endfor %}
+        </div>
+      </section>
+
+
+      {% if employee_equipment is not None %}
+      <section class="ep-card">
+        <header><h2>Biriktirilgan jihozlar</h2>{% if user.is_owner %}<a class="ep-link" href="{% url 'crm:equipment' %}?xodim={{ employee.pk }}">Barchasi {% ui_icon 'arrow' %}</a>{% else %}<span class="ep-count">{{ employee_equipment|length }}</span>{% endif %}</header>
+        {% include "boshqaruv/operations/equipment/_mini_list.html" with items=employee_equipment %}
+      </section>
+      {% endif %}
+
+      {% if employee_balances %}
+      <section class="ep-card">
+        <header><h2>Moliyaviy hisob</h2><span class="ep-meta">tasdiqlangan reyestr</span></header>
+        {% for item in employee_balances %}
+        <div class="ep-money"><div><small>Hisoblangan · {{ item.currency }}</small><b>{{ item.earned|money }}</b></div><div><small>To‘langan</small><b>{{ item.paid|money }}</b></div><div><small>Qolgan qarz</small><b>{{ item.payable|money }}</b></div></div>
+        {% endfor %}
+      </section>
+      {% endif %}
+    </div>
+
+    {# ---------------- Bedjik #}
+    <div class="ep-col">
+      <section class="ep-card ep-badge" id="bedjik">
+        <header><h2>Xodim bedjigi</h2><span class="ep-count is-id">{{ badge_id }}</span></header>
+        {% include "boshqaruv/components/badge_card.html" with person=employee %}
+        <div class="badge-actions">
+          <a class="button primary" href="{% url 'crm:employee_badge_pdf' employee.pk %}" download>{% ui_icon 'file' %} PDF yuklab olish</a>
+          <a class="button" href="{{ badge_url }}" target="_blank" rel="noopener">{% ui_icon 'shield' %} Tekshiruv sahifasi</a>
+        </div>
+        <p class="badge-hint">PDF haqiqiy o‘lchamda (54 × 85.6 mm) — old va orqa tomoni kesish belgilari bilan. QR skanerlanganda xodimning hozirgi holati ko‘rsatiladi: ishdan ketsa, bedjik avtomatik amal qilmaydi.</p>
+      </section>
+
+    </div>
+  </div>
+  {% if can_manage or can_reset_password %}
+  <section class="ep-card ep-sec" id="parol">
+    <header><h2>Hisob va xavfsizlik</h2>{% if can_reset_password %}<span class="ep-meta">faqat Asoschi</span>{% endif %}</header>
+    <div class="ep-sec-body">
+    {% if can_manage %}
+    <div class="ep-sec-block">
+      <h3>Hisob holati</h3>
+      <form method="post" action="{% url 'crm:employee_status' employee.pk %}" class="ep-sec-form" data-confirm="Hisob holatini o‘zgartirishni tasdiqlang.">
+        {% csrf_token %}
+        <div class="ep-seg" role="radiogroup" aria-label="Hisob holati">{% for code,label in statuses %}<label><input type="radio" name="status" value="{{ code }}" {% if employee.status == code %}checked{% endif %}><span>{{ label }}</span></label>{% endfor %}</div>
+        <button class="button">Holatni saqlash</button>
+      </form>
+      {% if employee.status == 'invited' %}<form method="post" action="{% url 'crm:employee_invite' employee.pk %}" class="ep-sec-form">{% csrf_token %}<button class="button">{% ui_icon 'send' %} Taklif havolasini yaratish</button></form>{% endif %}
+    </div>
+    {% endif %}
+
+    {% if can_reset_password %}
+    <div class="ep-sec-block">
+      <h3>Parolni tiklash</h3>
+      <p class="ep-sec-note">Xodim parolini unutgan bo‘lsa. Yangi parol qo‘yilgach eskisi ishlamaydi va xodimning barcha seanslari yopiladi.</p>
+
+      {% if reset_link %}
+      <div class="ep-sec-link">
+        <strong>Bir martalik havola tayyor</strong>
+        <code data-copy-source>{{ reset_link }}</code>
+        <button type="button" class="button primary" data-copy-link>Nusxalash</button>
+        <small>Faqat shu xodimga yuboring. Bir marta ishlaydi, 3 kunda eskiradi.</small>
+      </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'crm:employee_password' employee.pk %}" class="ep-sec-form">
+        {% csrf_token %}<input type="hidden" name="action" value="link">
+        <button class="button{% if not reset_link %} primary{% endif %}">{% ui_icon 'send' %} {% if reset_link %}Yangi havola yaratish{% else %}Tiklash havolasini yaratish{% endif %}</button>
+        <small class="ep-sec-hint">Tavsiya etiladi: xodim yangi parolni o‘zi qo‘yadi, siz uni bilmaysiz.</small>
+      </form>
+
+      <details class="ep-sec-more">
+        <summary>Yoki yangi parolni o‘zim o‘rnataman</summary>
+        <form method="post" action="{% url 'crm:employee_password' employee.pk %}" class="ep-sec-form" data-confirm="{{ employee.display_name }} uchun yangi parol o‘rnatilsinmi? Uning barcha ochiq seanslari yopiladi.">
+          {% csrf_token %}<input type="hidden" name="action" value="set">
+          <input type="hidden" name="username" value="{{ employee.username }}" autocomplete="username">
+          <label class="sr-only" for="ep-new-pass">Yangi parol</label>
+          <div class="ep-pass-field"><input id="ep-new-pass" name="new_password1" type="password" autocomplete="new-password" minlength="10" required placeholder="Yangi parol (kamida 10 belgi)">
+            <button type="button" class="button compact" data-pass-generate title="Kuchli parol yaratish">Yaratish</button></div>
+          <label class="sr-only" for="ep-new-pass2">Yangi parolni takrorlang</label>
+          <input id="ep-new-pass2" name="new_password2" type="password" autocomplete="new-password" minlength="10" required placeholder="Parolni takrorlang">
+          <button class="button">{% ui_icon 'lock' %} Parolni o‘rnatish</button>
+          <small class="ep-sec-hint">Parolni xodimga shaxsan ayting.</small>
+        </form>
+      </details>
+    </div>
+    {% endif %}
+    </div>
+  </section>
+  <script>
+  (() => {
+    const card = document.getElementById('parol');
+    if (!card) return;
+    card.querySelector('[data-pass-generate]')?.addEventListener('click', () => {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%*?';
+      const bytes = crypto.getRandomValues(new Uint32Array(14));
+      const value = Array.from(bytes, n => chars[n % chars.length]).join('');
+      const a = card.querySelector('#ep-new-pass'), b = card.querySelector('#ep-new-pass2');
+      a.value = b.value = value; a.type = b.type = 'text';
+      a.select();
+    });
+    card.querySelector('[data-copy-link]')?.addEventListener('click', async event => {
+      const text = card.querySelector('[data-copy-source]').textContent.trim();
+      try { await navigator.clipboard.writeText(text); event.target.textContent = 'Nusxalandi ✓'; }
+      catch { getSelection().selectAllChildren(card.querySelector('[data-copy-source]')); }
+    });
+  })();
+  </script>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/employee-badge.js' %}?v=1" defer></script>{% endblock %}

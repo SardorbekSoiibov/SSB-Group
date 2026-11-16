@@ -1,0 +1,13 @@
+{% load boshqaruv %}<ul class="ws-thread">
+  {% for item in comments %}
+  <li class="ws-comment">
+    {% include 'boshqaruv/components/avatar.html' with person=item.author avatar_class='small' %}
+    <div>
+      <div class="ws-comment-head"><strong>{{ item.author.display_name|default:'O‘chirilgan xodim' }}</strong>{% if item.is_announcement %}<span class="ws-tag">E’lon</span>{% endif %}{% if item.is_clarification %}<span class="ws-tag">Aniqlik so‘rovi</span>{% endif %}<small>{{ item.created_at|date:app_datetime_format }}</small></div>
+      <p>{{ item.body }}</p>
+      {% if item.replies.all %}<ul class="ws-replies">{% for reply in item.replies.all %}<li class="ws-comment">{% include 'boshqaruv/components/avatar.html' with person=reply.author avatar_class='small' %}<div><div class="ws-comment-head"><strong>{{ reply.author.display_name|default:'O‘chirilgan xodim' }}</strong><small>{{ reply.created_at|date:app_datetime_format }}</small></div><p>{{ reply.body }}</p></div></li>{% endfor %}</ul>{% endif %}
+      <details class="ws-reply"><summary>Javob yozish</summary><form method="post" action="{{ post_url }}">{% csrf_token %}<input type="hidden" name="parent" value="{{ item.pk }}"><textarea name="body" required maxlength="5000" aria-label="Javob matni"></textarea><button class="button compact">Yuborish</button></form></details>
+    </div>
+  </li>
+  {% empty %}<li><p class="ws-note">Hali izoh yozilmagan.</p></li>{% endfor %}
+</ul>

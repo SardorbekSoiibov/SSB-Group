@@ -1,0 +1,13 @@
+/* Moliyaviy hisobotlar: tezkor davr tugmalari va bloklar orasidagi masofa */
+.report-presets{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 14px}
+.report-presets>span{margin-right:4px;color:var(--ink-secondary);font-size:13px;font-weight:600}
+.report-presets .button{min-height:34px}
+#financial-report-filters{margin-bottom:16px}
+#financial-report-filters~.panel,#financial-report-filters~details.panel{margin-top:16px}
+#financial-report-filters~.role-note{margin:0 0 4px}
+@media (max-width:767px){
+  .report-presets{flex-wrap:nowrap;overflow-x:auto;margin-inline:-4px;padding:2px 4px 6px;scrollbar-width:none}
+  .report-presets::-webkit-scrollbar{display:none}
+  .report-presets .button{flex:none}
+  html body[data-app] #financial-report-filters:not(#_)>.segmented-control{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))}
+}

@@ -1,0 +1,28 @@
+{% load boshqaruv %}
+{# Xodim javob bermagan to'lovlar: istalgan sahifada tasdiqlash oynasi. #}
+<dialog class="pask" id="payout-ask" aria-labelledby="pask-title">
+  <header class="pask-head">
+    <span class="pask-ico" aria-hidden="true">{% ui_icon 'money' %}</span>
+    <div><h2 id="pask-title">To‘lovni tasdiqlang</h2><p>Asoschi Sizga quyidagi to‘lovni berganini qayd etdi. Pul qo‘lingizga tegdimi?</p></div>
+  </header>
+  <div class="pask-list">
+    {% for op in payout_asks %}
+    <article class="pask-item" data-pask="{{ op.pk }}">
+      <div class="pask-sum"><strong>{{ op.amount|money }} {{ op.currency }}</strong><span>{{ op.payout.paid_on|date:app_date_format }} · {{ op.payout.get_method_display }}</span></div>
+      <p class="pask-meta">{% if op.project %}Loyiha: {{ op.project.name }} · {% endif %}{{ op.description }}{% if op.payout.reference %} · {{ op.payout.reference }}{% endif %}</p>
+      <form method="post" action="{% url 'enterprise:payout_respond' op.pk %}" class="pask-form">
+        {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <div class="pask-actions">
+          <button class="button primary" name="answer" value="yes">{% ui_icon 'check' %} Ha, oldim</button>
+          <button type="button" class="button danger" data-pask-no>Yo‘q, olmadim</button>
+        </div>
+        <div class="pask-dispute" hidden>
+          <label>Nima noto‘g‘ri? <small>(ixtiyoriy)</small><textarea name="note" rows="2" maxlength="500" placeholder="Masalan: summa kam berildi / umuman berilmadi"></textarea></label>
+          <div class="pask-actions"><button type="button" class="button" data-pask-back>Orqaga</button><button class="button danger" name="answer" value="no">E’tirozni yuborish</button></div>
+        </div>
+      </form>
+    </article>
+    {% endfor %}
+  </div>
+  <footer class="pask-foot"><small>Javobingiz Asoschiga yuboriladi va o‘zgartirib bo‘lmaydi.</small><button type="button" class="button" data-pask-later>Keyinroq</button></footer>
+</dialog>

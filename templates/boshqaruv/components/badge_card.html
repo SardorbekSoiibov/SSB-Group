@@ -1,0 +1,47 @@
+{% load boshqaruv %}{# Barcha xodimlar uchun yagona bedjik. --mm = kartadagi 1 mm (54 × 85.6 mm), PDF bilan bir xil. #}
+<div class="badge-stage" data-badge-stage>
+  <div class="badge-card" data-badge-card tabindex="0" role="button" aria-label="Bedjikni aylantirish (old / orqa tomon)">
+    <div class="badge-face badge-front idc">
+      <div class="idc-hero" aria-hidden="true"><i class="idc-orb a"></i><i class="idc-grid"></i><span class="idc-watermark">{{ badge_mark }}</span></div>
+      <i class="idc-slot" aria-hidden="true"></i>
+      <div class="idc-brand"><span class="idc-logo">{{ badge_logo }}</span><span class="idc-sub">Xodim guvohnomasi · Staff ID</span></div>
+      <div class="idc-photo">{% if person.photo %}<img src="{% url 'crm:employee_photo' person.pk %}?v={{ person.photo_version }}" alt="" draggable="false">{% else %}<span>{{ person.initials }}</span>{% endif %}</div>
+      <div class="idc-info{% if badge_name_class %} {{ badge_name_class }}{% endif %}">
+        <strong class="idc-name">{{ person.display_name }}</strong>
+        <span class="idc-role">{{ person.job_title|default:"Xodim" }}</span>
+        {% if person.department %}<span class="idc-dept">{{ person.department }}</span>{% endif %}
+        <dl class="idc-fields">
+          <div><dt>ID</dt><dd>{{ badge_id }}</dd></div>
+          <div><dt>Ish boshlagan</dt><dd>{{ person.joined_on|date:"d.m.Y"|default:"—" }}</dd></div>
+          <div><dt>Holat</dt><dd><i style="--dot:{{ badge_status_color }}"></i>{{ person.get_status_display }}</dd></div>
+        </dl>
+      </div>
+      <div class="idc-foot"><span>{{ badge_host }}</span><span>{{ badge_id }}</span></div>
+      <i class="badge-gloss"></i>
+    </div>
+    <div class="badge-face badge-back idc idc-back">
+      <div class="idc-hero is-full" aria-hidden="true"><i class="idc-orb a"></i><i class="idc-orb b"></i><i class="idc-grid"></i></div>
+      <i class="idc-slot" aria-hidden="true"></i>
+      <span class="idc-biglogo">{{ badge_logo }}</span>
+      <span class="idc-kind">Xodim guvohnomasi</span>
+      <div class="idc-qr">{{ badge_qr }}</div>
+      <span class="idc-id">{{ badge_id }}</span>
+      {% if badge_partners %}
+      <div class="idc-partners">
+        <div class="idc-logos">{% for p in badge_partners %}<span title="{{ p.name }}"><img src="{% url 'crm:partner_logo' p.pk %}?badge=1&amp;v={{ p.logo_version }}" alt="{{ p.name }}" draggable="false"></span>{% endfor %}</div>
+      </div>
+      {% endif %}
+      <span class="idc-rules{% if not badge_partners %} is-up{% endif %}">Ushbu guvohnoma {{ badge_company }} xodimiga tegishli.<br>Topib olsangiz: {{ badge_host }}</span>
+      <div class="idc-sign"><span>Rahbar imzosi</span><i>M.O‘.</i></div>
+      <i class="badge-gloss"></i>
+    </div>
+  </div>
+  <div class="badge-shadow" aria-hidden="true"></div>
+</div>
+<div class="badge-controls">
+  <div class="badge-seg" role="group" aria-label="Bedjik tomoni">
+    <button type="button" data-badge-side="front" aria-pressed="true">Old tomoni</button>
+    <button type="button" data-badge-side="back" aria-pressed="false">Orqa tomoni</button>
+  </div>
+  <small>Bosing yoki suring — bedjik aylanadi</small>
+</div>

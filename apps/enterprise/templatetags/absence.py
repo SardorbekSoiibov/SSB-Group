@@ -1,0 +1,24 @@
+from django import template
+from django.utils import timezone
+
+from apps.enterprise.absence import period_text
+from apps.enterprise.absence_models import AbsenceRequest
+
+register = template.Library()
+
+
+@register.inclusion_tag("boshqaruv/business/_absence.html", takes_context=True)
+def absence_panel(context):
+    request = context["request"]
+    user = request.user
+    owner = user.is_owner
+    if owner:
+        pending = list(AbsenceRequest.objects.filter(status=AbsenceRequest.Status.PENDING).select_related("employee").order_by("date_from", "created_at"))
+        recent = list(AbsenceRequest.objects.exclude(status=AbsenceRequest.Status.PENDING).select_related("employee", "decided_by")[:6])
+    else:
+        pending = list(AbsenceRequest.objects.filter(employee=user, status=AbsenceRequest.Status.PENDING))
+        recent = list(AbsenceRequest.objects.filter(employee=user).exclude(status=AbsenceRequest.Status.PENDING).select_related("decided_by")[:6])
+    for item in pending + recent:
+        item.period = period_text(item)
+    return {"request": request, "owner": owner, "pending": pending, "recent": recent,
+            "today": timezone.localdate(), "csrf_token": context.get("csrf_token"), "next": request.get_full_path()}

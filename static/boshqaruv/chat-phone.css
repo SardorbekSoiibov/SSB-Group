@@ -1,0 +1,62 @@
+/* Xodimlar chati — iPhone 16 ko'rinishidagi suzuvchi oyna.
+   Tugma bosilsa pastdan chiqadi, yuqori yoki pastki chetidan pastga surilsa yopiladi. */
+
+.chat-launcher{position:fixed;right:24px;bottom:24px;z-index:75;display:grid;place-items:center;width:58px;height:58px;padding:0;border:0;border-radius:50%;background:var(--accent-custom,#007aff);color:#fff;cursor:pointer;box-shadow:0 14px 30px -10px color-mix(in srgb,var(--accent-custom,#007aff) 70%,transparent),0 4px 12px rgb(0 0 0/.18);transition:transform .35s cubic-bezier(.32,.72,0,1),opacity .25s}
+.chat-launcher:hover{transform:scale(1.06)}
+.chat-launcher:active{transform:scale(.94)}
+.chat-launcher:focus-visible{outline:3px solid color-mix(in srgb,var(--accent-custom,#007aff) 45%,transparent);outline-offset:3px}
+.chat-launcher svg{width:26px;height:26px}
+.chat-launcher-badge{position:absolute;top:-3px;right:-3px;min-width:22px;height:22px;padding:0 6px;border:2px solid var(--canvas,#fff);border-radius:999px;background:#ff3b30;color:#fff;font-size:11.5px;font-weight:700;line-height:18px;text-align:center;box-sizing:border-box}
+.chat-launcher-badge[hidden]{display:none}
+body.chat-phone-open .chat-launcher{opacity:0;transform:scale(.6);pointer-events:none}
+
+/* Qurilma: iPhone 16 korpusi 71.6 × 147.6 mm, ekran 393 × 852 pt */
+.chat-phone{--phone-h:min(800px,calc(100dvh - 40px));position:fixed;right:28px;bottom:20px;z-index:80;height:var(--phone-h);aspect-ratio:71.6/147.6;visibility:hidden;transform:translateY(calc(100% + 40px));transition:transform .5s cubic-bezier(.32,.72,0,1),visibility 0s linear .5s;will-change:transform;touch-action:none}
+.chat-phone.is-open{visibility:visible;transform:none;transition:transform .5s cubic-bezier(.32,.72,0,1),visibility 0s}
+.chat-phone.is-dragging{transition:none}
+.chat-phone.no-anim{transition:none}
+
+.chat-phone-device{position:relative;box-sizing:border-box;width:100%;height:100%;padding:calc(var(--phone-h) * .0145);border-radius:calc(var(--phone-h) * .073);background:#1d1d1f;box-shadow:inset 0 0 0 1.5px #3c3c40,inset 0 0 0 4px #121214,0 0 0 1px rgb(0 0 0/.25),0 50px 90px -30px rgb(0 0 0/.55),0 18px 36px -18px rgb(0 0 0/.4)}
+/* yon tugmalar: chap — Action + ovoz, o'ng — quvvat */
+.chat-phone-device::before,.chat-phone-device::after{content:"";position:absolute;width:3px;border-radius:2px;background:#2c2c2e}
+.chat-phone-device::before{left:-3px;top:17%;height:5%;box-shadow:0 calc(var(--phone-h) * .085) 0 #2c2c2e,0 calc(var(--phone-h) * .16) 0 #2c2c2e}
+.chat-phone-device::after{right:-3px;top:26%;height:10%}
+
+.chat-phone-screen{position:relative;display:flex;flex-direction:column;width:100%;height:100%;border-radius:calc(var(--phone-h) * .06);background:var(--surface,#fff);color:var(--ink,#000);overflow:hidden;isolation:isolate}
+
+.chat-phone-top{position:relative;flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:50px;padding:4px 26px 0;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
+.chat-phone.is-dragging .chat-phone-top{cursor:grabbing}
+.chat-phone-time{justify-self:center;font-size:15px;font-weight:650;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.chat-phone-island{width:31%;height:34px;border-radius:20px;background:#000}
+.chat-phone-icons{justify-self:center;display:flex;align-items:center;gap:5px}
+.chat-phone-icons svg{height:11px;width:auto;fill:currentColor}
+.chat-phone-icons svg:last-child{height:12px}
+.chat-phone-handle{display:none}
+
+.chat-phone-view{position:relative;flex:1;min-height:0}
+.chat-phone-view iframe{display:block;width:100%;height:100%;border:0;background:var(--surface,#fff)}
+.chat-phone.is-dragging iframe{pointer-events:none}
+.chat-phone-loading{position:absolute;inset:0;display:grid;place-items:center;margin:0;color:var(--muted,#8e8e93);font-size:13px;pointer-events:none}
+.chat-phone-loading[hidden]{display:none}
+
+.chat-phone-bottom{flex:none;display:grid;place-items:center;height:22px;cursor:grab;touch-action:none}
+.chat-phone-home{width:36%;height:5px;border-radius:3px;background:currentColor;opacity:.85}
+
+/* Telefon ekranida: ramkasiz, pastdan chiqadigan to'liq oyna */
+@media (max-width:600px){
+  .chat-launcher{right:16px;bottom:16px;width:54px;height:54px}
+  .chat-phone{inset:auto 0 0 0;width:100%;height:calc(100dvh - 10px);aspect-ratio:auto}
+  .chat-phone-device{padding:0;border-radius:18px 18px 0 0;background:none;box-shadow:0 -10px 40px rgb(0 0 0/.25)}
+  .chat-phone-device::before,.chat-phone-device::after{display:none}
+  .chat-phone-screen{border-radius:18px 18px 0 0}
+  .chat-phone-top{display:grid;place-items:center;grid-template-columns:1fr;height:22px;padding:0}
+  .chat-phone-time,.chat-phone-island,.chat-phone-icons{display:none}
+  .chat-phone-handle{display:block;width:40px;height:5px;border-radius:3px;background:var(--muted,#8e8e93);opacity:.6}
+  .chat-phone-bottom{height:max(10px,env(safe-area-inset-bottom))}
+  .chat-phone-home{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){.chat-phone,.chat-phone.is-open,.chat-launcher{transition:none}}
+
+/* suzuvchi tugma sahifa oxiridagi tugmalarni yopmasin */
+body:has(.chat-launcher) .page-container{padding-bottom:96px}

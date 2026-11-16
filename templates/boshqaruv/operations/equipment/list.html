@@ -1,0 +1,60 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Jihozlar{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/equipment.css' %}?v=3">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / JIHOZLAR</span>
+    <h1>{% if is_manager %}Ofis jihozlari{% else %}Mening jihozlarim{% endif %}</h1>
+    <p>{% if is_manager %}Barcha jihozlar, ularning holati va mas’ul xodimlari. Biriktirilgan xodim jihozning butligi va to‘g‘ri ishlatilishiga javobgar.{% else %}Sizga biriktirilgan jihozlar. Ularning butligi va to‘g‘ri ishlatilishiga siz javobgarsiz.{% endif %}</p>
+  </div>
+  {% if is_manager %}<div class="heading-actions"><button type="button" class="button primary" data-eq-open="eq-create">{% ui_icon 'plus' %} Jihoz qo‘shish</button></div>{% endif %}
+</header>
+
+{% if stats %}
+<div class="eq-stats">
+  <a href="?" class="eq-stat"><span>{% ui_icon 'grid' %}</span><b>{{ stats.total }}</b><small>Jami jihozlar</small></a>
+  <a href="?holat=in_use" class="eq-stat is-blue"><span>{% ui_icon 'people' %}</span><b>{{ stats.in_use }}</b><small>Foydalanishda</small></a>
+  <a href="?xodim=yoq" class="eq-stat is-green"><span>{% ui_icon 'check' %}</span><b>{{ stats.available }}</b><small>Omborda (bo‘sh)</small></a>
+  <a href="?holat=repair" class="eq-stat is-red"><span>{% ui_icon 'bell' %}</span><b>{{ stats.attention }}</b><small>Ta’mir / nosoz / yo‘qolgan</small></a>
+  <div class="eq-stat is-amber"><span>{% ui_icon 'shield' %}</span><b>{{ stats.unacked }}</b><small>Xodim tasdiqlamagan</small></div>
+</div>
+{% endif %}
+
+<form class="eq-filters" method="get">
+  <label class="eq-search">{% ui_icon 'search' %}<input type="search" name="q" value="{{ filters.q }}" placeholder="Nomi, inventar yoki seriya raqami, xodim…" aria-label="Qidirish"></label>
+  <select name="holat" aria-label="Holati" onchange="this.form.submit()"><option value="">Barcha holatlar</option>{% for v, l in statuses %}<option value="{{ v }}"{% if filters.holat == v %} selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+  <select name="tur" aria-label="Turi" onchange="this.form.submit()"><option value="">Barcha turlar</option>{% for v, l in categories %}<option value="{{ v }}"{% if filters.tur == v %} selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+  {% if is_manager %}<select name="xodim" aria-label="Mas’ul xodim" onchange="this.form.submit()"><option value="">Barcha xodimlar</option><option value="yoq"{% if filters.xodim == 'yoq' %} selected{% endif %}>Hech kimga biriktirilmagan</option>{% for p in people %}<option value="{{ p.pk }}"{% if filters.xodim == p.pk|stringformat:'s' %} selected{% endif %}>{{ p.display_name }} ({{ p.n }})</option>{% endfor %}</select>{% endif %}
+  <noscript><button class="button">Filtrlash</button></noscript>
+</form>
+
+{% if page.object_list %}
+<div class="eq-grid">{% for item in page.object_list %}{% include "boshqaruv/operations/equipment/_card.html" %}{% endfor %}</div>
+{% include "boshqaruv/components/pagination.html" with page=page %}
+{% else %}
+<div class="eq-empty">
+  <span class="eq-empty-icon">{% ui_icon 'desktop' %}</span>
+  {% if filters.q or filters.holat or filters.tur or filters.xodim %}
+  <h2>Hech narsa topilmadi</h2><p>Filtrlarni o‘zgartirib ko‘ring.</p><a class="button" href="?">Filtrlarni tozalash</a>
+  {% elif is_manager %}
+  <h2>Hali jihoz qo‘shilmagan</h2><p>Ofisdagi noutbuk, monitor, telefon va boshqa jihozlarni ro‘yxatga oling va mas’ul xodimga biriktiring. Xodim qabul qilganini tasdiqlaydi va jihoz uning javobgarligiga o‘tadi.</p>
+  <button type="button" class="button primary" data-eq-open="eq-create">{% ui_icon 'plus' %} Birinchi jihozni qo‘shish</button>
+  {% else %}
+  <h2>Sizga hali jihoz biriktirilmagan</h2><p>Asoschi jihoz biriktirganda shu yerda va bildirishnomalarda ko‘rasiz.</p>
+  {% endif %}
+</div>
+{% endif %}
+
+{% if is_manager %}
+<dialog class="eq-dialog" id="eq-create" aria-labelledby="eq-create-title"{% if open_create %} data-open-on-load{% endif %}>
+  <form method="post" enctype="multipart/form-data" class="form-grid">
+    {% csrf_token %}
+    <header><div><span class="eq-eyebrow">Yangi jihoz</span><h2 id="eq-create-title">Jihozni ro‘yxatga olish</h2></div><button type="button" class="icon-button" data-eq-close aria-label="Yopish">{% ui_icon 'close' %}</button></header>
+    <div class="eq-dialog-body">{% include "boshqaruv/components/form.html" with form=form %}</div>
+    <footer><button type="button" class="button" data-eq-close>Bekor qilish</button><button type="submit" class="button primary">{% ui_icon 'check' %} Saqlash</button></footer>
+  </form>
+</dialog>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/equipment.js' %}?v=1" defer></script>{% endblock %}

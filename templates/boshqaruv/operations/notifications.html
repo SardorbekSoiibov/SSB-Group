@@ -1,0 +1,83 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Bildirishnomalar markazi{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/notifications-page.css' %}?v=2">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / BILDIRISHNOMALAR</span>
+    <h1>Bildirishnomalar</h1>
+    <p>Vazifalar, loyiha yangiliklari, tasdiqlar va tizim xabarlari.</p>
+  </div>
+  <div class="heading-actions nt-actions">
+    <a class="button" href="{% url 'crm:connections' %}">{% ui_icon 'settings' %} Email va Telegram sozlamalari</a>
+    {% if unread_count %}
+    <form method="post" action="{% url 'crm:notification_read_all' %}">
+      {% csrf_token %}
+      <button class="button">{% ui_icon 'check' %} Barchasini o‘qilgan deb belgilash</button>
+    </form>
+    {% endif %}
+    {% if total_count %}
+    <form method="post" action="{% url 'crm:notification_clear' %}" data-secure-title="Bildirishnomalarni tozalash" data-secure-delete="Barcha bildirishnomalaringiz: {{ total_count }} ta{% if unread_count %}|Shundan o‘qilmagan: {{ unread_count }} ta{% endif %}">
+      {% csrf_token %}
+      <button class="button danger">{% ui_icon 'trash' %} Tozalash</button>
+    </form>
+    {% endif %}
+  </div>
+</header>
+
+<div class="nt-toolbar">
+  <div class="segmented-control">
+    <a {% if not request.GET.oqilmagan %}class="active" aria-current="page"{% endif %} href="?">Barcha bildirishnomalar</a>
+    <a {% if request.GET.oqilmagan %}class="active" aria-current="page"{% endif %} href="?oqilmagan=1">
+      O‘qilmaganlar {% if unread_count %}<span class="badge-number">{{ unread_count }}</span>{% endif %}
+    </a>
+  </div>
+  <span class="nt-total">{{ page.paginator.count }} ta xabar</span>
+</div>
+
+<section class="nt-center" aria-label="Xabarlar ro‘yxati">
+  <ul class="nt-list">
+    {% for item in page %}
+    {% ifchanged item.created_at|date:"Y-m-d" %}
+    <li class="nt-day" aria-hidden="true">{% if item.created_at|date:"Y-m-d" == app_today|date:"Y-m-d" %}Bugun{% else %}{{ item.created_at|date:app_date_format }}{% endif %}</li>
+    {% endifchanged %}
+    <li class="nt-item{% if not item.read_at %} is-unread{% endif %}" data-priority="{{ item.priority }}">
+      <form method="post" action="{% url 'crm:notification_open' item.pk %}">
+        {% csrf_token %}
+        <button class="nt-row" type="submit">
+          <span class="nt-dot" aria-hidden="true"></span>
+          <span class="nt-icon" aria-hidden="true">
+            {% if item.kind == 'chat_message' or item.kind == 'comment' %}{% ui_icon 'chat' %}
+            {% elif item.kind == 'deadline_soon' or item.kind == 'overdue' %}{% ui_icon 'calendar' %}
+            {% elif item.kind == 'submitted' or item.kind == 'reviewed' %}{% ui_icon 'check' %}
+            {% elif item.kind == 'approval' %}{% ui_icon 'shield' %}
+            {% elif item.kind == 'task_assigned' or item.kind == 'project_status' %}{% ui_icon 'project' %}
+            {% elif item.kind == 'inquiry' %}{% ui_icon 'people' %}
+            {% else %}{% ui_icon 'bell' %}{% endif %}
+          </span>
+          <span class="nt-content">
+            <span class="nt-top">
+              <strong>{{ item.title }}</strong>
+              <time datetime="{{ item.created_at|date:'c' }}">{{ item.created_at|date:"H:i" }}</time>
+            </span>
+            {% if item.body %}<span class="nt-body">{{ item.body }}</span>{% endif %}
+            <span class="nt-tags">
+              {% if not item.read_at %}<span class="nt-tag is-new">Yangi</span>{% endif %}
+              {% if item.priority != 'normal' %}<span class="nt-tag is-{{ item.priority }}">{{ item.priority_label }}</span>{% endif %}
+            </span>
+          </span>
+          <svg class="nt-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+      </form>
+    </li>
+    {% empty %}
+    <li class="nt-empty">
+      <span class="nt-empty-icon" aria-hidden="true">{% ui_icon 'bell' %}</span>
+      <strong>{% if request.GET.oqilmagan %}Hammasi o‘qilgan{% else %}Bildirishnomalar yo‘q{% endif %}</strong>
+      <span>Yangi bildirishnomalar mavjud emas.</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% include "boshqaruv/components/pagination.html" %}
+</section>
+{% endblock %}

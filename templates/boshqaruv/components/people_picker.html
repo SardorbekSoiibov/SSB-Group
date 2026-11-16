@@ -1,0 +1,27 @@
+{% load boshqaruv %}{% people_options field as options %}
+<div class="people-picker" data-people-picker="{{ field.name }}">
+  <div class="people-tools">
+    <label class="people-search">{% ui_icon 'search' %}<input type="search" data-people-search placeholder="Ism bo‘yicha qidirish…" aria-label="Xodimni qidirish" autocomplete="off"></label>
+    <select data-people-position aria-label="Lavozim bo‘yicha saralash"><option value="">Barcha lavozimlar</option>{% for position in options.positions %}<option value="{{ position }}">{{ position }}</option>{% endfor %}</select>
+  </div>
+  <div class="people-list" role="group" aria-label="{{ field.label }}">
+    {% if field.field.people_picker == 'single' and not field.field.required %}
+    <div class="people-row" data-people-row data-name="tanlanmagan" data-position="">
+      <label class="people-main"><input type="radio" name="{{ field.html_name }}" value="" {% if options.none_chosen %}checked{% endif %}><span class="people-who"><strong>Tanlanmagan</strong></span></label>
+    </div>
+    {% endif %}
+    {% for row in options.rows %}
+    <div class="people-row{% if row.checked %} is-chosen{% endif %}" data-people-row data-name="{{ row.person.display_name }} {{ row.person.username }}" data-position="{{ row.position }}">
+      <label class="people-main">
+        <input type="{% if field.field.people_picker == 'single' %}radio{% else %}checkbox{% endif %}" name="{{ field.html_name }}" value="{{ row.person.pk }}" {% if row.checked %}checked{% endif %}>
+        {% include 'boshqaruv/components/avatar.html' with person=row.person avatar_class='small' %}
+        <span class="people-who"><strong>{{ row.person.display_name }}</strong><small>{{ row.position }}</small></span>
+        <span class="people-load{% if row.load >= 3 %} is-busy{% endif %}">{{ row.load }} ta faol loyiha</span>
+      </label>
+      {% if field.field.with_responsibility %}<input class="people-responsibility" data-people-responsibility name="responsibility_{{ row.person.pk }}" value="{{ row.responsibility }}" maxlength="200" placeholder="Mas’uliyati, masalan: Frontend ishlab chiqish" aria-label="{{ row.person.display_name }} mas’uliyati" {% if not row.checked %}hidden{% endif %}>{% endif %}
+    </div>
+    {% endfor %}
+    <p class="people-empty" data-people-empty hidden>Xodim topilmadi.</p>
+  </div>
+  <p class="people-note" data-people-count aria-live="polite"></p>
+</div>

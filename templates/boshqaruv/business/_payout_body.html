@@ -1,0 +1,69 @@
+{% load boshqaruv %}
+<div class="payout-layout">
+  <section class="panel">
+    <header class="panel-head"><h2>To‘lov ma’lumotlari</h2></header>
+    <form method="post" enctype="multipart/form-data" class="form-grid" id="payout-form" action="{% url 'enterprise:payout_create' %}">
+      {% csrf_token %}
+      {% include "boshqaruv/components/form.html" with form=form %}
+      <div class="form-footer"><button type="button" class="button primary" data-payout-review>Davom etish · xulosani ko‘rish</button></div>
+
+      <dialog class="payout-dialog" id="payout-summary" aria-labelledby="payout-summary-title">
+        <h2 id="payout-summary-title">To‘lov xulosasi</h2>
+        <dl class="payout-summary">
+          <dt>Xodim</dt><dd data-sum="employee"></dd>
+          <dt>Loyiha</dt><dd data-sum="project"></dd>
+          <dt>Summa</dt><dd data-sum="amount" class="payout-sum-amount"></dd>
+          <dt>Sana</dt><dd data-sum="paid_on"></dd>
+          <dt>Usul</dt><dd data-sum="method"></dd>
+          <dt>Izoh</dt><dd data-sum="description"></dd>
+          <dt>Hujjat</dt><dd data-sum="reference"></dd>
+        </dl>
+        <label class="payout-check"><input type="checkbox" name="transfer_confirmed" value="1" required> Pul xodimga haqiqatan o‘tkazildi yoki qo‘liga topshirildi</label>
+        <p class="earn-note">Tasdiqlagach haqiqiy to‘lov yozuvi yaratiladi va uni o‘chirib bo‘lmaydi. Xato bo‘lsa, faqat hujjatlashtirilgan tuzatish qilinadi.</p>
+        <div class="payout-dialog-actions">
+          <button type="button" class="button" data-payout-cancel>Tahrirlash</button>
+          <button type="submit" class="button primary">Tasdiqlash va qayd etish</button>
+        </div>
+      </dialog>
+    </form>
+  </section>
+
+  <aside class="panel payout-aside" data-ios-collapsible="false" id="payout-aside"
+         data-employee="{{ preview.person.pk|default:'' }}" data-currency="{{ currency }}"
+         data-payable="{% if preview %}{{ preview.balance.payable|stringformat:'s' }}{% endif %}">
+    <header class="panel-head"><h2>Xodim qarzdorligi</h2></header>
+    {% if preview %}
+      <div class="panel-body">
+        <p class="payout-aside-name">{{ preview.person.display_name }}</p>
+        <dl class="payout-summary">
+          <dt>Ishlab topgan</dt><dd>{{ preview.balance.earned|money }} {{ preview.balance.currency }}</dd>
+          <dt>To‘langan</dt><dd>{{ preview.balance.paid|money }} {{ preview.balance.currency }}</dd>
+          <dt>To‘lanishi kerak</dt><dd class="payout-sum-amount">{{ preview.balance.payable|money }} {{ preview.balance.currency }}</dd>
+        </dl>
+        {% if preview.rows %}<p class="payout-hint">Qaysi qarz to‘lanayotganini tanlang — summa avtomatik qo‘yiladi:</p>{% endif %}
+        {% for row in preview.rows %}
+        <button type="button" class="payout-pick" data-project="{{ row.project.pk|default:'' }}" data-amount="{{ row.remaining|stringformat:'s' }}">
+          <span>{% if row.project %}{{ row.project.name }}{% else %}Ish haqi / umumiy{% endif %}</span>
+          <strong>{{ row.remaining|money }}</strong>
+          <small>{{ row.status_label }} · to‘langan {{ row.paid|money }}</small>
+        </button>
+        {% empty %}
+        <div class="payout-empty">
+          <strong>{{ currency }} da to‘lanmagan qarz yo‘q</strong>
+          <p>To‘lov faqat xodimning hisoblangan daromadidan beriladi. Daromad ikki yo‘l bilan paydo bo‘ladi:</p>
+          <ul><li>loyiha yakunlanib tasdiqlanganda — xodim ulushi avtomatik;</li>
+              <li>ish haqi yoki mukofot — «Moliyaviy boshqaruv» sahifasida «Yangi moliyaviy operatsiya» orqali.</li></ul>
+          <a class="button compact" href="{% url 'enterprise:finance' %}">Moliyaviy boshqaruvga o‘tish</a>
+        </div>
+        {% endfor %}
+        {% if preview.other %}
+        <div class="payout-other"><span>Boshqa valyutadagi qarz:</span>
+          {% for code, amount in preview.other %}<button type="button" class="button compact" data-switch-currency="{{ code }}">{{ amount|money }} {{ code }}</button>{% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    {% else %}
+      <p class="panel-body text-tertiary">Xodimni tanlang: uning loyihalar bo‘yicha qarzi shu yerda ko‘rinadi.</p>
+    {% endif %}
+  </aside>
+</div>

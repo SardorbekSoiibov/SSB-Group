@@ -1,0 +1,128 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}{{ item.name }} — Jihozlar{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/equipment.css' %}?v=3">{% endblock %}
+{% block content %}
+<nav class="eq-back"><a href="{% url 'crm:equipment' %}">{% ui_icon 'arrow' %} {% if is_manager %}Barcha jihozlar{% else %}Mening jihozlarim{% endif %}</a></nav>
+
+<section class="eq-hero">
+  <div class="eq-hero-media">{% if item.photo %}<img src="{% url 'crm:equipment_photo' item.pk %}?v={{ item.photo_version }}" alt="{{ item.name }}">{% else %}{% ui_icon item.icon %}{% endif %}</div>
+  <div class="eq-hero-body">
+    <div class="eq-hero-tags"><span class="eq-status" data-s="{{ item.status }}">{{ item.get_status_display }}</span><span class="eq-tag">{{ item.get_category_display }}</span><span class="eq-tag is-mono">{{ item.inventory_number }}</span></div>
+    <h1>{{ item.name }}</h1>
+    {% if item.specs %}<p class="eq-hero-specs">{{ item.specs }}</p>{% endif %}
+    {% if is_manager %}
+    <div class="eq-hero-actions">
+      <button type="button" class="button" data-eq-open="eq-edit">{% ui_icon 'settings' %} Tahrirlash</button>
+      <form method="post" action="{% url 'crm:equipment_delete' item.pk %}" data-secure-title="Jihozni o‘chirish" data-secure-delete="Jihoz: {{ item.name }} ({{ item.inventory_number }})|Uning butun tarixi ham o‘chiriladi">{% csrf_token %}<button class="button danger">{% ui_icon 'trash' %} O‘chirish</button></form>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if is_holder and item.needs_ack %}
+<section class="eq-ack">
+  <span class="eq-ack-icon">{% ui_icon 'shield' %}</span>
+  <div><strong>Bu jihoz sizga biriktirildi</strong><p>Qabul qilganingizni tasdiqlang. Tasdiqlaganingizdan so‘ng jihozning butligi va to‘g‘ri ishlatilishiga siz javobgar bo‘lasiz. Kamchilik bo‘lsa, avval pastdan muammo haqida yozing.</p></div>
+  <form method="post" action="{% url 'crm:equipment_acknowledge' item.pk %}">{% csrf_token %}<button class="button primary">{% ui_icon 'check' %} Qabul qildim</button></form>
+</section>
+{% endif %}
+
+<div class="eq-layout">
+  <div class="eq-col">
+    <section class="eq-panel">
+      <header><h2>Mas’ul xodim</h2></header>
+      {% if item.holder %}
+      <div class="eq-person">
+        {% include 'boshqaruv/components/avatar.html' with person=item.holder %}
+        <div>
+          {% if is_manager %}<a href="{% url 'crm:employee_detail' item.holder.pk %}"><strong>{{ item.holder.display_name }}</strong></a>{% else %}<strong>{{ item.holder.display_name }}</strong>{% endif %}
+          <small>{{ item.holder.job_title|default:item.holder.role }}{% if item.holder.department %} · {{ item.holder.department }}{% endif %}</small>
+        </div>
+      </div>
+      <dl class="eq-dl">
+        <div><dt>Biriktirilgan</dt><dd>{{ item.assigned_at|date:app_datetime_format|default:'—' }}</dd></div>
+        <div><dt>Qabul qilish</dt><dd>{% if item.acknowledged_at %}<span class="eq-ok">{% ui_icon 'check' %} Tasdiqlagan · {{ item.acknowledged_at|date:app_date_format }}</span>{% else %}<span class="eq-pending">Hali tasdiqlamagan</span>{% endif %}</dd></div>
+      </dl>
+      <p class="eq-duty">{% ui_icon 'shield' %} Jihozning butligi, to‘g‘ri ishlatilishi va unga zarar yetmasligi uchun shu xodim javobgar.</p>
+      {% else %}
+      <div class="eq-person is-empty"><span class="eq-free">{% ui_icon 'grid' %}</span><div><strong>Omborda</strong><small>Hech kimga biriktirilmagan</small></div></div>
+      {% endif %}
+    </section>
+
+    <section class="eq-panel">
+      <header><h2>Ma’lumotlar</h2></header>
+      <dl class="eq-dl is-grid">
+        <div><dt>Inventar raqami</dt><dd class="is-mono">{{ item.inventory_number }}</dd></div>
+        <div><dt>Seriya raqami</dt><dd class="is-mono">{{ item.serial_number|default:'—' }}</dd></div>
+        <div><dt>Texnik ahvoli</dt><dd><span class="eq-cond" data-c="{{ item.condition }}">{{ item.get_condition_display }}</span></dd></div>
+        <div><dt>Joylashuvi</dt><dd>{{ item.location|default:'—' }}</dd></div>
+        <div><dt>Sotib olingan</dt><dd>{{ item.purchase_date|date:app_date_format|default:'—' }}</dd></div>
+        {% if is_manager %}<div><dt>Narxi</dt><dd>{% if item.price %}{{ item.price|money }} {{ item.currency }}{% else %}—{% endif %}</dd></div>{% endif %}
+        <div><dt>Kafolat</dt><dd>{% if item.warranty_until %}{{ item.warranty_until|date:app_date_format }} {% if item.warranty_active %}<span class="eq-ok">amalda</span>{% else %}<span class="eq-pending">tugagan</span>{% endif %}{% else %}—{% endif %}</dd></div>
+      </dl>
+      {% if item.note %}<p class="eq-note">{{ item.note|linebreaksbr }}</p>{% endif %}
+    </section>
+
+    <section class="eq-panel">
+      <header><h2>Tarix</h2><span class="eq-count">{{ events|length }}</span></header>
+      <ol class="eq-timeline">
+        {% for e in events %}
+        <li data-k="{{ e.kind }}">
+          <i></i>
+          <div>
+            <strong>{{ e.get_kind_display }}{% if e.person and e.kind != 'acknowledged' and e.kind != 'issue' %}: {{ e.person.display_name }}{% endif %}</strong>
+            {% if e.note %}<p>{{ e.note }}</p>{% endif %}
+            <small>{{ e.created_at|date:app_datetime_format }}{% if e.actor %} · {{ e.actor.display_name }}{% endif %}</small>
+          </div>
+        </li>
+        {% empty %}<li class="is-empty"><div><small>Tarix hali bo‘sh.</small></div></li>{% endfor %}
+      </ol>
+    </section>
+  </div>
+
+  {% if is_holder or is_manager %}
+  <aside class="eq-col eq-side">
+    {% if is_manager %}
+    <section class="eq-panel">
+      <header><h2>{% if item.holder %}Boshqa xodimga berish{% else %}Xodimga biriktirish{% endif %}</h2></header>
+      <form method="post" action="{% url 'crm:equipment_assign' item.pk %}" class="eq-assign">
+        {% csrf_token %}
+        {% include "boshqaruv/components/form.html" with form=assign_form %}
+        <button class="button primary">{% ui_icon 'check' %} Saqlash</button>
+      </form>
+    </section>
+
+    <section class="eq-panel">
+      <header><h2>Holatini o‘zgartirish</h2></header>
+      <form method="post" action="{% url 'crm:equipment_status' item.pk %}" class="eq-assign">
+        {% csrf_token %}
+        {% include "boshqaruv/components/form.html" with form=status_form %}
+        <button class="button">{% ui_icon 'check' %} Holatni saqlash</button>
+      </form>
+    </section>
+    {% endif %}
+
+    <section class="eq-panel">
+      <header><h2>Muammo xabar qilish</h2></header>
+      <form method="post" action="{% url 'crm:equipment_issue' item.pk %}" class="eq-issue">
+        {% csrf_token %}
+        <textarea name="note" rows="3" maxlength="500" required placeholder="Masalan: ekranda chiziq paydo bo‘ldi, batareya tez tugayapti…"></textarea>
+        <button class="button">{% ui_icon 'send' %} Asoschiga yuborish</button>
+      </form>
+    </section>
+  </aside>
+  {% endif %}
+</div>
+
+{% if is_manager %}
+<dialog class="eq-dialog" id="eq-edit" aria-labelledby="eq-edit-title"{% if open_edit %} data-open-on-load{% endif %}>
+  <form method="post" enctype="multipart/form-data" class="form-grid">
+    {% csrf_token %}
+    <header><div><span class="eq-eyebrow">Tahrirlash</span><h2 id="eq-edit-title">{{ item.name }}</h2></div><button type="button" class="icon-button" data-eq-close aria-label="Yopish">{% ui_icon 'close' %}</button></header>
+    <div class="eq-dialog-body">{% include "boshqaruv/components/form.html" with form=edit_form %}</div>
+    <footer><button type="button" class="button" data-eq-close>Bekor qilish</button><button type="submit" class="button primary">{% ui_icon 'check' %} Saqlash</button></footer>
+  </form>
+</dialog>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/equipment.js' %}?v=1" defer></script>{% endblock %}

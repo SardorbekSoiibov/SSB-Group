@@ -1,0 +1,86 @@
+/* =====================================================================
+   Yagona xodim bedjigi — CR80 vertikal (54 × 85.6 mm).
+   --mm = kartadagi 1 mm. Barcha o'lchamlar PDF (apps/crm/badges.py) bilan bir xil.
+   ===================================================================== */
+.badge-stage{position:relative;display:grid;place-items:center;padding:30px 0 26px;perspective:1300px;background:radial-gradient(60% 60% at 50% 40%,color-mix(in srgb,var(--accent,#007aff) 14%,transparent),transparent 70%);touch-action:pan-y;user-select:none}
+.badge-card{--w:250px;--mm:calc(var(--w) / 54);--rx:0deg;--ry:0deg;--flip:0deg;--idc-navy:#0a1a33;--idc-accent:var(--accent,#007aff);position:relative;width:var(--w);aspect-ratio:54/85.6;transform-style:preserve-3d;transform:rotateX(var(--rx)) rotateY(calc(var(--flip) + var(--ry)));transition:transform .9s cubic-bezier(.2,.9,.25,1.15);cursor:grab;outline:0;animation:badge-float 6s ease-in-out infinite}
+.badge-card.is-dragging{transition:none;cursor:grabbing;animation:none}
+.badge-card.is-back{--flip:180deg}
+.badge-card:focus-visible .badge-face{box-shadow:0 0 0 4px color-mix(in srgb,var(--idc-accent) 50%,transparent),0 30px 50px -24px rgb(0 0 0/.55)}
+@keyframes badge-float{0%,100%{translate:0 0}50%{translate:0 -8px}}
+.badge-shadow{width:200px;height:22px;margin-top:18px;border-radius:50%;background:radial-gradient(closest-side,rgb(0 0 0/.28),transparent);filter:blur(4px);animation:badge-shadow 6s ease-in-out infinite}
+@keyframes badge-shadow{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.88);opacity:.7}}
+/* kartaning qalinligi */
+.badge-card::before{content:"";position:absolute;inset:0;border-radius:calc(var(--mm) * 3);background:linear-gradient(90deg,#c9d4e3,#eef2f7 50%,#c9d4e3);transform:translateZ(0)}
+.badge-face{position:absolute;inset:0;overflow:hidden;border-radius:calc(var(--mm) * 3);background:#fff;color:var(--idc-navy);font-family:inherit;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 30px 50px -24px rgb(0 0 0/.55),0 2px 6px rgb(0 0 0/.12),inset 0 0 0 1px rgb(0 0 0/.05);transform:translateZ(1.5px)}
+.badge-back{transform:rotateY(180deg) translateZ(1.5px)}
+.badge-gloss{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgb(255 255 255/.55) 46%,transparent 58%);background-size:250% 100%;background-position:var(--gx,120%) 0;mix-blend-mode:soft-light;transition:background-position .3s}
+
+/* ---- umumiy: navy → aksent fon, to'r, lenta teshigi */
+.idc{--extra:0px;line-height:1}
+.idc svg{display:block}
+.idc-hero{position:absolute;inset:0 0 auto;height:calc(var(--mm) * 36);overflow:hidden;clip-path:ellipse(85% 100% at 50% 0);
+  background:linear-gradient(155deg,var(--idc-navy) 0%,color-mix(in srgb,var(--idc-navy) 70%,var(--idc-accent)) 58%,var(--idc-accent) 135%)}
+.idc-hero.is-full{height:100%;clip-path:none}
+.idc-orb{position:absolute;border-radius:50%}
+.idc-orb.a{left:calc(var(--mm) * 36);top:calc(var(--mm) * -12);width:calc(var(--mm) * 28);height:calc(var(--mm) * 28);background:var(--idc-accent);opacity:.35;filter:blur(calc(var(--mm) * .6))}
+.idc-hero.is-full .idc-orb.a{left:calc(var(--mm) * 34);top:calc(var(--mm) * -14);width:calc(var(--mm) * 36);height:calc(var(--mm) * 36);opacity:.3}
+.idc-orb.b{left:calc(var(--mm) * -10);top:calc(var(--mm) * 48);width:calc(var(--mm) * 24);height:calc(var(--mm) * 24);background:#fff;opacity:.05}
+.idc-grid{position:absolute;inset:0;background:
+  repeating-linear-gradient(90deg,rgb(255 255 255/.07) 0 calc(var(--mm) * .12),transparent 0 calc(var(--mm) * 3)),
+  repeating-linear-gradient(180deg,rgb(255 255 255/.07) 0 calc(var(--mm) * .12),transparent 0 calc(var(--mm) * 3))}
+.idc-watermark{position:absolute;left:calc(var(--mm) * 30);top:calc(var(--mm) * 6);height:calc(var(--mm) * 30);color:#fff;opacity:.07}
+.idc-watermark svg{height:100%;width:auto}
+.idc-slot{position:absolute;left:calc(var(--mm) * 21.5);top:calc(var(--mm) * 2.4);width:calc(var(--mm) * 11);height:calc(var(--mm) * 2);box-sizing:border-box;border:calc(var(--mm) * .15) solid rgb(255 255 255/.18);border-radius:999px;background:rgb(6 16 34/.55);box-shadow:inset 0 calc(var(--mm) * .4) calc(var(--mm) * .6) rgb(0 0 0/.45)}
+
+/* ---- old tomon */
+.idc-brand{position:absolute;left:calc(var(--mm) * 5.5);top:calc(var(--mm) * 6.2);color:#fff}
+.idc-logo{display:block;height:calc(var(--mm) * 3.4)}
+.idc-logo svg{height:100%;width:auto}
+.idc-brand .idc-sub{position:absolute;top:calc(var(--mm) * 4.7);left:0;color:rgb(255 255 255/.7);font-size:calc(var(--mm) * 1.25);font-weight:700;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap}
+.idc-photo{position:absolute;left:calc(var(--mm) * 13.6);top:calc(var(--mm) * 19.6);box-sizing:border-box;width:calc(var(--mm) * 26.8);height:calc(var(--mm) * 26.8);padding:calc(var(--mm) * .7);border-radius:50%;background:linear-gradient(135deg,var(--idc-accent),#8b5cf6);box-shadow:0 calc(var(--mm) * 1.3) calc(var(--mm) * 3.2) rgb(10 26 51/.3)}
+.idc-photo img,.idc-photo span{display:grid;place-items:center;box-sizing:border-box;width:100%;height:100%;border:calc(var(--mm) * .7) solid #fff;border-radius:50%;object-fit:cover;object-position:50% 22%;pointer-events:none}
+.idc-photo span{background:linear-gradient(135deg,color-mix(in srgb,var(--idc-navy) 45%,var(--idc-accent)),var(--idc-accent));color:#fff;font-size:calc(var(--mm) * 8.5);font-weight:800;letter-spacing:.02em}
+.idc-info.is-two{--extra:calc(var(--mm) * 3.4)}
+.idc-name{position:absolute;left:calc(var(--mm) * 4);right:calc(var(--mm) * 4);top:calc(var(--mm) * 48.3);overflow:hidden;color:var(--idc-navy);font-size:calc(var(--mm) * 3.7);font-weight:800;letter-spacing:-.01em;line-height:1.12;text-align:center;text-overflow:ellipsis;white-space:nowrap}
+.idc-info.is-long .idc-name{font-size:calc(var(--mm) * 3)}
+.idc-info.is-two .idc-name{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal}
+.idc-role{position:absolute;left:calc(var(--mm) * 4);right:calc(var(--mm) * 4);top:calc(var(--mm) * 53 + var(--extra));overflow:hidden;color:#5b6474;font-size:calc(var(--mm) * 2.1);font-weight:500;text-align:center;text-overflow:ellipsis;white-space:nowrap}
+.idc-dept{position:absolute;left:50%;top:calc(var(--mm) * 56.6 + var(--extra));translate:-50% 0;box-sizing:border-box;max-width:calc(var(--mm) * 44.8);height:calc(var(--mm) * 3.8);padding:0 calc(var(--mm) * 2.4);overflow:hidden;border-radius:999px;background:color-mix(in srgb,var(--idc-accent) 11%,#fff);color:var(--idc-accent);font-size:calc(var(--mm) * 1.6);font-weight:750;letter-spacing:.08em;line-height:calc(var(--mm) * 3.8);text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap}
+.idc-fields{position:absolute;left:calc(var(--mm) * 3.5);top:calc(var(--mm) * 62.4 + var(--extra));display:grid;grid-template-columns:repeat(3,calc(var(--mm) * 15));gap:calc(var(--mm) * 1);margin:0;text-align:center}
+.idc-fields div{min-width:0}
+.idc-fields dt{color:#8a94a6;font-size:calc(var(--mm) * 1.2);font-weight:700;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.idc-fields dd{display:flex;align-items:center;justify-content:center;gap:calc(var(--mm) * .6);margin:calc(var(--mm) * .7) 0 0;overflow:hidden;color:var(--idc-navy);font-size:calc(var(--mm) * 2.05);font-weight:750;white-space:nowrap}
+.idc-fields dd i{flex:none;width:calc(var(--mm) * 1.2);height:calc(var(--mm) * 1.2);border-radius:50%;background:var(--dot);box-shadow:0 0 0 calc(var(--mm) * .45) color-mix(in srgb,var(--dot) 22%,transparent)}
+.idc-foot{position:absolute;left:calc(var(--mm) * 5);right:calc(var(--mm) * 5);top:calc(var(--mm) * 81.1);display:flex;justify-content:space-between;color:#9aa3b2;font-size:calc(var(--mm) * 1.3)}
+
+/* ---- orqa tomon */
+.idc-back{color:#fff}
+.idc-biglogo{position:absolute;left:0;right:0;top:calc(var(--mm) * 10);display:flex;justify-content:center;height:calc(var(--mm) * 7.4);color:#fff}
+.idc-biglogo svg{height:100%;width:auto;filter:drop-shadow(0 calc(var(--mm) * .6) calc(var(--mm) * 1.2) rgb(0 0 0/.25))}
+.idc-kind{position:absolute;left:0;right:0;top:calc(var(--mm) * 20.6);color:rgb(255 255 255/.7);font-size:calc(var(--mm) * 1.45);font-weight:700;letter-spacing:.3em;text-align:center;text-transform:uppercase}
+.idc-qr{position:absolute;left:calc(var(--mm) * 14.5);top:calc(var(--mm) * 24.5);box-sizing:border-box;width:calc(var(--mm) * 25);padding:calc(var(--mm) * 1.8);border-radius:calc(var(--mm) * 2.6);background:#fff;color:var(--idc-navy);box-shadow:0 calc(var(--mm) * 1.1) calc(var(--mm) * 3) rgb(0 0 0/.3)}
+.idc-qr svg{width:100%;height:auto}
+.idc-id{position:absolute;left:0;right:0;top:calc(var(--mm) * 52);font-size:calc(var(--mm) * 2.6);font-weight:800;letter-spacing:.1em;text-align:center}
+/* Hamkor logolari: yozuvsiz, ramkasiz — logoning o'z ko'rinishida */
+.idc-partners{position:absolute;left:calc(var(--mm) * 4);right:calc(var(--mm) * 4);top:calc(var(--mm) * 58.6)}
+.idc-logos{display:flex;align-items:center;justify-content:center;gap:calc(var(--mm) * 2)}
+.idc-logos span{display:flex;align-items:center;justify-content:center;flex:0 1 calc(var(--mm) * 22);min-width:0;height:calc(var(--mm) * 8)}
+.idc-logos img{display:block;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;pointer-events:none;opacity:.92;filter:drop-shadow(0 calc(var(--mm) * .3) calc(var(--mm) * .7) rgb(0 0 0/.3))}
+.idc-rules{position:absolute;left:calc(var(--mm) * 4);right:calc(var(--mm) * 4);top:calc(var(--mm) * 71.2);color:rgb(255 255 255/.62);font-size:calc(var(--mm) * 1.45);line-height:1.5;text-align:center}
+.idc-rules.is-up{top:calc(var(--mm) * 60.5)}
+.idc-sign span{position:absolute;left:calc(var(--mm) * 5);top:calc(var(--mm) * 80.2);width:calc(var(--mm) * 20);padding-top:calc(var(--mm) * .55);border-top:calc(var(--mm) * .16) solid rgb(255 255 255/.35);color:rgb(255 255 255/.55);font-size:calc(var(--mm) * 1.2)}
+.idc-sign i{position:absolute;left:calc(var(--mm) * 42.1);top:calc(var(--mm) * 75.2);display:grid;place-items:center;box-sizing:border-box;width:calc(var(--mm) * 6.8);height:calc(var(--mm) * 6.8);border:calc(var(--mm) * .16) dashed rgb(255 255 255/.35);border-radius:50%;color:rgb(255 255 255/.55);font-size:calc(var(--mm) * 1.2);font-style:normal;font-weight:700}
+
+/* ---- boshqaruv tugmalari */
+.badge-controls{display:grid;justify-items:center;gap:8px;padding:0 20px}
+.badge-controls small{color:var(--ink-tertiary);font-size:12px}
+.badge-seg{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;border-radius:999px;background:var(--ios-fill,rgb(118 118 128/.12))}
+.badge-seg button{min-width:110px;height:34px;padding:0 14px;border:0;border-radius:999px;background:none;color:var(--ink-secondary);font:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background .25s,color .25s,box-shadow .25s}
+.badge-seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 3px 8px rgb(0 0 0/.12)}
+:root[data-theme="dark"] .badge-seg button[aria-pressed="true"]{background:#636366;color:#fff}
+.badge-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:16px 20px 0}
+.badge-actions .button{justify-content:center;min-height:46px}
+.badge-hint{margin:12px 20px 20px;color:var(--ink-tertiary);font-size:12.5px;line-height:1.5}
+@media(max-width:640px){.badge-actions{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.badge-card,.badge-shadow{animation:none}.badge-card{transition:none}}

@@ -1,0 +1,118 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Loyihalar{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/work-views.css' %}?v=2">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / {{ app_section }}</span>
+    <h1>Loyihalarim</h1>
+    <p>Siz ishtirok etayotgan loyihalar, jamoa va o‘z mas’uliyatingiz.</p>
+  </div>
+  <div class="heading-actions">
+    {% if can_create %}
+    <a href="{% url 'crm:project_create' %}" class="button primary">{% ui_icon 'plus' %} Yangi loyiha</a>
+    {% endif %}
+  </div>
+</header>
+
+{% include 'boshqaruv/operations/projects/_views.html' with active_view='list' %}
+
+{% if sees_more %}
+<div class="segmented-control ws-scope">
+  <a href="{% url 'crm:projects' %}" {% if scope != 'meniki' %}class="active" aria-current="page"{% endif %}>Barcha loyihalar</a>
+  <a href="?korinish=meniki" {% if scope == 'meniki' %}class="active" aria-current="page"{% endif %}>Men ishtirok etayotganlar</a>
+</div>
+{% endif %}
+
+<form class="filter-bar">
+  {% if scope %}<input type="hidden" name="korinish" value="{{ scope }}">{% endif %}
+  <label>Qidirish
+    <input class="search-input" name="q" value="{{ request.GET.q }}" placeholder="Nomi yoki loyiha kodi…">
+  </label>
+  <label>Holat
+    <select name="holat">
+      <option value="">Barchasi</option>
+      {% for code,label in statuses %}
+      <option value="{{ code }}" {% if request.GET.holat == code %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Ustuvorlik
+    <select name="ustuvorlik">
+      <option value="">Barchasi</option>
+      {% for code,label in priorities %}
+      <option value="{{ code }}" {% if request.GET.ustuvorlik == code %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button class="button">Filtrlash</button>
+  {% if request.GET %}<a class="button" href="{% url 'crm:projects' %}">Tozalash</a>{% endif %}
+</form>
+
+<div class="ws-project-grid">
+  {% for p in page %}
+  <article class="ws-project">
+    <a class="ws-cover" href="{{ p.get_absolute_url }}" aria-hidden="true" tabindex="-1">{% if p.cover %}<img src="{% url 'crm:project_cover' p.pk %}" alt="" loading="lazy">{% else %}{{ p.name|initials }}{% endif %}</a>
+    <div class="ws-project-body">
+      <header><span class="status" data-status="{{ p.status }}">{{ p.get_status_display }}</span><small>{{ p.code }}</small></header>
+      <a href="{{ p.get_absolute_url }}" class="ws-card-title">{{ p.name }}</a>
+      <div class="ws-progress"><span class="progress-track" aria-hidden="true"><span style="width:{{ p.progress }}%"></span></span><span>{{ p.progress }}%</span></div>
+      <p class="ws-facts">
+        <span>Menejer: <b>{{ p.manager.display_name|default:'belgilanmagan' }}</b></span>
+        <span{% if p.is_overdue %} class="is-late"{% endif %}>Muddat: <b>{{ p.deadline|date:app_date_format|default:'belgilanmagan' }}</b></span>
+      </p>
+      {% if p.is_mine %}<div class="ws-role"><small>Sizning mas’uliyatingiz</small><b>{{ p.my_role|default:'Hali belgilanmagan' }}</b></div>{% endif %}
+      <div class="ws-avatars">{% for person in p.people|slice:':5' %}{% include 'boshqaruv/components/avatar.html' with person=person avatar_class='small' %}{% endfor %}<small>{{ p.people|length }} nafar</small></div>
+    </div>
+  </article>
+  {% empty %}
+  <div style="grid-column:1/-1;">
+    {% include 'boshqaruv/components/empty.html' with empty_title='Hozircha loyihalar yo‘q' empty_text='Sizga loyiha biriktirilganda shu yerda ko‘rinadi.' %}
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Detailed Table View -->
+<details class="project-table-details">
+  <summary>Jadval ko‘rinishini ochish · {{ page.paginator.count }} ta loyiha</summary>
+<section class="panel">
+  <header class="panel-head">
+    <h2>Loyihalar jadvali</h2>
+    <small>{{ page.paginator.count }} ta loyiha</small>
+  </header>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Loyiha</th>
+          <th>Holat</th>
+          <th>Menejer</th>
+          <th>Bajarilishi</th>
+          <th>Muddat</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in page %}
+        <tr>
+          <td>
+            <a class="row-title" href="{{ p.get_absolute_url }}">{{ p.name }}</a>
+            <small>{{ p.code }}{% if p.client %} · {{ p.client }}{% endif %}</small>
+          </td>
+          <td><span class="status" data-status="{{ p.status }}">{{ p.get_status_display }}</span></td>
+          <td>{{ p.manager|default:'—' }}</td>
+          <td>
+            <div class="progress-track"><span style="width:{{ p.progress }}%"></span></div>
+            <small>{{ p.progress }}%</small>
+          </td>
+          <td>{{ p.deadline|date:app_date_format|default:'Belgilanmagan' }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Loyiha topilmadi.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+</details>
+{% include "boshqaruv/components/pagination.html" %}
+{% endblock %}

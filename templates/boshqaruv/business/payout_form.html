@@ -1,0 +1,16 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}To‘lovni amalga oshirish{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'boshqaruv/payouts.css' %}?v=6">
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / MOLIYA</span>
+    <h1>To‘lovni amalga oshirish</h1>
+    <p>Pulni xodimga haqiqatan o‘tkazganingiz yoki qo‘liga berganingizdan keyin qayd eting. Xodimdan olganini tasdiqlash so‘raladi.</p>
+  </div>
+  <div class="heading-actions"><a class="button" href="{% url 'enterprise:finance' %}#tolovlar">Orqaga</a></div>
+</header>
+
+{% include 'boshqaruv/business/_payout_body.html' %}
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/payout-form.js' %}?v=1" defer></script>{% endblock %}

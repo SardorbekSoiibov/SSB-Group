@@ -1,0 +1,57 @@
+{% load boshqaruv %}<dialog class="pt-dialog" id="partner-dialog-{{ partner.pk|default:'new' }}" aria-labelledby="partner-title-{{ partner.pk|default:'new' }}"{% if open %} data-open-on-load{% endif %}>
+  <form method="post" action="{% url 'crm:partners' %}" enctype="multipart/form-data" class="pt-form" data-partner-form>
+    {% csrf_token %}
+    {% if partner %}<input type="hidden" name="partner" value="{{ partner.pk }}">{% endif %}
+    <header>
+      <div><span class="pt-eyebrow">{% if partner %}Tahrirlash{% else %}Yangi hamkor{% endif %}</span><h2 id="partner-title-{{ partner.pk|default:'new' }}">{% if partner %}{{ partner.name }}{% else %}Hamkor qo‘shish{% endif %}</h2></div>
+      <button type="button" class="icon-button" data-close-dialog aria-label="Yopish">{% ui_icon 'close' %}</button>
+    </header>
+    {% if form.non_field_errors %}<p class="pt-error">{{ form.non_field_errors|join:' ' }}</p>{% endif %}
+    <div class="pt-form-body">
+      <label class="pt-field wide">
+        <span>{{ form.name.label }}</span>
+        {{ form.name }}
+        {% for e in form.name.errors %}<small class="pt-error">{{ e }}</small>{% endfor %}
+      </label>
+
+      <label class="pt-drop" data-drop="logo">
+        <span class="pt-drop-preview" data-logo-preview>{% if partner %}<img src="{% url 'crm:partner_logo' partner.pk %}?v={{ partner.logo_version }}" alt="">{% else %}{% ui_icon 'camera' %}{% endif %}</span>
+        <span class="pt-drop-text"><b>Logotip</b><small data-file-name>{% if partner %}Almashtirish uchun yangi rasm tanlang{% else %}PNG (shaffof fon) tavsiya etiladi · JPG, WEBP · 8 MB gacha{% endif %}</small></span>
+        {{ form.logo }}
+        {% for e in form.logo.errors %}<small class="pt-error">{{ e }}</small>{% endfor %}
+      </label>
+
+      <label class="pt-drop" data-drop="contract">
+        <span class="pt-drop-preview is-doc">{% ui_icon 'file' %}</span>
+        <span class="pt-drop-text"><b>Hamkorlik shartnomasi</b><small data-file-name>{% if partner %}{{ partner.contract_name|default:'Yuklangan' }} · almashtirish uchun yangisini tanlang{% else %}PDF, DOC/DOCX yoki skan rasm · 25 MB gacha{% endif %}</small></span>
+        {{ form.contract }}
+        {% for e in form.contract.errors %}<small class="pt-error">{{ e }}</small>{% endfor %}
+      </label>
+
+      <label class="pt-field">
+        <span>{{ form.signed_on.label }}</span>
+        {{ form.signed_on }}
+        {% for e in form.signed_on.errors %}<small class="pt-error">{{ e }}</small>{% endfor %}
+      </label>
+      <label class="pt-field">
+        <span>{{ form.website.label }} <i>ixtiyoriy</i></span>
+        {{ form.website }}
+        {% for e in form.website.errors %}<small class="pt-error">{{ e }}</small>{% endfor %}
+      </label>
+      <label class="pt-field wide">
+        <span>{{ form.note.label }} <i>ixtiyoriy</i></span>
+        {{ form.note }}
+        {% for e in form.note.errors %}<small class="pt-error">{{ e }}</small>{% endfor %}
+      </label>
+      <label class="pt-switch wide">
+        {{ form.show_on_badge }}
+        <span class="pt-switch-ui" aria-hidden="true"></span>
+        <span><b>Bedjikda ko‘rsatish</b><small>Logo barcha xodimlar bedjigining old tomonida chiqadi (eng ko‘pi {{ max_badge_partners }} ta).</small></span>
+      </label>
+    </div>
+    <footer>
+      <button type="button" class="button" data-close-dialog>Bekor qilish</button>
+      <button type="submit" class="button primary">{% ui_icon 'check' %} Saqlash</button>
+    </footer>
+  </form>
+</dialog>

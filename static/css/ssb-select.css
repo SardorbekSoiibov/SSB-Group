@@ -1,0 +1,33 @@
+/* SSB zamonaviy ochiladigan ro'yxat (static/js/ssb-select.js). Panel va sayt tokenlariga moslashadi. */
+.ssb-select-panel{
+  --sp-bg:var(--surface,var(--card,#fff));
+  --sp-ink:var(--ink,var(--label,#000));
+  --sp-muted:var(--ink-tertiary,var(--label-3,rgb(60 60 67/.4)));
+  --sp-line:var(--line,var(--sep,rgb(60 60 67/.14)));
+  --sp-fill:var(--ios-fill,var(--fill,rgb(118 118 128/.12)));
+  --sp-accent:var(--accent,var(--blue,#007aff));
+  position:fixed;inset:auto;margin:0;z-index:2147483000;display:flex;flex-direction:column;box-sizing:border-box;
+  padding:6px;border:1px solid var(--sp-line);border-radius:16px;overflow:hidden;
+  background:color-mix(in srgb,var(--sp-bg) 92%,transparent);color:var(--sp-ink);
+  -webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);
+  box-shadow:0 1px 2px rgb(0 0 0/.08),0 18px 48px -12px rgb(0 0 0/.35);
+  font:inherit;font-size:14px;transform-origin:top center;animation:ssb-select-in .16s cubic-bezier(.2,.8,.2,1)
+}
+.ssb-select-panel.is-up{transform-origin:bottom center}
+.ssb-select-panel[popover]{position:fixed}
+@keyframes ssb-select-in{from{transform:scale(.97) translateY(-4px)}to{transform:none}}
+html body .ssb-select-panel input.ssb-select-search:not(#_),.ssb-select-search{flex:none;min-height:0!important;letter-spacing:normal!important;box-sizing:border-box;width:100%;height:36px;margin:0 0 6px;padding:0 12px;border:0!important;border-radius:10px!important;background:var(--sp-fill)!important;color:var(--sp-ink)!important;font:inherit;font-size:14px;outline:0;box-shadow:none!important}
+.ssb-select-search::placeholder{color:var(--sp-muted)}
+.ssb-select-list{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;outline:0;scrollbar-width:thin}
+.ssb-select-group{padding:10px 10px 4px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--sp-muted)}
+.ssb-select-option{position:relative;display:flex;align-items:center;min-height:36px;padding:7px 34px 7px 12px;border-radius:10px;cursor:pointer;line-height:1.3;user-select:none}
+.ssb-select-option>span{overflow-wrap:anywhere}
+.ssb-select-option.is-active{background:var(--sp-fill)}
+.ssb-select-option.is-selected{color:var(--sp-accent);font-weight:650}
+.ssb-select-option.is-selected::after{content:"";position:absolute;right:12px;top:50%;width:14px;height:14px;margin-top:-7px;
+  background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5 10 17 19 7'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5 10 17 19 7'/%3E%3C/svg%3E") center/contain no-repeat}
+.ssb-select-option.is-disabled{opacity:.4;cursor:not-allowed}
+.ssb-select-empty{margin:0;padding:14px 12px;color:var(--sp-muted);font-size:13px;text-align:center}
+select[aria-expanded="true"]{border-color:var(--accent,var(--blue,#007aff))!important}
+@media (prefers-reduced-motion:reduce){.ssb-select-panel{animation:none}}

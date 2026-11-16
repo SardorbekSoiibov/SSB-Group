@@ -1,0 +1,11 @@
+{% load boshqaruv %}<article class="ws-card{% if task.is_overdue %} is-overdue{% endif %}"{% if draggable %} data-board-card data-id="{{ task.pk }}" data-url="{% url 'crm:task_transition' task.pk %}" data-allowed="{{ task.actions|join:' ' }}"{% if task.actions %} draggable="true"{% endif %}{% endif %}>
+  <header><span class="status" data-status="{{ task.status }}">{{ task.get_status_display }}</span><span class="ws-priority" data-priority="{{ task.priority }}">{{ task.get_priority_display }}</span></header>
+  <a class="ws-card-title" href="{{ task.get_absolute_url }}">{{ task.title }}</a>
+  <small class="ws-card-project">{{ task.project.name }}</small>
+  <div class="ws-progress"><span class="progress-track" aria-hidden="true"><span style="width:{{ task.shown_progress }}%"></span></span><span>{{ task.shown_progress }}%</span></div>
+  <p class="ws-facts">
+    <span{% if task.is_overdue %} class="is-late"{% endif %}>Muddat: <b>{{ task.deadline|date:app_date_format|default:'belgilanmagan' }}</b></span>
+    {% if task.assigned_at %}<span>Berilgan: <b>{{ task.assigned_at|date:app_date_format }}</b></span>{% endif %}
+    {% if show_assignee %}<span>Ijrochi: <b>{{ task.assignee.display_name|default:'biriktirilmagan' }}</b></span>{% endif %}
+  </p>
+</article>

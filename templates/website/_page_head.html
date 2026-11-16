@@ -1,0 +1,12 @@
+<section class="page-head">
+  <div class="hero-glow is-soft" aria-hidden="true"><span></span><span></span></div>
+  <div class="wrap">
+    <nav aria-label="Yo'l" class="crumbs" data-reveal>
+      <a href="{% url 'website:home' %}">Bosh sahifa</a>
+      {% if crumb %}<span class="crumb-sep" aria-hidden="true">{% include "website/_icon.html" with name="chevron" %}</span><a href="{{ crumb_url }}">{{ crumb }}</a>{% endif %}
+      <span class="crumb-sep" aria-hidden="true">{% include "website/_icon.html" with name="chevron" %}</span><span class="crumb-current">{{ heading|truncatechars:40 }}</span>
+    </nav>
+    <h1 class="large-title" data-reveal>{{ heading }}</h1>
+    {% if lede %}<p class="page-lede" data-reveal>{{ lede }}</p>{% endif %}
+  </div>
+</section>

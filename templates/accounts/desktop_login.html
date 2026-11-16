@@ -1,0 +1,50 @@
+{% load static %}<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kirish · SSB Boshqaruv</title>
+  <link rel="icon" href="{% static 'img/favicon.svg' %}">
+  <link rel="stylesheet" href="{% static 'site/ios.css' %}?v=6">
+  <link rel="stylesheet" href="{% static 'boshqaruv/entry.css' %}?v=3">
+  <style>
+    /* Windows ilovasi: faqat boshqaruv tizimiga kirish oynasi (ommaviy sayt ko'rsatilmaydi). */
+    html,body{height:100%}
+    body.desktop-login{display:grid;place-items:center;min-height:100%;margin:0;padding:24px;box-sizing:border-box;
+      background:radial-gradient(1200px 600px at 50% -10%,rgb(10 132 255/.18),transparent 60%),var(--bg,#f2f2f7)}
+    body.desktop-login dialog#login-modal.login-modal{position:static;display:block;margin:0;inset:auto;transform:none;animation:none}
+    .desktop-login-foot{margin:18px 0 0;color:var(--label-2,#6e6e73);font-size:12.5px;text-align:center}
+  </style>
+</head>
+<body class="site ios desktop-login">
+  <main>
+    <dialog id="login-modal" class="login-modal" open aria-labelledby="login-modal-title">
+      <div class="login-modal-content">{% include "accounts/_login_modal.html" %}</div>
+    </dialog>
+    <p class="desktop-login-foot">SSB Boshqaruv · Windows ilovasi</p>
+  </main>
+  <script>
+  (() => {
+    'use strict';
+    // Parolni ko'rsatish/yashirish va "Meni eslab qol" (faqat login eslab qolinadi; parolni Windows/brauzer saqlagichi saqlaydi).
+    const KEY = 'ssb-remembered-login';
+    const form = document.querySelector('.login-modal-form');
+    if (!form) return;
+    const user = form.querySelector('[name=username]'), pass = form.querySelector('[name=password]');
+    try { if (!user.value) user.value = localStorage.getItem(KEY) || ''; } catch {}
+    (document.querySelector('[aria-invalid=true]') || (user.value ? pass : user)).focus();
+    form.querySelector('.login-password-toggle')?.addEventListener('click', event => {
+      const show = pass.type === 'password';
+      pass.type = show ? 'text' : 'password';
+      const button = event.currentTarget, label = show ? 'Parolni yashirish' : 'Parolni ko‘rsatish';
+      button.setAttribute('aria-pressed', String(show)); button.setAttribute('aria-label', label); button.title = label;
+      pass.focus();
+    });
+    form.addEventListener('submit', () => {
+      try { form.querySelector('[name=remember]')?.checked ? localStorage.setItem(KEY, user.value.trim()) : localStorage.removeItem(KEY); } catch {}
+      const button = form.querySelector('[type=submit]'); button.disabled = true; button.setAttribute('aria-busy', 'true');
+    });
+  })();
+  </script>
+</body>
+</html>

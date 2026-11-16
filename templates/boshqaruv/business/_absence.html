@@ -1,0 +1,68 @@
+{% load boshqaruv %}
+{% if owner and not pending %}
+<section class="absence-compact" aria-labelledby="absence-title" data-ios-collapsible="false">
+  <span class="absence-summary-icon" aria-hidden="true">{% ui_icon 'calendar' %}</span>
+  <strong id="absence-title">Ishga kela olmaslik so‘rovlari</strong><small>Yangi so‘rov yo‘q</small>
+  {% if recent %}<details class="absence-history"><summary>Oxirgi qarorlar</summary>
+    <ul role="list">{% for item in recent %}<li><span class="absence-status is-{{ item.status }}">{{ item.get_status_display }}</span><strong>{{ item.employee.display_name }}</strong><small>{{ item.period }}{% if item.decision_note %} · {{ item.decision_note }}{% endif %}</small></li>{% endfor %}</ul>
+  </details>{% endif %}
+</section>
+{% elif owner %}
+<section class="absence-panel panel" aria-labelledby="absence-title">
+  <header class="absence-head">
+    <div><h2 id="absence-title">Ishga kela olmaslik so‘rovlari</h2><p>Xodimlar sabab bilan yuborgan so‘rovlar. Tasdiqlansa, o‘sha kunlardagi smenalar bekor qilinadi.</p></div>
+    <span class="absence-count{% if pending %} has-items{% endif %}">{{ pending|length }}</span>
+  </header>
+  {% if pending %}
+  <ul class="absence-list" role="list">
+    {% for item in pending %}
+    <li class="absence-item">
+      <div class="absence-who">{% include 'boshqaruv/components/avatar.html' with person=item.employee avatar_class='small' %}<div><strong>{{ item.employee.display_name }}</strong><small>{{ item.period }} · {{ item.days }} kun</small></div></div>
+      <p class="absence-reason">{{ item.reason }}</p>
+      <form method="post" action="{% url 'enterprise:absence_decide' item.pk %}" class="absence-decide">
+        {% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
+        <input name="note" maxlength="500" placeholder="Izoh (ixtiyoriy)" aria-label="{{ item.employee.display_name }} uchun izoh">
+        <button class="button" name="action" value="reject">{% ui_icon 'close' %} Rad etish</button>
+        <button class="button primary" name="action" value="approve">{% ui_icon 'check' %} Tasdiqlash</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="absence-empty">Hozircha yangi so‘rov yo‘q.</p>
+  {% endif %}
+  {% if recent %}
+  <details class="absence-history"><summary>Oxirgi qarorlar</summary>
+    <ul role="list">{% for item in recent %}<li><span class="absence-status is-{{ item.status }}">{{ item.get_status_display }}</span><strong>{{ item.employee.display_name }}</strong><small>{{ item.period }}{% if item.decision_note %} · {{ item.decision_note }}{% endif %}</small></li>{% endfor %}</ul>
+  </details>
+  {% endif %}
+</section>
+{% else %}
+<section class="absence-panel panel" aria-labelledby="absence-title">
+  <details class="absence-request" id="absence-request"{% if not pending and not recent %}{% endif %}>
+    <summary>
+      <span class="absence-summary-icon" aria-hidden="true">{% ui_icon 'calendar' %}</span>
+      <span><strong id="absence-title">Ishga kela olmaysizmi?</strong><small>Sababini yozing — so‘rov asoschiga boradi, javobi sizga keladi.</small></span>
+      <span class="button primary absence-open">{% ui_icon 'plus' %} So‘rov yuborish</span>
+    </summary>
+    <form method="post" action="{% url 'enterprise:absence_create' %}" class="absence-form">
+      {% csrf_token %}<input type="hidden" name="next" value="{{ next }}">
+      <label class="field"><span>Qaysi kundan</span><input type="date" name="date_from" required min="{{ today|date:'Y-m-d' }}" value="{{ today|date:'Y-m-d' }}" data-absence-from></label>
+      <label class="field"><span>Qaysi kungacha</span><input type="date" name="date_to" required min="{{ today|date:'Y-m-d' }}" value="{{ today|date:'Y-m-d' }}" data-absence-to></label>
+      <label class="field absence-reason-field"><span>Sabab</span><textarea name="reason" rows="3" required minlength="5" maxlength="1000" placeholder="Masalan: shifokor qabuliga borishim kerak"></textarea></label>
+      <div class="absence-actions"><button class="button primary" type="submit">{% ui_icon 'check' %} Asoschiga yuborish</button></div>
+    </form>
+  </details>
+  {% if pending or recent %}
+  <ul class="absence-mine" role="list">
+    {% for item in pending %}<li><span class="absence-status is-pending">{{ item.get_status_display }}</span><strong>{{ item.period }}</strong><small>{{ item.reason }}</small></li>{% endfor %}
+    {% for item in recent %}<li><span class="absence-status is-{{ item.status }}">{{ item.get_status_display }}</span><strong>{{ item.period }}</strong><small>{{ item.reason }}{% if item.decision_note %} · Asoschi izohi: {{ item.decision_note }}{% endif %}</small></li>{% endfor %}
+  </ul>
+  {% endif %}
+</section>
+<script>
+(()=>{const box=document.getElementById('absence-request');if(!box)return;const from=box.querySelector('[data-absence-from]'),to=box.querySelector('[data-absence-to]');
+from.addEventListener('change',()=>{to.min=from.value;if(to.value<from.value)to.value=from.value;});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-absence-day]');if(!b)return;from.value=to.value=b.dataset.absenceDay;box.open=true;box.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>box.querySelector('textarea').focus({preventScroll:true}),350);});})();
+</script>
+{% endif %}

@@ -1,0 +1,318 @@
+/* ==========================================================================
+   SSB Boshqaruv — Premium Apple-Inspired Login Modal
+   Full protection against CSS bleeding and browser dark mode overrides
+   ========================================================================== */
+
+html.login-modal-open {
+  overflow: hidden !important;
+}
+
+dialog#login-modal.login-modal {
+  all: revert;
+  color-scheme: light !important;
+  position: fixed !important;
+  inset: 0 !important;
+  margin: auto !important;
+  width: min(460px, calc(100vw - 28px)) !important;
+  max-height: calc(100dvh - 40px) !important;
+  padding: 38px 36px 30px !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  border-radius: 30px !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(239,243,248,.96)) !important;
+  color: #202b3b !important;
+  box-shadow: 0 32px 100px rgba(24,40,62,.22), inset 0 1px 0 #fff !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
+  font-family: "Onest", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  z-index: 99999 !important;
+}
+
+dialog#login-modal.login-modal::backdrop {
+  background: rgba(25, 40, 60, 0.28) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+body.site dialog#login-modal .login-modal-close {
+  all: unset !important;
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  background: #f2f2f7 !important;
+  color: #66768a !important;
+  border: none !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: all 0.18s ease !important;
+  box-sizing: border-box !important;
+}
+
+body.site dialog#login-modal .login-modal-close:hover {
+  background: #e5e5ea !important;
+  color: #243348 !important;
+  transform: scale(1.06) !important;
+}
+
+.login-modal-content {
+  box-sizing: border-box !important;
+}
+
+.entry-symbol {
+  display: inline-flex !important;
+  align-items: baseline !important;
+  gap: 5px !important;
+  color: #243348 !important;
+  font-size: 24px !important;
+  font-weight: 750 !important;
+  letter-spacing: -1.2px !important;
+  margin-bottom: 22px !important;
+}
+
+.entry-symbol span {
+  color: #738caa !important;
+  font-weight: 450 !important;
+}
+
+.login-modal-heading {
+  margin-bottom: 28px !important;
+}
+
+.login-modal-heading > p.eyebrow {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.07em !important;
+  text-transform: uppercase !important;
+  color: #708198 !important;
+  margin: 0 0 6px !important;
+  padding: 0 !important;
+}
+
+.login-modal-heading h2 {
+  font-size: 32px !important;
+  letter-spacing: -0.025em !important;
+  font-weight: 700 !important;
+  margin: 0 0 6px !important;
+  line-height: 1.25 !important;
+  color: #243348 !important;
+}
+
+.login-modal-heading > p.subtext {
+  font-size: 13px !important;
+  color: #66768a !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+.login-modal-form {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.entry-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  position: relative !important;
+}
+
+.entry-field label {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #243348 !important;
+  margin: 0 !important;
+}
+
+.entry-field input {
+  all: unset !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 52px !important;
+  border: 1px solid rgba(92,116,146,.19) !important;
+  border-radius: 15px !important;
+  background: rgba(255,255,255,.72) !important;
+  color: #243348 !important;
+  padding: 0 14px !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  transition: all 0.2s ease !important;
+}
+
+.entry-field input:focus {
+  border-color: #365878 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(78,111,149,.14) !important;
+}
+
+.entry-field input[aria-invalid="true"] {
+  border-color: #ff3b30 !important;
+  background: #fff5f5 !important;
+}
+
+.login-password-field {
+  position: relative !important;
+  width: 100% !important;
+}
+
+.login-password-field input {
+  padding-right: 76px !important;
+}
+
+body.site dialog#login-modal .login-password-toggle {
+  all: unset !important;
+  position: absolute !important;
+  right: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 4px 8px !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  color: #365878 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: opacity 0.15s !important;
+  box-sizing: border-box !important;
+}
+
+body.site dialog#login-modal .login-password-toggle:hover {
+  opacity: 0.75 !important;
+}
+
+body.site dialog#login-modal .login-modal-submit {
+  all: unset !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  height: 52px !important;
+  border-radius: 15px !important;
+  background: linear-gradient(120deg, #263b53, #526f90) !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  box-shadow: 0 2px 8px rgba(40,62,90,.18) !important;
+  cursor: pointer !important;
+  margin-top: 6px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-sizing: border-box !important;
+}
+
+body.site dialog#login-modal .login-modal-submit:hover {
+  background: #28445f !important;
+  box-shadow: 0 4px 14px rgba(40,62,90,.25) !important;
+  transform: translateY(-1px) !important;
+}
+
+body.site dialog#login-modal .login-modal-submit:active {
+  transform: translateY(0) !important;
+  scale: 0.99 !important;
+}
+
+body.site dialog#login-modal .login-modal-submit[aria-busy="true"] {
+  opacity: 0.6 !important;
+  cursor: wait !important;
+}
+
+.login-field-error,
+.login-modal-error {
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+  color: #ff3b30 !important;
+  margin: 2px 0 0 !important;
+}
+
+.login-modal-error {
+  border: 1px solid rgba(255, 59, 48, 0.2) !important;
+  background: #fff5f5 !important;
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+  margin-bottom: 14px !important;
+}
+
+.login-modal-note {
+  font-size: 11px !important;
+  color: #708198 !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
+  margin: 6px 0 0 !important;
+}
+
+.login-modal-footer-link {
+  display: block !important;
+  text-align: center !important;
+  font-size: 12px !important;
+  font-weight: 550 !important;
+  color: #365878 !important;
+  text-decoration: none !important;
+  margin-top: 14px !important;
+  padding-top: 14px !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.login-modal-footer-link:hover {
+  text-decoration: underline !important;
+}
+
+.login-modal-loading {
+  padding: 48px 20px !important;
+  text-align: center !important;
+  color: #708198 !important;
+  font-size: 13px !important;
+}
+
+.login-modal-loading strong {
+  display: block !important;
+  font-size: 16px !important;
+  color: #243348 !important;
+  margin-bottom: 8px !important;
+}
+
+body.site dialog#login-modal button:focus-visible {
+  outline: 2px solid #365878 !important;
+  outline-offset: 3px !important;
+}
+
+@media (max-width: 480px) {
+  dialog#login-modal.login-modal {
+    padding: 32px 22px 24px !important;
+  }
+
+  .entry-field input {
+    font-size: 16px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog#login-modal.login-modal *,
+  dialog#login-modal.login-modal *::before,
+  dialog#login-modal.login-modal *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+body.site dialog#login-modal .login-modal-submit svg {
+  width: 18px !important;
+  height: 18px !important;
+}

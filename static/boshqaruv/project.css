@@ -1,0 +1,156 @@
+/* Project page: one row of equal figures, main work on the left, decisions and people on the right. */
+.project-sub{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:6px 0 0}
+.project-sub code{color:var(--ink-secondary);font-size:13px}
+.project-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 16px}
+.project-stats>div{min-width:0;min-height:88px;padding:13px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.project-stats dt{color:var(--ink-secondary);font-size:12px}
+.project-stats dd{margin:3px 0 0;overflow:hidden;font-size:20px;font-weight:650;line-height:1.25;text-overflow:ellipsis;white-space:nowrap}
+.project-stats .progress-track{display:block;margin-top:8px}
+.project-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,360px);gap:16px;align-items:start}
+.project-column{display:grid;gap:16px;min-width:0}
+.project-column>.panel{min-width:0;margin:0}
+.project-description{margin:0 0 14px;color:var(--ink);font-size:14px;line-height:1.6;overflow-wrap:anywhere;white-space:pre-line}
+.project-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0}
+.project-facts>div{min-width:0;padding:10px 14px;border-radius:12px;background:var(--canvas)}
+.project-facts dt{color:var(--ink-secondary);font-size:12px}
+.project-facts dd{margin:2px 0 0;overflow:hidden;font-size:14px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+.project-empty{margin:0;padding:22px 20px;color:var(--ink-secondary);font-size:13.5px;text-align:center}
+.project-history{margin:0;padding:6px 20px 12px;list-style:none}
+.project-history li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.project-history li:last-child{border-bottom:0}
+.project-history strong{min-width:0;font-size:13.5px;font-weight:600}
+.project-history span{flex:none;color:var(--ink-secondary);font-size:12px}
+.project-status{display:grid;gap:12px}
+.project-status form{display:grid;gap:8px;margin:0}
+.project-status input,.project-add-step input{width:100%;min-width:0;height:42px;padding:0 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--canvas);color:var(--ink);font-size:13.5px}
+.project-status input:focus,.project-add-step input:focus{outline:none;border-color:var(--apple-blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--apple-blue) 15%,transparent)}
+.project-actions{display:grid;gap:8px}
+.project-actions .button,.project-wide{justify-content:center;width:100%;min-height:42px}
+.project-note{margin:0;color:var(--ink-secondary);font-size:13.5px}
+.project-blockers{padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#e5484d 12%,transparent);color:#e5484d;font-size:13px}
+.project-blockers ul{margin:4px 0 0;padding-left:18px}
+.project-links{display:grid;gap:2px;padding-top:10px;border-top:1px solid var(--line)}
+.project-links a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;color:var(--apple-blue);font-size:13px;font-weight:600;text-decoration:none}
+.project-links a:hover{text-decoration:underline}
+.project-links svg{flex:none;width:15px;height:15px}
+.project-people,.project-steps{display:grid;gap:4px;margin:0;padding:10px 12px;list-style:none}
+.project-people li,.project-steps li{display:flex;align-items:center;gap:10px;min-width:0;padding:7px 8px;border-radius:10px}
+.project-people li>div,.project-steps li>div{flex:1;min-width:0}
+.project-people strong,.project-steps strong{display:block;overflow:hidden;font-size:13.5px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+.project-people small,.project-steps small{display:block;color:var(--ink-secondary);font-size:12px}
+.project-panel-foot{padding:0 20px 16px}
+.project-steps form{display:inline-flex;margin:0}
+.project-step-check{display:grid;flex:none;place-items:center;width:26px;height:26px;padding:0;border:1.5px solid var(--line-strong);border-radius:50%;background:transparent;color:transparent;cursor:pointer}
+span.project-step-check{cursor:default}
+.project-step-check svg{width:14px;height:14px}
+.project-steps .is-done .project-step-check{border-color:#30a46c;background:#30a46c;color:#fff}
+.project-steps .is-done strong{color:var(--ink-secondary);text-decoration:line-through}
+.project-step-remove{display:grid;flex:none;place-items:center;width:26px;height:26px;padding:0;border:0;border-radius:8px;background:transparent;color:var(--ink-secondary);cursor:pointer}
+.project-step-remove:hover{background:color-mix(in srgb,#e5484d 16%,transparent);color:#e5484d}
+.project-step-remove svg{width:14px;height:14px}
+.project-add-step{display:flex;gap:8px;padding:12px 20px 16px;border-top:1px solid var(--line)}
+.project-add-step .button{flex:none;height:42px;min-height:42px}
+.project-danger{border-color:color-mix(in srgb,#e5484d 35%,var(--line))}
+.project-danger .panel-body{display:grid;gap:12px}
+.project-danger strong{display:block;font-size:14px}
+.project-danger small{display:block;margin-top:2px;color:var(--ink-secondary);font-size:12.5px;line-height:1.45}
+.project-danger form{margin:0}
+/* ---------- Boshqaruv markazi: holat yo'li va keyingi qadam */
+.pc-control{margin:0 0 16px}
+.pc-steps{display:flex;gap:6px;margin:0;padding:18px 20px 14px;list-style:none;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line)}
+.pc-steps::-webkit-scrollbar{display:none}
+.pc-steps li{position:relative;display:flex;flex:1 1 0;align-items:center;gap:8px;min-width:120px;color:var(--ink-tertiary,var(--ink-secondary));font-size:13px;font-weight:600}
+.pc-steps li:not(:last-child)::after{content:"";flex:1;height:2px;margin-left:4px;border-radius:2px;background:var(--line)}
+.pc-steps li.is-done:not(:last-child)::after{background:#30a46c}
+.pc-steps i{display:grid;flex:none;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ios-fill,rgb(118 118 128/.12));font-style:normal;font-size:12.5px;font-weight:700}
+.pc-steps i svg{width:14px;height:14px}
+.pc-steps span{white-space:nowrap}
+.pc-steps .is-done{color:var(--ink-secondary)}
+.pc-steps .is-done i{background:#30a46c;color:#fff}
+.pc-steps .is-current{color:var(--ink)}
+.pc-steps .is-current i{background:var(--accent,var(--apple-blue));color:#fff;box-shadow:0 0 0 5px color-mix(in srgb,var(--accent,var(--apple-blue)) 20%,transparent)}
+.pc-steps.is-paused .is-current i{background:#e08a00;box-shadow:0 0 0 5px rgb(224 138 0/.2)}
+.pc-steps.is-cancelled{opacity:.55}
+.pc-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,320px);gap:18px;padding:16px 20px 18px}
+.pc-now{display:grid;gap:10px;align-content:start;min-width:0}
+.pc-now-text{margin:0;font-size:14.5px;line-height:1.55}
+.pc-check{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.pc-check li{display:flex;align-items:center;gap:9px;font-size:13.5px}
+.pc-check i{display:grid;flex:none;place-items:center;width:22px;height:22px;border-radius:50%;font-style:normal;font-size:12px;font-weight:800}
+.pc-check i svg{width:12px;height:12px}
+.pc-check .is-ok i{background:#30a46c;color:#fff}
+.pc-check .is-miss i{background:color-mix(in srgb,#e08a00 18%,transparent);color:#c2710c}
+.pc-check small{color:var(--ink-secondary)}
+.pc-blockers{padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#e08a00 14%,transparent);font-size:13px;line-height:1.5}
+.pc-blockers a{color:var(--accent,var(--apple-blue));font-weight:600}
+.pc-actions{display:grid;gap:8px;align-content:start}
+.pc-primary{justify-content:center;width:100%;min-height:46px;font-size:15px}
+.pc-primary svg{width:16px;height:16px}
+.pc-effect{color:var(--ink-secondary);font-size:12.5px;line-height:1.45}
+p.pc-effect{margin:0}
+.pc-more{display:flex;flex-wrap:wrap;gap:6px;padding-top:6px;border-top:1px solid var(--line)}
+.pc-chip{display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700}
+.pc-chip.is-bad{background:color-mix(in srgb,#e5484d 16%,transparent);color:#e5484d}
+.pc-chip.is-ok{background:color-mix(in srgb,#30a46c 16%,transparent);color:#30a46c}
+.pc-days{display:block;margin-top:4px;color:var(--ink-secondary);font-size:12px;font-weight:600}
+.pc-days.is-warn{color:#c2710c}.pc-days.is-bad{color:#e5484d}
+
+/* ---------- Bo'limlar */
+.pc-tabs{display:flex;gap:6px;padding:4px;border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow-x:auto;scrollbar-width:none;scroll-margin-top:90px}
+.pc-tabs::-webkit-scrollbar{display:none}
+.pc-tabs button{display:inline-flex;flex:1 0 auto;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:0 14px;border:0;border-radius:12px;background:transparent;color:var(--ink-secondary);font:inherit;font-size:13.5px;font-weight:650;cursor:pointer}
+.pc-tabs button:hover{color:var(--ink)}
+.pc-tabs button[aria-selected="true"]{background:var(--accent,var(--apple-blue));color:#fff}
+.pc-tabs b{padding:0 7px;border-radius:999px;background:rgb(118 118 128/.18);font-size:11.5px;line-height:18px}
+.pc-tabs button[aria-selected="true"] b{background:rgb(255 255 255/.25)}
+.pc-pane[hidden]{display:none!important}
+.pc-sub{display:block;margin-top:3px;color:var(--ink-secondary);font-size:12.5px;font-weight:500;line-height:1.45}
+
+/* ---------- Loyiha moliyasi */
+.pc-fin .panel-body{display:grid;gap:12px}
+.pc-fin-paid{display:grid;gap:8px}
+.pc-fin-paid span{color:var(--ink-secondary);font-size:12px}
+.pc-fin-paid strong{display:block;font-size:22px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.pc-fin-paid small{color:var(--ink-secondary);font-size:12px}
+.pc-fin-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+.pc-fin-grid>div{min-width:0;padding:10px 12px;border-radius:12px;background:var(--canvas)}
+.pc-fin-grid dt{color:var(--ink-secondary);font-size:11.5px}
+.pc-fin-grid dd{margin:2px 0 0;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.pc-shares{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.pc-shares li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px}
+.pc-shares li>div{display:grid;gap:2px;min-width:0}
+.pc-shares strong{font-size:13.5px}
+.pc-shares small{color:var(--ink-secondary);font-size:11.5px;line-height:1.4}
+.pc-shares .button{flex:none}
+.pc-fin-actions{display:flex;flex-wrap:wrap;gap:8px}
+.pc-fin-note{margin:0;padding:10px 12px;border-radius:12px;background:var(--canvas);color:var(--ink-secondary);font-size:12.5px;line-height:1.5}
+.pc-fin-note b{color:var(--ink)}
+.pc-fin-empty{margin:0;color:var(--ink-secondary);font-size:13px;line-height:1.55}
+.pc-myrole{margin:12px 0 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--accent,var(--apple-blue)) 9%,transparent);font-size:13px;line-height:1.5}
+.pc-you{display:inline!important;margin-left:4px;padding:0 6px;border-radius:999px;background:color-mix(in srgb,var(--accent,var(--apple-blue)) 16%,transparent);color:var(--accent,var(--apple-blue))!important;font-size:10.5px!important;font-weight:700}
+
+/* ---------- "Umumiy" bo'limi */
+.pc-about{display:grid;gap:12px}
+.pc-about .project-description{margin:0}
+.pc-about .pc-myrole{margin:0}
+.pc-about-links{display:flex;flex-wrap:wrap;gap:8px}
+.pc-about-links form{margin:0}
+.pc-danger{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:0 20px 18px;padding:12px 14px;border:1px solid color-mix(in srgb,#e5484d 35%,var(--line));border-radius:14px}
+.pc-danger strong{display:block;font-size:13.5px}
+.pc-danger small{display:block;margin-top:2px;color:var(--ink-secondary);font-size:12px}
+.pc-danger form{margin:0}
+.project-column{align-content:start}
+
+/* ---------- Holatni tasdiqlash oynasi */
+.pc-confirm:not(#_){position:fixed;inset:0;width:min(440px,calc(100vw - 32px));height:fit-content;max-height:calc(100dvh - 32px);margin:auto;padding:0;border:0;border-radius:24px;background:var(--surface);color:var(--ink);box-shadow:0 40px 90px -30px rgb(0 0 0/.55)}
+.pc-confirm::backdrop{background:rgb(0 0 0/.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.pc-confirm form{display:grid;gap:12px;margin:0;padding:22px}
+html body[data-app] .pc-confirm:not(#_) h2{margin:0;font-size:19px!important}
+.pc-confirm-effect{margin:0;color:var(--ink-secondary);font-size:13.5px;line-height:1.5}
+.pc-confirm-note{display:grid;gap:6px;font-size:13px;font-weight:600}
+.pc-confirm-note textarea{box-sizing:border-box;width:100%;padding:10px 12px;border:1.5px solid transparent;border-radius:14px;background:var(--ios-card-2,rgb(118 118 128/.12));color:var(--ink);font:inherit;font-size:15px;resize:vertical}
+.pc-confirm-actions{display:flex;justify-content:flex-end;gap:8px}
+
+@media(max-width:1100px){.project-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:800px){.pc-body{grid-template-columns:minmax(0,1fr)}.pc-steps li{min-width:104px}.pc-steps li span{font-size:12px}}
+@media(max-width:700px){.project-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.project-stats dd{font-size:17px}.project-facts{grid-template-columns:minmax(0,1fr)}}

@@ -1,0 +1,48 @@
+/* Qo'llanma modali: topbardagi "?" tugmasi ochadi. */
+.guide-dialog:not(#_){position:fixed;inset:0;width:min(860px,calc(100vw - 32px));height:min(760px,calc(100dvh - 32px));max-width:none;max-height:none;margin:auto;padding:0;border:0;border-radius:26px;background:var(--surface);color:var(--ink);box-shadow:0 40px 90px -30px rgb(0 0 0/.55);overflow:hidden}
+.guide-dialog::backdrop{background:rgb(0 0 0/.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.guide-dialog[open]{animation:guide-in .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes guide-in{from{opacity:0;transform:translateY(10px) scale(.985)}}
+.guide-shell{display:flex;flex-direction:column;height:100%}
+
+.guide-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:22px 24px 12px}
+.guide-head h2{margin:2px 0 6px;font-size:22px;letter-spacing:-.02em}
+.guide-head p{margin:0;color:var(--ink-secondary);font-size:13.5px;line-height:1.5}
+.guide-eyebrow{color:var(--accent,#007aff);font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.guide-mine-key{display:inline-block;padding:0 7px;border-radius:999px;background:var(--accent,#007aff);color:#fff;font-size:11px;line-height:18px}
+
+.guide-tabs{display:flex;flex-wrap:wrap;gap:8px;padding:6px 24px 14px;border-bottom:1px solid var(--line)}
+html body[data-app] .guide-head:not(#_) h2{font-size:22px!important;font-weight:700!important}
+html body .guide-tabs::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+.guide-tabs button{position:relative;display:inline-flex;flex:none;align-items:center;gap:7px;min-height:40px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;transition:background-color .2s ease,border-color .2s ease,color .2s ease}
+.guide-tabs button:hover{background:var(--ios-fill,rgb(118 118 128/.1))}
+.guide-tabs button[aria-selected="true"]{border-color:transparent;background:var(--accent,#007aff);color:#fff}
+.guide-tab-ico{font-size:15px;line-height:1}
+.guide-tabs button>b{display:none;padding:0 6px;border-radius:999px;background:color-mix(in srgb,var(--accent,#007aff) 16%,transparent);color:var(--accent,#007aff);font-size:10.5px;line-height:17px}
+.guide-tabs button.is-mine>b{display:inline-block}
+.guide-tabs button[aria-selected="true"]>b{background:rgb(255 255 255/.25);color:#fff}
+
+.guide-body{flex:1;min-height:0;overflow-y:auto;padding:18px 24px 26px;overscroll-behavior:contain}
+.guide-lead{margin:0 0 16px;padding:14px 16px;border-radius:16px;background:color-mix(in srgb,var(--accent,#007aff) 8%,transparent);font-size:14px;line-height:1.55}
+.guide-steps{display:grid;gap:10px;margin:0;padding:0;list-style:none;counter-reset:g}
+.guide-steps>li{position:relative;padding:14px 16px 14px 58px;border:1px solid var(--line);border-radius:18px;counter-increment:g}
+.guide-steps>li::before{content:counter(g);position:absolute;left:16px;top:14px;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--accent,#007aff);color:#fff;font-size:13px;font-weight:700}
+.guide-steps h3{margin:3px 0 6px;font-size:15px;letter-spacing:-.01em}
+.guide-steps p{margin:0 0 6px;color:var(--ink-secondary);font-size:13.5px;line-height:1.6}
+.guide-steps p:last-child{margin-bottom:0}
+.guide-steps b{color:var(--ink);font-weight:650}
+.guide-steps kbd{padding:1px 6px;border:1px solid var(--line);border-radius:6px;background:var(--ios-fill,rgb(118 118 128/.1));font:inherit;font-size:12px}
+.guide-note{margin:14px 0 0;color:var(--ink-tertiary,var(--ink-secondary));font-size:12.5px}
+.g-in{color:#30a14e;font-weight:700}.g-out{color:#e5484d;font-weight:700}.g-acc{color:#0a84ff;font-weight:700}
+
+@media (max-width:640px){
+  .guide-dialog:not(#_){width:100vw;height:calc(100dvh - 24px);margin:auto 0 0;border-radius:24px 24px 0 0}
+  .guide-head{padding:18px 16px 10px}
+  .guide-head h2{font-size:19px}
+  .guide-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:4px 16px 12px}
+  html body[data-app] .guide-head:not(#_) h2{font-size:19px!important}
+  .guide-body{padding:14px 16px calc(22px + env(safe-area-inset-bottom,0px))}
+  .guide-steps>li{padding:12px 14px 12px 50px}
+  .guide-steps>li::before{left:12px;top:12px;width:26px;height:26px}
+}
+@media (prefers-reduced-motion:reduce){.guide-dialog[open]{animation:none}}

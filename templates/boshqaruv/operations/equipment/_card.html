@@ -1,0 +1,16 @@
+{% load boshqaruv %}<a class="eq-card" href="{{ item.get_absolute_url }}">
+  <span class="eq-thumb">{% if item.photo %}<img src="{% url 'crm:equipment_photo' item.pk %}?v={{ item.photo_version }}" alt="" loading="lazy">{% else %}{% ui_icon item.icon %}{% endif %}<b class="eq-status" data-s="{{ item.status }}">{{ item.get_status_display }}</b></span>
+  <span class="eq-card-body">
+    <strong>{{ item.name }}</strong>
+    <small>{{ item.inventory_number }} · {{ item.get_category_display }}</small>
+    {% if item.specs %}<small class="eq-specs">{{ item.specs }}</small>{% endif %}
+  </span>
+  <span class="eq-holder">
+    {% if item.holder %}
+      {% include 'boshqaruv/components/avatar.html' with person=item.holder avatar_class='small' %}
+      <span><b>{{ item.holder.display_name }}</b><small>{% if item.needs_ack %}<i class="eq-pending">Tasdiqlanmagan</i>{% else %}Mas’ul · {{ item.assigned_at|date:app_date_format }}{% endif %}</small></span>
+    {% else %}
+      <span class="eq-free">{% ui_icon 'grid' %}</span><span><b>Omborda</b><small>Hech kimga biriktirilmagan</small></span>
+    {% endif %}
+  </span>
+</a>

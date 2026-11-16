@@ -1,0 +1,28 @@
+{% load boshqaruv %}
+<div class="op-root">
+<div class="op-kinds" role="radiogroup" aria-label="Amal turi">
+  {% if 'agreement' in kinds %}<button type="button" role="radio" data-kind="agreement"><i>1</i><strong>Loyiha kelishuvi</strong><small>Shartnoma summasi va ulushlar</small></button>{% endif %}
+  <button type="button" role="radio" data-kind="receipt"><i class="is-in">2</i><strong>Mijozdan pul keldi</strong><small>Tushum ulushlarga bo‘linadi</small></button>
+  <button type="button" role="radio" data-kind="salary"><i>₸</i><strong>Ish haqi</strong><small>Xodimga oylik hisoblash</small></button>
+  <button type="button" role="radio" data-kind="bonus"><i>★</i><strong>Mukofot</strong><small>Xodimga bonus hisoblash</small></button>
+  <button type="button" role="radio" data-kind="expense"><i class="is-out">−</i><strong>Xarajat</strong><small>Ijara, internet, xarid…</small></button>
+  <button type="button" role="radio" data-kind="correction"><i>↺</i><strong>Tuzatish</strong><small>Xato yozuvni to‘g‘rilash</small></button>
+</div>
+
+<div class="op-layout">
+  <section class="panel op-form-panel" data-ios-collapsible="false">
+    <header class="panel-head"><div><h2 data-op-title>Amal ma’lumotlari</h2><small class="op-help" data-op-help></small></div></header>
+    <form method="post" class="form-grid op-form" id="op-form" action="{% url 'enterprise:operation_new' %}" novalidate>
+      {% csrf_token %}
+      {% include "boshqaruv/components/form.html" with form=form %}
+      <div class="form-footer"><button type="submit" class="button primary" data-op-submit>Saqlash</button></div>
+    </form>
+  </section>
+
+  <aside class="panel op-preview" data-ios-collapsible="false" aria-live="polite">
+    <header class="panel-head"><h2>Natija qanday bo‘ladi</h2></header>
+    <div class="panel-body" data-op-preview><p class="text-tertiary">Ma’lumotlarni kiriting — shu yerda hisob-kitob chiqadi.</p></div>
+  </aside>
+</div>
+{{ agreements|json_script:"op-agreements" }}
+</div>

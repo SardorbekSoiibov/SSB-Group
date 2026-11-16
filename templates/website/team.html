@@ -1,0 +1,17 @@
+{% extends "base_public.html" %}
+{% block title %}Jamoa — {{ site.company_name }}{% endblock %}
+{% block content %}
+{% include "website/_page_head.html" with heading="Jamoa" lede="Loyihangiz ustida bevosita ishlaydigan dizaynerlar, dasturchilar va menejerlar." %}
+<section class="section pt-0">
+  <div class="wrap">
+    {% if team %}
+    <ul class="team-grid" data-stagger>
+      {% for m in team %}<li>{% include "website/_member.html" with member=m full=True %}</li>{% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-card"><span class="app-icon is-muted">{% include "website/_icon.html" with name="people" %}</span><p>Jamoa sahifasi tez orada to‘ldiriladi.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% include "website/_cta_band.html" with cta_title="Jamoamiz bilan ishlashni xohlaysizmi?" %}
+{% endblock %}

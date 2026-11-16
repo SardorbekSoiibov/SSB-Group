@@ -1,0 +1,49 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Kompaniya sozlamalari{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/settings.css' %}?v=1">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / TIZIM SOZLAMALARI</span>
+    <h1>Kompaniya tizim sozlamalari</h1>
+    <p>Ish maydoni qoidalari va tizim ulanishlari bir joyda.</p>
+  </div>
+  <div class="heading-actions"><button type="button" class="button primary" data-record-template="settings-form" data-record-title="Ish maydoni qoidalari">{% ui_icon 'settings' %} Sozlamalarni tahrirlash</button></div>
+</header>
+
+<div class="settings-layout">
+  <section class="settings-card" aria-labelledby="settings-rules">
+    <h2 id="settings-rules">Ish maydoni qoidalari</h2>
+    <dl class="settings-grid">
+      <div class="settings-item"><span>{% ui_icon 'overview' %}</span><div><dt>Kompaniya nomi</dt><dd id="settings-company">{{ current.company_name }}</dd></div></div>
+      <div class="settings-item"><span>{% ui_icon 'money' %}</span><div><dt>Asosiy valyuta</dt><dd>{{ current.default_currency }}</dd></div></div>
+      <div class="settings-item"><span>{% ui_icon 'calendar' %}</span><div><dt>Sana ko‘rinishi</dt><dd>{{ current.get_date_format_display }}</dd></div></div>
+      <div class="settings-item"><span>{% ui_icon 'chart' %}</span><div><dt>Kompaniya ulushi</dt><dd>{{ current.company_share_percent|floatformat:"-2" }}%</dd></div></div>
+      <div class="settings-item"><span>{% ui_icon 'project' %}</span><div><dt>Loyiha arxivi hajmi</dt><dd>{{ current.archive_max_mb }} MB</dd></div></div>
+      <div class="settings-item"><span>{% ui_icon 'file' %}</span><div><dt>Fayl hajmi chegarasi</dt><dd>{{ current.upload_max_mb }} MB</dd></div></div>
+      <div class="settings-item"><span>{% ui_icon 'bell' %}</span><div><dt>Muddat eslatmasi</dt><dd>{{ current.reminder_days_before }} kun oldin</dd></div></div>
+      <div class="settings-item"><span>{% ui_icon 'check' %}</span><div><dt>Loyihani boshlash tasdig‘i</dt><dd>{% if current.require_project_start_approval %}Yoqilgan{% else %}O‘chirilgan{% endif %}</dd></div></div>
+    </dl>
+    <div class="settings-types"><h3>Ruxsat etilgan fayl turlari</h3><ul>{% for ext in current.extensions %}<li>{{ ext }}</li>{% endfor %}</ul></div>
+  </section>
+
+  <div class="settings-side">
+    <section class="settings-card" aria-labelledby="settings-integrations">
+      <h2 id="settings-integrations">Ulanishlar</h2>
+      <ul class="settings-links">{% for item in integrations %}<li><span class="settings-link-icon">{% ui_icon item.icon %}</span><div><strong>{{ item.name }}</strong><small>{{ item.hint }}</small></div><b class="settings-state{% if item.connected %} is-on{% endif %}">{% if item.connected %}Ulangan{% else %}Ulanmagan{% endif %}</b></li>{% endfor %}</ul><a class="button" href="{% url 'crm:connections' %}">Ulanishlarni sozlash va tekshirish</a>
+    </section>
+    {% if user|can:'cms.edit' %}
+    <a class="settings-card settings-brand" href="{% url 'crm:cms_site' %}"><span class="settings-link-icon">{% ui_icon 'overview' %}</span><div><strong>Brending va ommaviy sayt</strong><small>Logotip, kontaktlar va ijtimoiy tarmoqlar</small></div>{% ui_icon 'arrow' %}</a>
+    {% endif %}
+  </div>
+</div>
+
+<div id="settings-form" data-record-template-source hidden>
+  <form data-modal-source method="post" enctype="multipart/form-data" class="form-grid">
+    {% csrf_token %}
+    {% include "boshqaruv/components/form.html" with form=form %}
+    <div class="form-footer"><button class="button primary" type="submit">{% ui_icon 'check' %} Sozlamalarni saqlash</button></div>
+  </form>
+</div>
+{% endblock %}
+

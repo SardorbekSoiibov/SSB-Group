@@ -1,0 +1,19 @@
+/* Performance reviews: equal review cards and the review dialog layout. */
+.review-note{margin:0 0 16px;padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink-secondary);font-size:13.5px;line-height:1.5}
+.review-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,430px),1fr));gap:16px;align-items:stretch;margin-top:16px}
+.review-grid>.panel{display:flex;flex-direction:column;min-width:0;margin:0}
+.review-grid>.panel>.panel-body{display:flex;flex:1;flex-direction:column}
+.review-grid>.panel>.panel-body>.review-foot{margin-top:auto}
+.review-grid>.empty-state{grid-column:1/-1}
+.review-form .field[data-field=employee],.review-form .field[data-field=feedback],.review-presets,.review-formula{grid-column:1/-1}
+.review-presets{display:flex;flex-wrap:wrap;gap:6px}
+.review-presets button{padding:6px 12px;border:1px solid var(--line-strong);border-radius:999px;background:transparent;color:var(--ink-secondary);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.review-presets button:hover,.review-presets button[aria-pressed=true]{border-color:var(--apple-blue);color:var(--apple-blue)}
+.review-formula{margin:0;padding:10px 14px;border-radius:12px;background:var(--canvas);color:var(--ink-secondary);font-size:12.5px;line-height:1.5}
+.review-grid .panel-body>h3{margin:14px 0 4px}
+.review-grid .panel-body .prose{margin:0}
+.review-grid .panel-body>.chart-key{margin:12px 0 0}
+.review-grid .review-foot{margin-top:auto;padding-top:12px}
+.review-grid .panel-body>.review-foot{margin-top:14px}
+.review-grid .score-badge-apple .score-number{font-size:18px}
+.review-grid .review-foot.border-t{border-top:1px solid var(--line)}

@@ -1,0 +1,27 @@
+{% extends 'boshqaruv/base.html' %}{% load static boshqaruv %}
+{% block title %}Faylni yuklab olish{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/archive.css' %}?v=7">{% endblock %}
+{% block content %}
+<header class="page-heading"><div><span class="eyebrow">SSB BOSHQARUV / UMUMIY ARXIV / YUKLAB OLISH</span><h1>Jamoaning loyiha arxivi</h1></div></header>
+<div class="archive-ghost" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<dialog open class="archive-modal archive-challenge" id="archive-challenge" data-archive-back="{% url 'enterprise:archives' %}" aria-labelledby="archive-challenge-title">
+  <a class="icon-button archive-modal-close" href="{% url 'enterprise:archives' %}" aria-label="Arxivga qaytish">{% ui_icon 'close' %}</a>
+  <div data-challenge-view="question">
+    <h2 id="archive-challenge-title">Yuklab olishni tasdiqlang</h2>
+    <div class="archive-file"><span class="archive-type">{{ archive.file_type }}</span><div><strong title="{{ archive.display_project_name }}">{{ archive.display_project_name }}</strong><small title="{{ archive.filename }}">{{ archive.filename }}</small><small>{{ archive.uploader.display_name }} · {{ archive.size|plain_filesize }}</small></div></div>
+    <form method="post" action="{% url 'enterprise:archive_download' archive.pk %}" class="archive-modal-form{% if error %} has-error{% endif %}" id="archive-challenge-form">{% csrf_token %}
+      <input type="hidden" name="download_token" value="">
+      <p class="archive-question" id="archive-question" aria-live="polite">{{ question }} = ?</p>
+      <div class="field{% if error %} invalid{% endif %}"><label class="sr-only" for="archive-answer">Misol javobi</label><input id="archive-answer" name="answer" inputmode="numeric" pattern="-?[0-9]*" maxlength="6" autocomplete="off" placeholder="Javobni kiriting" required autofocus{% if error %} aria-invalid="true" aria-describedby="archive-answer-error"{% endif %}>{% if error %}<p class="field-error" id="archive-answer-error" role="alert">{{ error }}</p>{% endif %}</div>
+      <button class="button primary" type="submit">{% ui_icon 'download' %} <span data-challenge-label>Tasdiqlash va yuklab olish</span></button>
+    </form>
+  </div>
+  <div data-challenge-view="done" hidden role="status">
+    <span class="archive-modal-icon is-success">{% ui_icon 'check' %}</span>
+    <h2>Yuklab olish boshlandi</h2>
+    <p>{{ archive.filename }} brauzeringizning yuklamalar bo‘limiga tushmoqda.</p>
+    <a class="button primary archive-modal-wide" href="{% url 'enterprise:archives' %}">Arxivga qaytish</a>
+  </div>
+</dialog>
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/archive.js' %}?v=5" defer></script>{% endblock %}

@@ -1,0 +1,70 @@
+/* Earnings, payouts and employee receipt confirmation */
+.earn-currencies{display:flex;flex-wrap:wrap;gap:6px}
+.payout-awaiting{display:block;margin-top:4px;color:#c2710c;font-size:11.5px;font-weight:600}
+html body[data-app] .earn-cards:not(#_){grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.earn-note{margin:0;padding:12px 20px;color:var(--ink-secondary,var(--ink-tertiary));font-size:13px;line-height:1.5}
+.earn .metric-card.earn-due strong{color:var(--accent,var(--apple-blue))}
+.earn .metric-card.earn-warn strong{color:#c2710c}
+.payout-head-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+
+.payout-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,340px);gap:16px;padding:16px 20px;border-top:1px solid var(--line)}
+.payout-row.is-ask{background:color-mix(in srgb,var(--accent,#0a84ff) 6%,transparent)}
+.payout-row.is-dispute{background:color-mix(in srgb,#d92d20 6%,transparent)}
+.payout-main{display:flex;flex-direction:column;gap:3px;min-width:0}
+.payout-main strong{font-size:15px;font-variant-numeric:tabular-nums}
+.payout-main p{margin:0;font-size:13px;color:var(--ink)}
+.payout-main small{font-size:12px;color:var(--ink-tertiary);overflow-wrap:anywhere}
+.payout-event::before{content:"• "}
+.payout-link{font-size:12px;width:fit-content}
+.payout-side{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.payout-side small{font-size:12px;color:var(--ink-tertiary)}
+.payout-question{margin:0;font-weight:600}
+.payout-answer{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px}
+.payout-no summary{list-style:none;cursor:pointer}
+.payout-no summary::-webkit-details-marker{display:none}
+.payout-no[open]{display:flex;flex-direction:column;gap:8px;width:100%}
+.payout-no[open] summary{display:none}
+.payout-resolve{display:flex;flex-direction:column;gap:8px;width:100%}
+.payout-resolve>div{display:flex;flex-wrap:wrap;gap:8px}
+.payout-row textarea{width:100%;padding:8px 10px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px;resize:vertical}
+
+.payout-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.payout-aside .panel-body{display:flex;flex-direction:column;gap:10px}
+.payout-aside-name{margin:0;font-weight:600;font-size:15px}
+.payout-pick{display:grid;grid-template-columns:1fr auto;gap:2px 10px;width:100%;padding:10px 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.payout-pick:hover{border-color:var(--accent,var(--apple-blue))}
+.payout-pick strong{font-variant-numeric:tabular-nums}
+.payout-pick small{grid-column:1/-1;font-size:12px;color:var(--ink-tertiary)}
+
+.payout-aside{position:sticky;top:16px;transition:opacity .2s ease}
+.payout-aside.is-loading{opacity:.55;pointer-events:none}
+.payout-hint{margin:6px 0 0;color:var(--ink-secondary);font-size:12.5px}
+.payout-pick.is-picked{border-color:var(--accent,var(--apple-blue));box-shadow:0 0 0 1px var(--accent,var(--apple-blue)) inset}
+.payout-empty{display:grid;gap:8px;padding:14px;border-radius:14px;background:var(--ios-fill,rgb(118 118 128/.1));font-size:13px;line-height:1.5}
+.payout-empty p{margin:0;color:var(--ink-secondary)}
+.payout-empty ul{margin:0;padding-left:18px;color:var(--ink-secondary)}
+.payout-empty .button{justify-self:start}
+.payout-other{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding-top:4px;font-size:12.5px;color:var(--ink-secondary)}
+.payout-limit{margin:6px 0 0;font-size:12.5px}
+#payout-form.form-grid{align-items:start}
+#payout-form .field{align-self:start}
+#payout-form [data-payout-review]:disabled{opacity:.5;cursor:not-allowed}
+.payout-summary{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0}
+.payout-summary dt{color:var(--ink-tertiary);font-size:13px}
+.payout-summary dd{margin:0;font-size:14px;overflow-wrap:anywhere}
+.payout-sum-amount{font-weight:700;font-size:16px!important;font-variant-numeric:tabular-nums}
+
+.payout-dialog:not(#_){position:fixed;inset:0;margin:auto;height:fit-content;max-height:calc(100dvh - 32px);overflow:auto}
+.payout-dialog{width:min(480px,calc(100vw - 32px));padding:24px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);box-shadow:0 24px 60px rgba(0,0,0,.25)}
+.payout-dialog::backdrop{background:rgba(0,0,0,.4)}
+.payout-dialog h2{margin:0 0 16px;font-size:18px}
+.payout-dialog .earn-note{padding:8px 0 0}
+.payout-check{display:flex;gap:10px;align-items:flex-start;margin-top:18px;padding:12px;border:1px solid var(--line-strong);border-radius:10px;font-weight:600;font-size:14px}
+.payout-check input{margin-top:3px}
+.payout-dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+
+@media (max-width:860px){
+  .payout-layout{grid-template-columns:1fr}
+  .payout-aside{position:static;order:-1}
+  .payout-row{grid-template-columns:1fr}
+}

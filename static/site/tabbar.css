@@ -1,0 +1,60 @@
+/* Ommaviy sayt: telefon va planshetda suzib turuvchi pastki tab-panel. Kompyuterda ko'rinmaydi.
+   Faol bo'lmagan tab — kulrang chiziqli ikonka; faol tab — to'ldirilgan ikonka, ortida rangli "pill". */
+.site-tabbar{display:none}
+
+@media (max-width:980px){
+  /* Tepada logotip va til tanlash; menyu tugmasi kerak emas — bo'limlar pastki panelda */
+  .topbar-actions .topbar-burger,.mobile-sheet{display:none!important}
+
+  .site-tabbar{
+    --tab-off:#8b8e99;--tab-on:var(--blue);--tab-bg:rgb(255 255 255/.82);--tab-edge:rgb(255 255 255/.9);
+    --tab-pill:color-mix(in srgb,var(--blue) 13%,transparent);
+    position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:90;
+    display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);
+    max-width:560px;height:66px;margin:0 auto;padding:0 6px;
+    border:1px solid var(--tab-edge);border-radius:26px;background:var(--tab-bg);
+    -webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);
+    box-shadow:0 1px 0 rgb(255 255 255/.5) inset,0 18px 40px -16px rgb(15 23 42/.35),0 4px 12px -6px rgb(15 23 42/.18);
+  }
+  .site-tab{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;height:66px;padding:0 2px;
+    color:var(--tab-off);text-decoration:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+    transition:color .25s ease;
+  }
+  .site-tab .tab-svg{
+    box-sizing:content-box;width:22px;height:22px;padding:5px 15px;flex:none;overflow:visible;border-radius:16px;
+    background:transparent;transition:background-color .3s var(--ease),transform .35s var(--spring);
+  }
+  .site-tab .tab-svg .o{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .site-tab .tab-svg .f{display:none;fill:currentColor;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+  .site-tab span{max-width:100%;overflow:hidden;font-size:10.5px;font-weight:600;line-height:12px;letter-spacing:-.005em;white-space:nowrap;text-overflow:ellipsis}
+  .site-tab:active .tab-svg{transform:scale(.9)}
+  .site-tab[aria-current="page"]{color:var(--tab-on)}
+  .site-tab[aria-current="page"] .tab-svg{background:var(--tab-pill)}
+  .site-tab[aria-current="page"] .tab-svg .o{display:none}
+  .site-tab[aria-current="page"] .tab-svg .f{display:inline}
+  .site-tab[aria-current="page"] span{font-weight:700}
+  .site-tab:focus-visible{outline:none}
+  .site-tab:focus-visible .tab-svg{box-shadow:0 0 0 2px var(--tab-on)}
+
+  /* Sahifa oxiri panel ostida qolmasin */
+  body.site{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+}
+
+/* Telefondagi kirish oynasi: iOS uslubidagi tutqich (pastga surib yopiladi) */
+@media (max-width:640px){
+  .login-modal{touch-action:pan-y}
+  .login-modal-content{position:relative;padding-top:44px!important}
+  .login-modal-content::before{content:"";position:absolute;top:10px;left:50%;width:38px;height:5px;margin-left:-19px;border-radius:3px;background:var(--label-3)}
+  .login-modal-close{top:22px!important;right:18px!important}
+}
+
+@media (max-width:360px){.site-tab .tab-svg{padding:5px 10px}}
+
+@media (max-width:980px) and (prefers-color-scheme:dark){
+  .site-tabbar{--tab-off:#8e8e93;--tab-bg:rgb(28 28 30/.78);--tab-edge:rgb(255 255 255/.08);
+    box-shadow:0 1px 0 rgb(255 255 255/.06) inset,0 18px 40px -14px rgb(0 0 0/.7)}
+}
+
+@media (prefers-reduced-motion:reduce){.site-tab,.site-tab .tab-svg{transition:none}}
+@media print{.site-tabbar{display:none!important}}

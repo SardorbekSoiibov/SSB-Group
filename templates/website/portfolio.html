@@ -1,0 +1,28 @@
+{% extends "base_public.html" %}
+{% block title %}Ishlarimiz — {{ site.company_name }}{% endblock %}
+{% block description %}{{ site.company_name }} tomonidan ishlab chiqilgan veb-saytlar, CRM tizimlari va raqamli mahsulotlar.{% endblock %}
+{% block content %}
+{% include "website/_page_head.html" with heading="Ishlarimiz" lede="Biz qurgan tizimlar, ular hal qilgan muammolar va ishlatilgan texnologiyalar." %}
+<section class="section pt-0">
+  <div class="wrap">
+    <form method="get" action="{% url 'website:portfolio' %}" class="filter-bar" data-reveal
+          hx-get="{% url 'website:portfolio' %}" hx-target="#portfolio-grid" hx-trigger="change, input from:#pf-q delay:350ms, submit" hx-push-url="true">
+      <fieldset class="chip-row">
+        <legend class="sr-only">Kategoriya</legend>
+        <label class="chip-option"><input type="radio" name="kategoriya" value="" class="sr-only" {% if not active %}checked{% endif %}><span class="chip">Barchasi</span></label>
+        {% for c in categories %}
+        <label class="chip-option"><input type="radio" name="kategoriya" value="{{ c.slug }}" class="sr-only" {% if active == c.slug %}checked{% endif %}><span class="chip">{{ c.name }}</span></label>
+        {% endfor %}
+      </fieldset>
+      <div class="search-field">
+        <label for="pf-q" class="sr-only">Qidirish</label>
+        {% include "website/_icon.html" with name="search" %}
+        <input id="pf-q" type="search" name="q" value="{{ query }}" placeholder="Loyiha yoki texnologiya">
+        <noscript><button class="btn btn-filled btn-sm">Qidirish</button></noscript>
+      </div>
+    </form>
+    <div id="portfolio-grid" class="portfolio-results" aria-live="polite">{% include "website/_portfolio_grid.html" %}</div>
+  </div>
+</section>
+{% include "website/_cta_band.html" %}
+{% endblock %}

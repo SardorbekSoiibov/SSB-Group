@@ -1,0 +1,28 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}{% if task %}Vazifani tahrirlash{% else %}Yangi vazifa biriktirish{% endif %}{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / VAZIFALAR</span>
+    <h1>{% if task %}Vazifani tahrirlash: {{ task.title }}{% else %}Yangi vazifa biriktirish{% endif %}</h1>
+    <p>Loyihani, mas’ul ijrochini va muddatni tanlang. Ko‘rsatmalarni aniq yozing.</p>
+  </div>
+  <div class="heading-actions">
+    <a href="{% if task %}{{ task.get_absolute_url }}{% else %}{% url 'crm:tasks' %}{% endif %}" class="button">Bekor qilish</a>
+  </div>
+</header>
+<section class="panel">
+  <header class="panel-head">
+    <h2>Vazifa ma’lumotlari</h2>
+    <span class="chart-key">* bilan belgilangan maydonlar to‘ldirilishi shart</span>
+  </header>
+  <form data-modal-source method="post" enctype="multipart/form-data" class="form-grid">
+    {% csrf_token %}
+    {% include "boshqaruv/components/form.html" with form=form %}
+    <div class="form-footer" style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; padding-top:16px; border-top:1px solid var(--line);">
+      <a href="{% if task %}{{ task.get_absolute_url }}{% else %}{% url 'crm:tasks' %}{% endif %}" class="button">Bekor qilish</a>
+      <button class="button primary" type="submit">{% ui_icon 'check' %} Vazifani saqlash</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

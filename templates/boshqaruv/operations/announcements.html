@@ -1,0 +1,170 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Hackaton e’lonlari{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/announcements.css' %}?v=5">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / HACKATON</span>
+    <h1>Hackaton e’lonlari</h1>
+    <p>Yaqinlashayotgan hackatonlar: sanasi, ro‘yxatdan o‘tish muddati, joyi va mukofoti — barchasi bir joyda.</p>
+  </div>
+  <div class="heading-actions"></div>
+</header>
+
+<div class="ann-layout">
+  <div class="ann-feed">
+    {% for item in page %}
+    <article class="ann-card{% if item.pinned %} is-pinned{% endif %}">
+      <header class="ann-head">
+        <span class="ann-avatar" aria-hidden="true">{{ item.author.initials|default:"S" }}</span>
+        <div class="ann-meta">
+          <strong>{{ item.author|default:"SSB Group" }}</strong>
+          <small>{{ item.created_at|date:"d.m.Y H:i" }}</small>
+        </div>
+        {% if item.pinned %}<span class="ann-pin">{% ui_icon 'bell' %} Qadalgan</span>{% endif %}
+        {% if item.author_id == user.pk or user.is_owner %}
+        <form method="post" action="{% url 'crm:announcement_delete' item.pk %}" class="ann-delete{% if not item.pinned %} is-alone{% endif %}" data-confirm="«{{ item.title }}» e’loni o‘chirilsinmi? Rasmlari ham o‘chadi, buni qaytarib bo‘lmaydi." data-confirm-danger>
+          {% csrf_token %}
+          <button type="submit" aria-label="E’lonni o‘chirish" title="O‘chirish">{% ui_icon 'trash' %}</button>
+        </form>
+        {% endif %}
+      </header>
+      <h2 class="ann-title">{{ item.title }}</h2>
+      {% if item.event_date or item.registration_deadline or item.location or item.prize %}
+      <ul class="hk-facts">
+        {% if item.event_date %}<li class="{% if item.is_past %}is-muted{% endif %}"><span aria-hidden="true">📅</span><small>Sana</small><strong>{{ item.event_date|date:"d.m.Y" }}</strong>{% if item.is_past %}<em>o‘tib ketgan</em>{% endif %}</li>{% endif %}
+        {% if item.registration_deadline %}{% with left=item.registration_left %}
+        <li class="{% if left < 0 %}is-muted{% elif left <= 3 %}is-urgent{% endif %}"><span aria-hidden="true">⏳</span><small>Ro‘yxatdan o‘tish</small><strong>{{ item.registration_deadline|date:"d.m.Y" }} gacha</strong>
+          <em>{% if left < 0 %}yopilgan{% elif left == 0 %}bugun oxirgi kun{% else %}{{ left }} kun qoldi{% endif %}</em></li>
+        {% endwith %}{% endif %}
+        {% if item.location %}<li><span aria-hidden="true">📍</span><small>Joy / format</small><strong>{{ item.location }}</strong></li>{% endif %}
+        {% if item.prize %}<li class="is-prize"><span aria-hidden="true">🎁</span><small>Mukofot</small><strong>{{ item.prize }}</strong></li>{% endif %}
+      </ul>
+      {% endif %}
+      <div class="ann-body">{{ item.body|urlize|linebreaksbr }}</div>
+
+      {% with images=item.images.all %}{% if images %}
+      <div class="ann-gallery" data-count="{% if images|length > 4 %}4{% else %}{{ images|length }}{% endif %}" data-ann-gallery>
+        {% for img in images %}
+        <button type="button" class="ann-photo{% if forloop.counter > 4 %} is-extra{% endif %}" data-ann-photo data-src="{% url 'crm:announcement_image' img.pk %}" aria-label="Rasmni kattalashtirish ({{ forloop.counter }}/{{ images|length }})"{% if forloop.counter > 4 %} hidden{% endif %}>
+          <img src="{% url 'crm:announcement_image' img.pk %}" alt="" loading="lazy" decoding="async"{% if img.width %} width="{{ img.width }}" height="{{ img.height }}"{% endif %}>
+          {% if forloop.counter == 4 and images|length > 4 %}<span class="ann-more">+{{ images|length|add:"-4" }}</span>{% endif %}
+        </button>
+        {% endfor %}
+      </div>
+      {% endif %}{% endwith %}
+
+      {% if item.link_url %}
+      <a class="ann-link" href="{{ item.link_url }}" target="_blank" rel="noopener noreferrer">
+        <span>{{ item.button_label }}</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>
+      </a>
+      {% endif %}
+    </article>
+    {% empty %}
+    <div class="ann-empty">
+      <span class="ann-empty-icon" aria-hidden="true">{% ui_icon 'spark' %}</span>
+      <h2>Hozircha hackaton e’lonlari yo‘q</h2>
+      <p>{% if form %}Birinchi hackatonni e’lon qiling: o‘ng tomondagi «Yangi hackaton e’loni» tugmasini bosing.{% else %}Yangi hackaton e’lon qilinganda shu yerda va bildirishnomalarda ko‘rasiz.{% endif %}</p>
+    </div>
+    {% endfor %}
+    {% include "boshqaruv/components/pagination.html" %}
+  </div>
+
+  <aside class="ann-side">
+    {% if form %}
+    <section class="panel announcement-composer" data-ios-collapsible="false">
+      <header class="panel-head">
+        <div><span class="announcement-icon" aria-hidden="true">{% ui_icon 'spark' %}</span><h2>Yangi hackaton e’loni</h2></div>
+        <span class="chart-key">Butun jamoa ko‘radi</span>
+      </header>
+      <form data-modal-source data-announcement-form method="post" enctype="multipart/form-data" class="announcement-form ann-compose" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-alert" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+
+        <div class="ann-group">
+          <div class="field{% if form.title.errors %} invalid{% endif %}" data-field="title">
+            <label for="{{ form.title.id_for_label }}">Hackaton nomi<span>*</span></label>
+            {{ form.title }}
+            {% for e in form.title.errors %}<p class="field-error" role="alert">{{ e }}</p>{% endfor %}
+          </div>
+          <div class="field{% if form.body.errors %} invalid{% endif %}" data-field="body">
+            <label for="{{ form.body.id_for_label }}">Tavsif<span>*</span></label>
+            {{ form.body }}
+            <small>Matndagi havolalar avtomatik bosiladigan bo‘ladi.</small>
+            {% for e in form.body.errors %}<p class="field-error" role="alert">{{ e }}</p>{% endfor %}
+          </div>
+        </div>
+
+        <div class="ann-group hk-details">
+          <span class="field-label">Hackaton tafsilotlari <em>ixtiyoriy</em></span>
+          <div class="hk-grid">
+            {% for field in form %}{% if field.name == 'event_date' or field.name == 'registration_deadline' or field.name == 'location' or field.name == 'prize' %}
+            <div class="field{% if field.errors %} invalid{% endif %}" data-field="{{ field.name }}">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% for e in field.errors %}<p class="field-error" role="alert">{{ e }}</p>{% endfor %}
+            </div>
+            {% endif %}{% endfor %}
+          </div>
+        </div>
+
+        <div class="field ann-photos-field{% if form.images.errors %} invalid{% endif %}" data-field="images">
+          <span class="field-label">Rasmlar <em>ixtiyoriy · soni cheklanmagan</em></span>
+          <label class="ann-drop" data-ann-drop>
+            <input type="file" name="{{ form.images.html_name }}" accept="image/jpeg,image/png,image/webp" multiple data-ann-input>
+            <span class="ann-drop-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="m21 15-4.5-4.5L8 19"/></svg></span>
+            <span class="ann-drop-text"><strong>Rasm qo‘shish</strong><small>Bosing yoki shu yerga tashlang · JPG, PNG, WebP · har biri 8 MB gacha</small></span>
+          </label>
+          <ul class="ann-previews" data-ann-previews aria-live="polite"></ul>
+          {% for e in form.images.errors %}<p class="field-error" role="alert">{{ e }}</p>{% endfor %}
+        </div>
+
+        <div class="ann-group ann-link-group">
+          <span class="field-label">Havola tugmasi <em>ixtiyoriy</em></span>
+          <div class="field{% if form.link_label.errors %} invalid{% endif %}" data-field="link_label">
+            <label for="{{ form.link_label.id_for_label }}">Tugma matni</label>
+            {{ form.link_label }}
+            {% for e in form.link_label.errors %}<p class="field-error" role="alert">{{ e }}</p>{% endfor %}
+          </div>
+          <div class="field{% if form.link_url.errors %} invalid{% endif %}" data-field="link_url">
+            <label for="{{ form.link_url.id_for_label }}">Havola (URL)</label>
+            {{ form.link_url }}
+            {% for e in form.link_url.errors %}<p class="field-error" role="alert">{{ e }}</p>{% endfor %}
+          </div>
+          <div class="ann-link-preview" data-ann-link-preview hidden>
+            <small>Ko‘rinishi:</small>
+            <span class="ann-link is-preview"><span data-ann-link-text>Havolani ochish</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg></span>
+          </div>
+        </div>
+
+        <div class="field ann-switch" data-field="pinned">
+          {{ form.pinned }}
+          <label for="{{ form.pinned.id_for_label }}">Yuqorida qadash<small>E’lon ro‘yxatning eng tepasida turadi.</small></label>
+        </div>
+
+        {% if channel_count %}
+        <div class="field ann-switch" data-field="telegram">
+          {{ form.telegram }}
+          <label for="{{ form.telegram.id_for_label }}">Telegram kanallarga ham yuborish<small>Bot qo‘shilgan {{ channel_count }} ta kanalga rasm va tugmasi bilan chiqadi.</small></label>
+        </div>
+        {% endif %}
+
+        <div class="form-footer announcement-actions">
+          <button class="button primary" type="submit">{% ui_icon 'spark' %} Hackatonni e’lon qilish</button>
+        </div>
+      </form>
+    </section>
+    {% endif %}
+  </aside>
+</div>
+
+<dialog class="ann-viewer" data-ann-viewer aria-label="Rasm">
+  <button type="button" class="ann-viewer-close" data-ann-close aria-label="Yopish">{% ui_icon 'close' %}</button>
+  <button type="button" class="ann-viewer-nav is-prev" data-ann-prev aria-label="Oldingi rasm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
+  <img alt="" data-ann-full>
+  <button type="button" class="ann-viewer-nav is-next" data-ann-next aria-label="Keyingi rasm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
+  <span class="ann-viewer-count" data-ann-count></span>
+</dialog>
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/announcements.js' %}?v=2" defer></script>{% endblock %}

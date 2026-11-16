@@ -1,0 +1,150 @@
+{% load static %}<!doctype html>
+<html lang="uz" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}{{ site.seo_title }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ site.seo_description }}{% endblock %}">
+  <link rel="canonical" href="{{ request.build_absolute_uri }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ site.company_name }}">
+  <meta property="og:title" content="{% block og_title %}{{ site.seo_title }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ site.seo_description }}{% endblock %}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  {% block og_image %}{% if site.og_image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site.og_image.url }}">{% endif %}{% endblock %}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preload" href="{% static 'fonts/onest-latin-wght-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'site/ios.css' %}?v=7"><link rel="stylesheet" href="{% static 'css/ssb-select.css' %}?v=1"><script src="{% static 'js/ssb-select.js' %}?v=1" defer></script>
+  <link rel="stylesheet" href="{% static 'site/tabbar.css' %}?v=5">
+  {% block head %}{% endblock %}
+  <script>document.documentElement.classList.replace('no-js','js');document.documentElement.classList.add('ssb-loading');setTimeout(function(){document.documentElement.classList.remove('ssb-loading');},4500);</script>
+</head>
+<body class="site ios" x-data="ssbPublicShell()">
+  {% url 'website:home' as home_url %}
+  {% if user.is_authenticated %}{% url 'enterprise:overview' as entry_url %}{% else %}{% url 'accounts:login' as entry_url %}{% endif %}
+  {% if request.path == home_url %}{% firstof '' as home_prefix %}{% else %}{% firstof home_url as home_prefix %}{% endif %}
+
+  <div class="brand-loader" role="status" aria-label="SSB Group yuklanmoqda">
+    <div class="launch">
+      <span class="launch-wordmark" aria-hidden="true">SSB <span>Group</span></span>
+      <span class="launch-spinner" aria-hidden="true">{% for i in "123456789012" %}<i style="--k:{{ forloop.counter0 }}"></i>{% endfor %}</span>
+    </div>
+  </div>
+
+  <a href="#main" class="skip-link">Asosiy kontentga o‘tish</a>
+  <div class="scroll-progress" aria-hidden="true"><i></i></div>
+
+  <div class="topbar-wrap">
+    <header class="topbar" aria-label="Asosiy menyu">
+      <a href="{{ home_url }}" class="topbar-brand" aria-label="{{ site.company_name|default:'SSB Group' }} — bosh sahifa">{% include "website/_logo.html" %}</a>
+      <nav class="topbar-nav" aria-label="Bo‘limlar">
+        <span class="topbar-pill" aria-hidden="true"></span>
+        <a href="{{ home_prefix }}#xizmatlar" data-scroll="xizmatlar">Xizmatlar</a>
+        <a href="{{ home_prefix }}#portfolio" data-scroll="portfolio">Ishlarimiz</a>
+        <a href="{{ home_prefix }}#biz-haqimizda" data-scroll="biz-haqimizda">Biz haqimizda</a>
+        <a href="{{ home_prefix }}#jamoa" data-scroll="jamoa">Jamoa</a>
+      </nav>
+      <div class="topbar-actions">
+        <div class="language-picker" data-no-translate>
+          <button type="button" class="language-trigger" aria-label="Tilni tanlash" aria-expanded="false" aria-controls="language-options" aria-haspopup="menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg><span class="language-current">UZ</span></button>
+          <div id="language-options" class="language-options" role="menu" aria-label="Language / Язык / Til" hidden>
+            <button type="button" role="menuitemradio" aria-checked="true" data-language="uz"><span lang="uz">O‘zbekcha</span><small>UZ</small></button>
+            <button type="button" role="menuitemradio" aria-checked="false" data-language="ru"><span lang="ru">Русский</span><small>RU</small></button>
+            <button type="button" role="menuitemradio" aria-checked="false" data-language="en"><span lang="en">English</span><small>EN</small></button>
+          </div>
+        </div>
+        <a href="{{ entry_url }}" class="btn btn-tinted btn-sm hide-sm">Kirish</a>
+        <a href="{{ home_prefix }}#boshlash" data-scroll="boshlash" class="btn btn-filled btn-sm hide-md">Loyiha boshlash</a>
+        <button type="button" class="topbar-burger" data-menu-toggle aria-controls="mobile-sheet" aria-expanded="false" aria-label="Menyuni ochish"><span></span><span></span></button>
+      </div>
+    </header>
+  </div>
+
+  <div id="mobile-sheet" class="mobile-sheet" aria-hidden="true">
+    <nav class="mobile-list" aria-label="Mobil menyu">
+      <a href="{{ home_prefix }}#xizmatlar" data-scroll="xizmatlar"><span class="sym">{% include "website/_icon.html" with name="layers" cls="" %}</span>Xizmatlar<i aria-hidden="true"></i></a>
+      <a href="{{ home_prefix }}#portfolio" data-scroll="portfolio"><span class="sym">{% include "website/_icon.html" with name="grid" cls="" %}</span>Ishlarimiz<i aria-hidden="true"></i></a>
+      <a href="{{ home_prefix }}#biz-haqimizda" data-scroll="biz-haqimizda"><span class="sym">{% include "website/_icon.html" with name="info" cls="" %}</span>Biz haqimizda<i aria-hidden="true"></i></a>
+      <a href="{{ home_prefix }}#jamoa" data-scroll="jamoa"><span class="sym">{% include "website/_icon.html" with name="people" cls="" %}</span>Jamoa<i aria-hidden="true"></i></a>
+      <a href="{{ home_prefix }}#boshlash" data-scroll="boshlash"><span class="sym">{% include "website/_icon.html" with name="chat" cls="" %}</span>Aloqa<i aria-hidden="true"></i></a>
+    </nav>
+    <div class="mobile-actions">
+      <a href="{{ home_prefix }}#boshlash" data-scroll="boshlash" class="btn btn-filled btn-lg">Loyiha boshlash</a>
+      <a href="{{ entry_url }}" class="btn btn-tinted btn-lg">Kirish</a>
+    </div>
+  </div>
+
+  <main id="main" class="main">{% block content %}{% endblock %}</main>
+
+  <footer class="footer">
+    <div class="footer-card">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="{{ home_url }}" class="topbar-brand">{% include "website/_logo.html" %}</a>
+          <p>{{ site.footer_text|default:"Veb-saytlar, CRM tizimlari, Telegram botlar va biznes jarayonlarini avtomatlashtirish." }}</p>
+          <div class="footer-cta">
+            <a href="{{ home_prefix }}#boshlash" data-scroll="boshlash" class="btn btn-filled">Loyiha boshlash</a>
+            <a href="{{ entry_url }}" class="btn btn-tinted">Kirish</a>
+          </div>
+        </div>
+        <nav class="footer-col" aria-label="Footer menyusi">
+          <h2>Bo‘limlar</h2>
+          <ul>
+            <li><a href="{{ home_prefix }}#xizmatlar" data-scroll="xizmatlar">Xizmatlar</a></li>
+            <li><a href="{{ home_prefix }}#portfolio" data-scroll="portfolio">Ishlarimiz</a></li>
+            <li><a href="{{ home_prefix }}#biz-haqimizda" data-scroll="biz-haqimizda">Biz haqimizda</a></li>
+            <li><a href="{{ home_prefix }}#jamoa" data-scroll="jamoa">Jamoa</a></li>
+            <li><a href="{{ home_prefix }}#boshlash" data-scroll="boshlash">Aloqa</a></li>
+          </ul>
+        </nav>
+        <div class="footer-col">
+          <h2>Aloqa</h2>
+          <ul>
+            {% if site.phone %}<li><a href="tel:{{ site.phone|cut:' ' }}">{{ site.phone }}</a></li>{% endif %}
+            {% if site.email %}<li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>{% endif %}
+            {% if site.address %}<li>{{ site.address }}</li>{% endif %}
+            {% if site.working_hours %}<li class="muted">{{ site.working_hours }}</li>{% endif %}
+            {% if not site.phone and not site.email %}<li><a href="{{ home_prefix }}#boshlash" data-scroll="boshlash">Murojaat formasi orqali yozing</a></li>{% endif %}
+          </ul>
+          {% if site.telegram or site.instagram or site.linkedin or site.github %}
+          <div class="footer-socials">
+            {% if site.telegram %}<a href="{{ site.telegram }}" rel="noopener" target="_blank">Telegram</a>{% endif %}
+            {% if site.instagram %}<a href="{{ site.instagram }}" rel="noopener" target="_blank">Instagram</a>{% endif %}
+            {% if site.linkedin %}<a href="{{ site.linkedin }}" rel="noopener" target="_blank">LinkedIn</a>{% endif %}
+            {% if site.github %}<a href="{{ site.github }}" rel="noopener" target="_blank">GitHub</a>{% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <p class="footer-mark" aria-hidden="true">{{ site.company_name|default:"SSB Group" }}</p>
+      <div class="footer-bottom">
+        <p>© {% now "Y" %} {{ site.company_name|default:"SSB Group" }}</p>
+        <a href="{% url 'website:privacy' %}">Maxfiylik siyosati</a>
+      </div>
+    </div>
+  </footer>
+
+  {# Pastki tugmalar yangi sahifa ochmaydi: bosh sahifaning o'zida kerakli bo'limga silliq aylantiradi #}
+  <nav class="site-tabbar" aria-label="Pastki menyu" data-site-tabbar>
+    <a href="{{ home_url }}" data-tab-section="top" class="site-tab"{% if request.path == home_url %} data-scroll="main" aria-current="page"{% endif %}>{% include "boshqaruv/components/tab_icon.html" with name="home" %}<span>Asosiy</span></a>
+    <a href="{{ home_prefix }}#xizmatlar" data-scroll="xizmatlar" data-tab-section="xizmatlar" class="site-tab">{% include "boshqaruv/components/tab_icon.html" with name="services" %}<span>Xizmatlar</span></a>
+    <a href="{{ home_prefix }}#portfolio" data-scroll="portfolio" data-tab-section="portfolio" class="site-tab">{% include "boshqaruv/components/tab_icon.html" with name="project" %}<span>Ishlarimiz</span></a>
+    <a href="{{ home_prefix }}#boshlash" data-scroll="boshlash" data-tab-section="boshlash" class="site-tab">{% include "boshqaruv/components/tab_icon.html" with name="chat" %}<span>Aloqa</span></a>
+    <a href="{{ entry_url }}" class="site-tab">{% include "boshqaruv/components/tab_icon.html" with name="person" %}<span>{% if user.is_authenticated %}Kabinet{% else %}Kirish{% endif %}</span></a>
+  </nav>
+
+  <dialog id="login-modal" class="login-modal" data-login-url="{% url 'accounts:login' %}" aria-labelledby="login-modal-title"><button type="button" class="login-modal-close" aria-label="Yopish"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button><div class="login-modal-content"></div></dialog>
+  <script src="{% static 'site/ios.js' %}?v=1"></script>
+  <script src="{% static 'site/tabbar.js' %}?v=1" defer></script>
+  <script src="{% static 'site/sheet.js' %}?v=1" defer></script>
+  <script src="{% static 'boshqaruv/entry.js' %}?v=3" defer></script>
+  <script src="{% static 'js/localization.js' %}?v=7" defer></script>
+  <script defer src="{% static 'vendor/alpine.min.js' %}"></script>
+  <script src="{% static 'vendor/htmx.min.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

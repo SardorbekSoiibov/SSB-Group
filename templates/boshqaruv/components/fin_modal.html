@@ -1,0 +1,12 @@
+{% load boshqaruv static %}
+{# Moliyaviy amal modali: data-fin-modal havolalari formani shu sahifada ochadi (moliya va loyiha sahifalarida). #}
+<dialog class="fin-modal" id="fin-modal" aria-labelledby="fin-modal-title">
+  <header class="fin-modal-head"><div><span class="eyebrow">Moliya</span><h2 id="fin-modal-title" data-fin-modal-title>Moliyaviy amal</h2></div><button type="button" class="icon-button" data-fin-modal-close aria-label="Yopish">{% ui_icon 'close' %}</button></header>
+  <div class="fin-modal-body" data-fin-modal-body></div>
+</dialog>
+<link rel="stylesheet" href="{% static 'boshqaruv/finance.css' %}?v=6">
+<link rel="stylesheet" href="{% static 'boshqaruv/operation-new.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'boshqaruv/payouts.css' %}?v=6">
+<script src="{% static 'boshqaruv/operation-new.js' %}?v=2" defer></script>
+<script src="{% static 'boshqaruv/payout-form.js' %}?v=1" defer></script>
+<script src="{% static 'boshqaruv/finance-modal.js' %}?v=2" defer></script>

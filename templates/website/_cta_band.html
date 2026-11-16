@@ -1,0 +1,9 @@
+<section class="cta-band-wrap">
+  <div class="wrap">
+    <div class="cta-band" data-reveal>
+      <div class="cta-orbs" aria-hidden="true"><span></span><span></span></div>
+      <h2>{{ cta_title|default:"Loyihangizni muhokama qilamizmi?" }}</h2>
+      <a href="{% url 'website:contact' %}{% if cta_service %}?xizmat={{ cta_service }}{% endif %}" class="btn btn-white btn-lg">Loyiha boshlash{% include "website/_icon.html" with name="arrow-up-right" %}</a>
+    </div>
+  </div>
+</section>

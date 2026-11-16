@@ -1,0 +1,72 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Mijoz murojaatlari (Lidlar){% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / CRM VA MUROJAATLAR</span>
+    <h1>Kiruvchi murojaatlar</h1>
+    <p>Sayt, Telegram va boshqa manbalardan kelib tushgan yangi mijoz arizalari va loyiha takliflari.</p>
+  </div>
+  <div class="heading-actions"></div>
+</header>
+
+<form class="filter-bar">
+  <label>Qidirish
+    <input name="q" value="{{ request.GET.q }}" placeholder="Mijoz ismi, telefon yoki telegram…">
+  </label>
+  <label>Murojaat bosqichi
+    <select name="bosqich">
+      <option value="">Barcha bosqichlar</option>
+      {% for item in pipeline %}
+      <option value="{{ item.value }}" {% if request.GET.bosqich == item.value %}selected{% endif %}>{{ item.label }} ({{ item.count }})</option>
+      {% endfor %}
+    </select>
+  </label>
+  <button class="button">Filtrlash</button>
+</form>
+
+<section class="panel">
+  <header class="panel-head">
+    <h2>Murojaatlar ro‘yxati</h2>
+    <span class="chart-key">{{ page.paginator.count|default:page|length }} ta murojaat</span>
+  </header>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Mijoz / Aloqa</th>
+          <th>Qiziqqan xizmati</th>
+          <th>Bosqich</th>
+          <th>Mas’ul menejer</th>
+          <th>Yuborilgan sana</th>
+          <th>Amal</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in page %}
+        <tr>
+          <td>
+            <a href="{% url 'crm:inquiry_detail' item.pk %}" class="row-title">{{ item.name }}</a>
+            <small class="muted font-mono">{{ item.contact }}</small>
+          </td>
+          <td><strong>{{ item.service|default:'Umumiy loyiha' }}</strong></td>
+          <td><span class="status" data-status="{{ item.stage }}">{{ item.get_stage_display }}</span></td>
+          <td>{{ item.assigned_to|default:'Biriktirilmagan' }}</td>
+          <td><small class="text-secondary">{{ item.created_at|date:app_datetime_format }}</small></td>
+          <td>
+            <a href="{% url 'crm:inquiry_detail' item.pk %}" class="button compact">Ko‘rib chiqish {% ui_icon 'arrow' %}</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align:center; padding:32px 20px; color:var(--ink-tertiary);">
+            Filtr bo‘yicha murojaatlar mavjud emas.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "boshqaruv/components/pagination.html" %}
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Muddatlar taqvimi{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/work-views.css' %}?v=2">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / LOYIHALAR</span>
+    <h1>Muddatlar taqvimi</h1>
+    <p>Oylar kesimida loyiha va vazifalar yakunlanish muddatlarini kuzating.</p>
+  </div>
+  <div class="heading-actions">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <a href="?oy={{ prev|date:'Y-n' }}" class="button" aria-label="Oldingi oy">← Oldingi oy</a>
+      <a href="{% url 'crm:calendar' %}" class="button">Shu oy</a>
+      <span class="date-chip" style="font-weight:600; padding:6px 12px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm);">{{ month|date:'m.Y' }}</span>
+      <a href="?oy={{ next|date:'Y-n' }}" class="button" aria-label="Keyingi oy">Keyingi oy →</a>
+    </div>
+  </div>
+</header>
+
+{% include 'boshqaruv/operations/projects/_views.html' with active_view='calendar' %}
+
+<p class="work-view-hint">{% ui_icon 'project' %} Loyiha muddati · Tafsilotlarni ochish uchun nomini bosing.</p>
+<div class="panel">
+  <div class="table-wrap">
+    <div class="calendar-grid">
+      <div class="calendar-weekday">Du</div>
+      <div class="calendar-weekday">Se</div>
+      <div class="calendar-weekday">Ch</div>
+      <div class="calendar-weekday">Pa</div>
+      <div class="calendar-weekday">Ju</div>
+      <div class="calendar-weekday">Sh</div>
+      <div class="calendar-weekday">Ya</div>
+      {% for week in weeks %}
+      {% for day in week %}
+      <div class="calendar-cell {% if day.date == today %}today{% endif %} {% if not day.in_month %}outside-month{% endif %}">
+        <strong>{{ day.date|date:'d.m' }}</strong>
+        {% for event in day.events %}
+        <a href="{{ event.obj.get_absolute_url }}">{% if event.kind == 'task' %}{% ui_icon 'task' %} Vazifa: {% else %}{% ui_icon 'project' %} Loyiha: {% endif %}{% if event.kind == 'task' %}{{ event.obj.title }}{% else %}{{ event.obj.name }}{% endif %}</a>
+        {% endfor %}
+      </div>
+      {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

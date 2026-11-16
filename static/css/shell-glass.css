@@ -1,0 +1,122 @@
+/* Page-wide look that matches the floating glass sidebar: pill controls, soft glass cards, black primary actions.
+   Visual properties only (colour, radius, shadow) - sizes, layout and behaviour stay as they were. */
+body[data-app]:not(#_){
+  --g-ink:#17181a;--g-muted:#8b8e95;--g-black:#131314;--g-black-ink:#fff;--g-accent:#b7f27a;--g-accent-ink:#13240a;
+  --g-panel:rgb(255 255 255/.74);--g-edge:rgb(255 255 255/.85);--g-line:rgb(17 24 39/.075);--g-field:#fff;--g-chip:rgb(17 24 39/.055);
+  --g-hover:#fff;--g-base:#eeedea;
+  --g-shadow:0 26px 50px -30px rgb(16 24 40/.34),0 8px 20px -14px rgb(16 24 40/.14),inset 0 1px 0 rgb(255 255 255/.6);
+  --g-shadow-sm:0 10px 20px -14px rgb(16 24 40/.32),inset 0 1px 0 rgb(255 255 255/.55);
+  background:
+    radial-gradient(900px 560px at 88% -8%,color-mix(in srgb,var(--g-accent) 30%,transparent),transparent 70%),
+    radial-gradient(760px 520px at 8% 108%,rgb(120 113 108/.16),transparent 70%),
+    var(--g-base)!important;
+  background-attachment:fixed!important
+}
+:root[data-theme="dark"] body[data-app]:not(#_){
+  --g-ink:#f3f3f5;--g-muted:#9b9da6;--g-black:#f4f4f5;--g-black-ink:#121213;
+  --g-panel:rgb(34 35 40/.72);--g-edge:rgb(255 255 255/.08);--g-line:rgb(255 255 255/.085);--g-field:rgb(255 255 255/.07);--g-chip:rgb(255 255 255/.08);
+  --g-hover:rgb(255 255 255/.1);--g-base:#0f0f11;
+  --g-shadow:0 26px 50px -30px rgb(0 0 0/.9),inset 0 1px 0 rgb(255 255 255/.05);
+  --g-shadow-sm:inset 0 1px 0 rgb(255 255 255/.05);
+  background:
+    radial-gradient(900px 560px at 88% -8%,color-mix(in srgb,var(--g-accent) 13%,transparent),transparent 70%),
+    var(--g-base)!important;
+  background-attachment:fixed!important
+}
+:root[data-accent]:not([data-accent="navy"]) body[data-app]:not(#_){--g-accent:var(--apple-blue);--g-accent-ink:#fff}
+:root[data-theme="dark"][data-accent]:not([data-accent="navy"]) body[data-app]:not(#_){--g-accent-ink:#101114}
+body[data-app] .app-body:not(#_){background:none!important}
+
+/* top bar: floating glass pill */
+body[data-app] .app-topbar:not(#_){top:12px!important;margin:12px 12px 0 0!important;border:1px solid var(--g-edge)!important;border-radius:30px!important;background:var(--g-panel)!important;box-shadow:var(--g-shadow)!important;-webkit-backdrop-filter:blur(28px) saturate(170%)!important;backdrop-filter:blur(28px) saturate(170%)!important}
+body[data-app] .app-topbar:not(#_) .breadcrumbs,body[data-app] .app-topbar:not(#_) .breadcrumbs a{color:var(--g-muted)!important}
+body[data-app] .app-topbar:not(#_) .breadcrumbs strong{color:var(--g-ink)!important}
+body[data-app] .topbar-icons:not(#_){border:1px solid var(--g-line)!important;border-radius:999px!important;background:var(--g-field)!important;box-shadow:var(--g-shadow-sm)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body[data-app] .topbar-icons:not(#_) :is(.command-button,.notification-button,.appearance-menu>summary){border-radius:50%!important;color:var(--g-ink)!important}
+body[data-app] .topbar-icons:not(#_) :is(.command-button,.notification-button,.appearance-menu>summary):hover{background:var(--g-chip)!important}
+body[data-app] .topbar-icons:not(#_) .ui-icon{color:var(--g-ink)!important}
+body[data-app] .account-menu:not(#_)>summary .avatar,body[data-app] .app-topbar:not(#_) .avatar{border-radius:50%!important;background:color-mix(in srgb,var(--g-ink) 9%,transparent)!important;color:var(--g-ink)!important;box-shadow:0 0 0 3px var(--g-field),var(--g-shadow-sm)!important}
+
+/* buttons: pills, black primary with an accent icon */
+body[data-app] :is(.button,.icon-button,.command-button):not(#_){border-radius:999px!important}
+body[data-app] .button:not(#_):not(.primary):not(.danger):not([class*="danger"]){border:1px solid var(--g-line)!important;background:var(--g-field)!important;color:var(--g-ink)!important;box-shadow:var(--g-shadow-sm)!important}
+body[data-app] .button:not(#_):not(.primary):not(.danger):not([class*="danger"]):hover{background:var(--g-hover)!important;border-color:color-mix(in srgb,var(--g-ink) 16%,transparent)!important}
+body[data-app] .button.primary:not(#_),body[data-app] .topbar-actions>.button.primary:not(#_){border:0!important;background:var(--g-black)!important;color:var(--g-black-ink)!important;box-shadow:0 14px 24px -14px rgb(0 0 0/.65)!important}
+body[data-app] .button.primary:not(#_):hover{background:color-mix(in srgb,var(--g-black) 88%,var(--g-black-ink))!important}
+body[data-app] .button.primary:not(#_) .ui-icon{color:var(--g-accent)!important}
+:root[data-theme="dark"] body[data-app] .button.primary:not(#_) .ui-icon{color:var(--g-black-ink)!important}
+body[data-app] .confirm-modal.is-danger .button.primary:not(#_){background:var(--danger)!important;color:#fff!important}
+body[data-app] .button:not(#_):disabled{opacity:.5}
+body[data-app] .icon-button:not(#_){border:1px solid var(--g-line)!important;background:var(--g-field)!important;color:var(--g-ink)!important;box-shadow:none!important}
+body[data-app] .date-chip:not(#_){border:1px solid var(--g-line)!important;background:var(--g-chip)!important;color:var(--g-muted)!important;box-shadow:none!important}
+body[data-app] .text-link:not(#_){color:var(--g-ink)!important}
+
+/* headings */
+body[data-app] .eyebrow:not(#_){color:var(--g-muted)!important}
+body[data-app] .page-heading:not(#_) h1{color:var(--g-ink)!important}
+
+/* cards */
+body[data-app] :is(.panel,.filter-bar,.metric-card,.ws-card):not(#_){border:1px solid var(--g-edge)!important;border-radius:28px!important;background:var(--g-panel)!important;box-shadow:var(--g-shadow)!important}
+body[data-app] .panel:not(#_){overflow:hidden}
+body[data-app] .panel:not(#_)>.panel-head{border-bottom:1px solid var(--g-line)!important;background:none!important}
+body[data-app] .panel:not(#_) .panel:not(#_){border-radius:20px!important;box-shadow:none!important;border-color:var(--g-line)!important}
+body[data-app] .panel-collapse-button:not(#_){border-radius:50%!important;border:1px solid var(--g-line)!important;background:var(--g-chip)!important;color:var(--g-ink)!important;box-shadow:none!important}
+body[data-app] dialog .panel:not(#_){box-shadow:none!important}
+
+/* KPI cards: the first one is the dark "hero" card */
+body[data-app] .stat-strip:not(#_) .stat-cell{border:1px solid var(--g-edge)!important;border-radius:28px!important;background:var(--g-panel)!important;box-shadow:var(--g-shadow)!important}
+body[data-app] .stat-strip:not(#_) .stat-cell strong{color:var(--g-ink)!important;letter-spacing:-.04em}
+body[data-app] .stat-strip:not(#_) .stat-label{color:var(--g-ink)!important}
+body[data-app] .stat-strip:not(#_) .stat-cell small{color:var(--g-muted)!important}
+body[data-app] .stat-strip:not(#_) .stat-label .ui-icon{box-sizing:border-box;width:34px!important;height:34px!important;padding:8px;border-radius:50%;background:var(--g-chip);color:var(--g-ink)!important;flex:none}
+body[data-app] .stat-strip:not(#_) .stat-label{display:flex!important;align-items:center;gap:10px}
+body[data-app] .stat-strip:not(#_) .stat-cell:first-child{border-color:transparent!important;background:var(--g-black)!important;box-shadow:0 26px 44px -26px rgb(0 0 0/.7)!important}
+body[data-app] .stat-strip:not(#_) .stat-cell:first-child :is(strong,.stat-label){color:var(--g-black-ink)!important}
+body[data-app] .stat-strip:not(#_) .stat-cell:first-child small{color:color-mix(in srgb,var(--g-black-ink) 62%,transparent)!important}
+body[data-app] .stat-strip:not(#_) .stat-cell:first-child .stat-label .ui-icon{background:var(--g-accent);color:var(--g-accent-ink)!important}
+
+/* fields */
+body[data-app] :is(.field,.filter-bar,.pf-grid,.command-dialog,.record-dialog) :is(input:not([type="checkbox"],[type="radio"],[type="color"],[type="range"],[type="file"],[type="hidden"]),select:not([multiple]):not(.button)):not(#_){border:1px solid var(--g-line)!important;border-radius:999px!important;background:var(--g-field)!important;color:var(--g-ink)!important;box-shadow:var(--g-shadow-sm)!important}
+body[data-app] :is(.field,.filter-bar,.pf-grid,.command-dialog,.record-dialog) :is(textarea,select[multiple]):not(#_){border:1px solid var(--g-line)!important;border-radius:20px!important;background:var(--g-field)!important;color:var(--g-ink)!important;box-shadow:var(--g-shadow-sm)!important}
+body[data-app] :is(.field,.filter-bar,.pf-grid,.command-dialog,.record-dialog) :is(input,select,textarea):not(#_):focus{border-color:color-mix(in srgb,var(--g-ink) 26%,transparent)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--g-ink) 9%,transparent)!important;outline:0!important}
+body[data-app] :is(input,textarea):not(#_)::placeholder{color:var(--g-muted)}
+body[data-app] :is(input[type="checkbox"],input[type="radio"]):not(#_){accent-color:var(--g-black)}
+
+/* segmented controls and tabs */
+body[data-app] :is(.segmented-control,.tabs):not(#_){border:1px solid var(--g-line)!important;border-radius:999px!important;background:var(--g-chip)!important}
+body[data-app] :is(.segmented-control,.tabs):not(#_) :is(a,button){border-radius:999px!important;color:var(--g-muted)!important}
+body[data-app] :is(.segmented-control,.tabs):not(#_) :is(a,button):hover{color:var(--g-ink)!important}
+body[data-app] :is(.segmented-control,.tabs):not(#_) :is(a.active,button.active,[aria-current="page"],[aria-selected="true"],[aria-pressed="true"]){background:var(--g-black)!important;color:var(--g-black-ink)!important;box-shadow:0 10px 18px -12px rgb(0 0 0/.6)!important}
+body[data-app] .work-views:not(#_)>a{border:1px solid var(--g-edge)!important;border-radius:24px!important;background:var(--g-panel)!important;box-shadow:var(--g-shadow-sm)!important;color:var(--g-ink)!important}
+body[data-app] .work-views:not(#_)>a[aria-current="page"]{border-color:transparent!important;background:var(--g-black)!important;color:var(--g-black-ink)!important;box-shadow:0 20px 34px -22px rgb(0 0 0/.7)!important}
+body[data-app] .work-views:not(#_)>a[aria-current="page"] :is(strong,small){color:inherit!important}
+body[data-app] .work-views:not(#_)>a[aria-current="page"] small{opacity:.65}
+body[data-app] .work-views:not(#_)>a[aria-current="page"] .ui-icon{color:var(--g-accent)!important}
+:root[data-theme="dark"] body[data-app] .work-views:not(#_)>a[aria-current="page"] .ui-icon{color:var(--g-black-ink)!important}
+
+/* tables */
+body[data-app] .data-table:not(#_) thead th{background:none!important;color:var(--g-muted)!important;border-bottom:1px solid var(--g-line)!important}
+body[data-app] .data-table:not(#_) tbody td{border-color:var(--g-line)!important}
+body[data-app] .data-table:not(#_) tbody tr:hover>td{background:color-mix(in srgb,var(--g-hover) 70%,transparent)!important}
+body[data-app] .progress-track:not(#_){border-radius:999px!important;background:color-mix(in srgb,var(--g-ink) 10%,transparent)!important}
+body[data-app] .progress-track:not(#_)>span{border-radius:999px!important;background:var(--g-black)!important}
+body[data-app] .status:not(#_){border-radius:999px!important}
+
+/* menus and dialogs */
+body[data-app] :is(.dropdown,.appearance-popover):not(#_){border:1px solid var(--g-edge)!important;border-radius:24px!important;background:var(--surface)!important;box-shadow:0 30px 60px -24px rgb(16 24 40/.45)!important}
+body[data-app] .dropdown:not(#_) :is(a,button:not([data-accent-choice])),body[data-app] .appearance-popover:not(#_) button{border-radius:14px!important}
+body[data-app] :is(.command-dialog,.record-dialog):not(#_){border:1px solid var(--g-edge)!important;border-radius:30px!important;box-shadow:0 40px 90px -30px rgb(0 0 0/.55)!important}
+body[data-app] .action-list:not(#_) a{border-radius:18px!important}
+body[data-app] .action-list:not(#_) a .ui-icon:first-child{box-sizing:border-box;width:34px;height:34px;padding:8px;border-radius:50%;background:var(--g-chip);color:var(--g-ink)}
+body[data-app] .toast-region:not(#_)>*{border-radius:999px!important}
+body[data-app] .app-footer:not(#_){border-top-color:var(--g-line)!important;color:var(--g-muted)!important}
+
+@media(max-width:1023px){body[data-app] .app-topbar:not(#_){top:8px!important;margin:8px 8px 0!important;border-radius:26px!important}}
+
+/* people picker: the pill is the wrapper, the inner search input stays bare */
+body[data-app] .people-picker .people-search:not(#_){border:1px solid var(--g-line)!important;border-radius:999px!important;background:var(--g-field)!important;box-shadow:var(--g-shadow-sm)!important}
+body[data-app] .people-picker .people-search:not(#_):focus-within{border-color:color-mix(in srgb,var(--g-ink) 26%,transparent)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--g-ink) 9%,transparent)!important}
+body[data-app] .people-picker .people-search input[type="search"]:not(#_),body[data-app] .people-picker .people-search input[type="search"]:not(#_):focus{border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+body[data-app] .people-picker:not(#_) .people-tools select{border-radius:999px!important}
+body[data-app] .people-picker:not(#_) .people-list{border-radius:20px!important}
+body[data-app] .people-picker:not(#_) .people-row{border-radius:16px!important}

@@ -1,0 +1,21 @@
+<article class="project-card{% if large %} is-large{% endif %}">
+  <a href="{{ project.get_absolute_url }}" class="project-link">
+    <div class="project-media" data-tilt="4">
+      {% if project.cover %}
+      <img src="{{ project.cover.url }}" alt="{{ project.title }} loyihasi"
+           width="{{ project.cover_width|default:1600 }}" height="{{ project.cover_height|default:1000 }}"
+           loading="lazy" decoding="async">
+      {% else %}
+      <div class="project-placeholder"><span>{{ project.title }}</span></div>
+      {% endif %}
+      {% if project.category %}<span class="project-badge">{{ project.category.name }}</span>{% endif %}
+    </div>
+    <div class="project-meta">
+      <div>
+        <h3>{{ project.title }}</h3>
+        <p>{{ project.summary }}</p>
+      </div>
+      <span class="round-btn sm" aria-hidden="true">{% include "website/_icon.html" with name="arrow-up-right" %}</span>
+    </div>
+  </a>
+</article>

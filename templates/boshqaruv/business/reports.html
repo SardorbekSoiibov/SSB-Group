@@ -1,0 +1,32 @@
+{% extends 'boshqaruv/base.html' %}{% load boshqaruv static %}
+{% block title %}Moliyaviy tahlil{% endblock %}
+{% block content %}
+<header class="page-heading"><div><span class="eyebrow">SSB BOSHQARUV / MOLIYAVIY HISOBOTLAR</span><h1>Moliyaviy tahlil</h1></div></header>
+<nav class="report-presets" aria-label="Tezkor davr tanlash">
+  <span>Davr:</span>
+  <button type="button" class="button compact" data-range="month">Bu oy</button>
+  <button type="button" class="button compact" data-range="last-month">O‘tgan oy</button>
+  <button type="button" class="button compact" data-range="quarter">Bu chorak</button>
+  <button type="button" class="button compact" data-range="year">Bu yil</button>
+  <button type="button" class="button compact" data-range="last-year">O‘tgan yil</button>
+  <button type="button" class="button compact" data-range="all">Butun davr</button>
+</nav>
+<form class="filter-bar" id="financial-report-filters" method="get" novalidate>
+  {% for field in filters %}{% if field.name != 'export' %}<label>{{ field.label }}{{ field }}{% for error in field.errors %}<small class="field-error" role="alert">{{ error }}</small>{% endfor %}</label>{% endif %}{% endfor %}
+  <label>Loyiha<select name="project"><option value="">Barchasi</option>{% for item in filter_projects %}<option value="{{ item.pk }}" {% if selected_project.pk == item.pk %}selected{% endif %}>{{ item.name }}</option>{% endfor %}</select></label>
+  <label>Xodim<select name="employee"><option value="">Barchasi</option>{% for item in filter_employees %}<option value="{{ item.pk }}" {% if selected_employee.pk == item.pk %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></label>
+  <label>Lavozim<select name="position"><option value="">Barchasi</option>{% for item in filter_roles %}<option value="{{ item.pk }}" {% if selected_role.pk == item.pk %}selected{% endif %}>{{ item }}</option>{% endfor %}</select></label>
+  <button class="button" type="submit">Hisoblash</button>
+  <div class="segmented-control" aria-label="Hisobotni yuklab olish"><button class="button compact" name="export" value="xlsx">{% ui_icon 'download' %} Excel</button><button class="button compact" name="export" value="pdf">{% ui_icon 'download' %} PDF</button><button class="button compact primary" name="export" value="csv">{% ui_icon 'download' %} CSV</button></div>
+  {% if filters.export.errors %}<p role="alert">{{ filters.export.errors }}</p>{% endif %}
+  <small id="report-date-hint" hidden>Bu hisobot tugash sanasi holatiga butun tarixdan hisoblanadi.</small>
+</form>
+{% if filter_errors %}<p class="role-note" role="alert">Filtrlardagi xatolarni tuzating. Hisob-kitob va eksport bajarilmadi.</p>{% else %}
+<p class="role-note">{% if report == 'performance' %}Faqat rahbar tasdiqlagan faoliyat baholari; moliyaviy balansni o‘zgartirmaydi.{% elif all_time %}{{ end|date:app_date_format }} holatiga, shu sanagacha bo‘lgan butun tasdiqlangan tarixdan hisoblandi.{% else %}Faqat {{ start|date:app_date_format }}–{{ end|date:app_date_format }} davrida tasdiqlangan operatsiyalar.{% endif %} {% if report != 'performance' %}Valyutalar aralashtirilmaydi: <strong>{{ currency }}</strong>.{% endif %} {% if project_scope %}Xodim yoki lavozim filtri ularga bog‘liq loyihalar bo‘yicha to‘liq kompaniya hisobini ko‘rsatadi.{% endif %}</p>
+{% if chart %}<section class="panel"><header class="panel-head"><h2>Haqiqiy mijoz tushumi dinamikasi</h2><small>{{ currency }} · tasdiqlangan reyestr</small></header><div class="report-bars">{% for point in chart %}<div><b>{{ point.amount|money }}</b><div class="bar-track"><span style="height:{{ point.height }}%;{% if point.negative %}background:#bf6060{% endif %}" title="{{ point.label }} · {{ point.amount }}"></span></div><small>{{ point.label }}</small></div>{% endfor %}</div></section>{% endif %}
+<section class="panel"><header class="panel-head"><div><h2>{{ report_title }}</h2><small>Filtrga mos {{ source_count }} ta tasdiqlangan manba yozuvi</small></div><a class="text-link" href="{% url 'enterprise:finance' %}?currency={{ currency }}">Manbalar reyestri →</a></header><div class="table-wrap"><table class="data-table"><thead><tr>{% for label in headers %}<th>{{ label }}</th>{% endfor %}</tr></thead><tbody>{% for row in rows %}<tr>{% for value in row %}<td>{% if value|is_decimal %}{{ value|money }}{% else %}{{ value }}{% endif %}</td>{% endfor %}</tr>{% empty %}<tr><td colspan="{{ headers|length }}"><p>Bu filtrlar bo‘yicha tasdiqlangan ma’lumot yo‘q.</p><small>Yaratilgan loyiha yoki kutilayotgan tasdiq pul tushumi hisoblanmaydi. Sana, valyuta va reyestrdagi tasdiqlangan amallarni tekshiring.</small></td></tr>{% endfor %}</tbody></table></div></section>
+{% if source_entries %}<details class="panel" style="padding:20px;margin-top:16px"><summary>Hisob manbalarini ochish — {{ source_count }} ta yozuv</summary><p class="role-note">Oxirgi 30 ta mos yozuv. Har bir havola asl tranzaksiya va tuzatishlar tarixini ochadi.</p><ul class="feed">{% for item in source_entries %}<li><a href="{% url 'enterprise:entry' item.pk %}"><strong>{{ item.get_category_display }} · {{ item.amount|money }} {{ item.currency }}</strong><p>{{ item.project|default:'Umumiy kompaniya amali' }} · {{ item.operation.finalized_at|date:app_datetime_format }}</p><small>{{ item.pk }}</small></a></li>{% endfor %}</ul></details>{% endif %}
+{% endif %}
+{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/reports.css' %}?v=1">{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/reports.js' %}?v=2" defer></script>{% endblock %}

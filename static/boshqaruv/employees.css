@@ -1,0 +1,136 @@
+/* Xodimlar — zamonaviy jamoa katalogi: kartochkalar yoki ixcham ro'yxat. */
+.team{--team-accent:var(--apple-blue,#007aff);--team-ok:#30b85b;--team-warn:#e59a1c;--team-bad:#ff453a;--team-off:#8e8e93}
+
+/* ---------- sarlavha */
+.team-hero{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:end;gap:20px 28px;margin-bottom:22px}
+.team-eyebrow{display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;padding:4px 10px 4px 8px;border-radius:999px;background:color-mix(in srgb,var(--team-accent) 12%,transparent);color:var(--team-accent);font-size:11.5px;font-weight:650;letter-spacing:.04em;text-transform:uppercase}
+.team-eyebrow .ui-icon{width:14px;height:14px}
+.team-hero h1{margin:0;font-size:34px;font-weight:750;letter-spacing:-.035em;line-height:1.1}
+.team-hero p{max-width:460px;margin:8px 0 0;color:var(--ink-secondary);font-size:13.5px;line-height:1.5}
+.team-stats{display:flex;margin:0;border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden}
+.team-stats div{display:grid;gap:2px;min-width:92px;padding:12px 18px;border-left:1px solid var(--line)}
+.team-stats div:first-child{border-left:0}
+.team-stats dt{color:var(--ink-tertiary);font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.team-stats dd{margin:0;color:var(--ink);font-size:22px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.team-stats div:nth-child(2) dd{color:var(--team-ok)}
+.team-add{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 18px 0 14px;border-radius:14px;background:var(--team-accent);color:#fff;font-size:14px;font-weight:600;white-space:nowrap;box-shadow:0 10px 24px -12px var(--team-accent);transition:transform .2s,box-shadow .2s}
+.team-add:hover{transform:translateY(-1px);box-shadow:0 14px 28px -12px var(--team-accent);color:#fff}
+.team-add .ui-icon{width:18px;height:18px}
+
+/* ---------- holat tablari */
+.team-tabs{display:flex;gap:4px;width:max-content;max-width:100%;margin-bottom:14px;padding:4px;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow-x:auto;scrollbar-width:none}
+.team-tabs::-webkit-scrollbar{display:none}
+.team-tabs a{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 12px;border-radius:10px;color:var(--ink-secondary);font-size:13px;font-weight:550;white-space:nowrap;transition:background .15s,color .15s}
+.team-tabs a:hover{background:color-mix(in srgb,var(--ink) 6%,transparent);color:var(--ink)}
+.team-tabs a b{min-width:20px;padding:1px 6px;border-radius:999px;background:color-mix(in srgb,var(--ink) 8%,transparent);font-size:11.5px;font-weight:650;text-align:center;font-variant-numeric:tabular-nums}
+.team-tabs a[aria-current]{background:var(--team-accent);color:#fff}
+.team-tabs a[aria-current] b{background:rgb(255 255 255/.22)}
+
+/* ---------- qidiruv qatori */
+.team-toolbar{display:flex;align-items:center;gap:10px;margin:0 0 18px}
+.team-toolbar label{margin:0}
+.team-search{position:relative;flex:1;min-width:0}
+.team-search>.ui-icon{position:absolute;left:14px;top:50%;width:16px;height:16px;color:var(--ink-tertiary);transform:translateY(-50%);pointer-events:none}
+.team-search input,.team-select select{width:100%;height:42px;border:1px solid var(--line-strong);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:13.5px;transition:border-color .15s,box-shadow .15s}
+.team-search input{padding:0 14px 0 40px}
+.team-select{flex:0 0 220px}
+.team-select select{padding:0 12px;cursor:pointer}
+.team-search input:focus,.team-select select:focus{outline:none;border-color:var(--team-accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--team-accent) 16%,transparent)}
+.team-clear{display:inline-flex;align-items:center;gap:5px;height:42px;padding:0 12px;border-radius:12px;color:var(--ink-secondary);font-size:13px;white-space:nowrap}
+.team-clear:hover{background:color-mix(in srgb,var(--ink) 6%,transparent);color:var(--ink)}
+.team-clear .ui-icon{width:14px;height:14px}
+.team-view{display:flex;flex:none;padding:3px;border:1px solid var(--line-strong);border-radius:12px;background:var(--surface)}
+.team-view button{display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;border-radius:9px;background:none;color:var(--ink-tertiary);cursor:pointer}
+.team-view button[aria-pressed="true"]{background:color-mix(in srgb,var(--team-accent) 14%,transparent);color:var(--team-accent)}
+.team-view .ui-icon{width:17px;height:17px}
+
+/* ---------- kartochkalar */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:16px;margin-bottom:22px}
+.person{--tone:var(--team-accent);position:relative;display:flex;flex-direction:column;gap:12px;min-width:0;padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.person::before{content:"";position:absolute;left:18px;right:18px;top:-1px;height:2px;border-radius:0 0 2px 2px;background:var(--team-accent);opacity:.85}
+.person:hover{border-color:color-mix(in srgb,var(--team-accent) 40%,var(--line));box-shadow:0 12px 30px -22px rgb(0 0 0/.6)}
+.person:focus-within{border-color:color-mix(in srgb,var(--tone) 55%,var(--line))}
+
+.person-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.person-photo{position:relative;flex:none}
+.person-photo .avatar{position:relative;display:grid;place-items:center;width:60px;height:60px;margin:0;border-radius:50%;font-size:18px;font-weight:700;overflow:hidden;box-shadow:0 0 0 1px var(--line-strong)}
+.person-photo .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.person-dot{position:absolute;right:1px;bottom:1px;width:14px;height:14px;border:3px solid var(--surface);border-radius:50%;background:var(--team-ok);box-sizing:border-box}
+.person[data-status="invited"] .person-dot{background:var(--team-warn)}
+.person[data-status="suspended"] .person-dot{background:var(--team-bad)}
+.person[data-status="deactivated"] .person-dot{background:var(--team-off)}
+.person-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border:1px solid var(--line-strong);border-radius:6px;color:var(--ink-secondary);font-size:10.5px;font-weight:650;letter-spacing:.05em;text-transform:uppercase}
+.person-badge .ui-icon{width:11px;height:11px}
+
+.person-main{min-width:0}
+.person-main h2{display:flex;align-items:center;gap:6px;margin:0;font-size:16px;font-weight:700;letter-spacing:-.015em;line-height:1.3}
+.person-link{min-width:0;overflow:hidden;color:var(--ink);text-overflow:ellipsis;white-space:nowrap}
+.person-link:focus-visible{outline:none}
+.person:has(.person-link:focus-visible){outline:3px solid color-mix(in srgb,var(--tone) 50%,transparent);outline-offset:2px}
+.person-verified{display:grid;flex:none;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--team-accent);color:#fff}
+.person-verified .ui-icon{width:11px;height:11px;stroke-width:3}
+.person-role{margin:2px 0 0;overflow:hidden;color:var(--ink-secondary);font-size:13px;text-overflow:ellipsis;white-space:nowrap}
+
+.person-meta{display:flex;flex-wrap:wrap;gap:6px}
+.person-meta span{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:6px;background:color-mix(in srgb,var(--ink) 6%,transparent);color:var(--ink-secondary);font-size:12px;font-weight:550;white-space:nowrap}
+.person-state::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--team-ok)}
+.person[data-status="invited"] .person-state::before{background:var(--team-warn)}
+.person[data-status="suspended"] .person-state::before{background:var(--team-bad)}
+.person[data-status="deactivated"] .person-state::before{background:var(--team-off)}
+
+.person-skills{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
+.person-skills li{padding:2px 8px;border:1px solid var(--line-strong);border-radius:6px;color:var(--ink-secondary);font-size:11.5px;font-weight:550}
+.person-skills li.more{border-style:dashed;color:var(--ink-tertiary)}
+
+.person-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
+.person-projects{color:var(--ink-secondary);font-size:12.5px;white-space:nowrap}
+.person-projects b{color:var(--ink);font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.person-actions{display:flex;gap:6px}
+.person-actions a{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--line);border-radius:8px;color:var(--ink-secondary);transition:background .15s,color .15s,border-color .15s}
+.person-actions a:hover{border-color:var(--team-accent);background:var(--team-accent);color:#fff}
+.person-actions .ui-icon{width:16px;height:16px}
+.team-empty{grid-column:1/-1;padding:12px;border:1px dashed var(--line-strong);border-radius:20px}
+
+/* ---------- ixcham ro'yxat ko'rinishi (o'sha kartochkalar qator bo'lib) */
+.team-grid.is-list{grid-template-columns:1fr;gap:0;border:1px solid var(--line);border-radius:18px;background:var(--surface);overflow:hidden}
+.team-grid.is-list .person{display:grid;grid-template-columns:44px minmax(180px,1.6fr) minmax(200px,1.4fr) minmax(0,1fr) 230px;grid-template-areas:"photo main meta skills foot";align-items:center;gap:16px;padding:12px 18px;border:0;border-top:1px solid var(--line);border-radius:0;background:none;box-shadow:none;transform:none}
+.team-grid.is-list .person:first-child{border-top:0}
+.team-grid.is-list .person:hover{background:color-mix(in srgb,var(--team-accent) 5%,transparent)}
+.team-grid.is-list .person::before{display:none}
+.team-grid.is-list .person-top{grid-area:photo;display:contents}
+.team-grid.is-list .person-photo{grid-area:photo}
+.team-grid.is-list .person-photo .avatar{width:42px;height:42px;font-size:13px;box-shadow:none}
+.team-grid.is-list .person-dot{width:12px;height:12px;border-width:2px;right:-1px;bottom:-1px}
+.team-grid.is-list .person-badge{display:none}
+.team-grid.is-list .person-main{grid-area:main}
+.team-grid.is-list .person-main h2{font-size:14px}
+.team-grid.is-list .person-role{font-size:12px}
+.team-grid.is-list .person-meta{grid-area:meta;flex-wrap:nowrap}
+.team-grid.is-list .person-skills{grid-area:skills;flex-wrap:nowrap;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
+.team-grid.is-list .person-skills li{flex:none;white-space:nowrap}
+.team-grid.is-list .person-foot{grid-area:foot;justify-content:flex-end;margin:0;padding:0;border:0;gap:16px}
+.team-grid.is-list .team-empty{border:0}
+
+/* ---------- moslashuvchanlik */
+@media(max-width:1200px){
+  .team-hero{grid-template-columns:minmax(0,1fr) auto}
+  .team-stats{grid-column:1/-1;grid-row:2;width:max-content;max-width:100%}
+  .team-grid.is-list .person{grid-template-columns:44px minmax(160px,1.5fr) minmax(0,1.2fr) 230px;grid-template-areas:"photo main meta foot"}
+  .team-grid.is-list .person-skills{display:none}
+}
+@media(max-width:720px){
+  .team-hero{grid-template-columns:1fr;gap:16px}
+  .team-hero h1{font-size:28px}
+  .team-stats{grid-row:auto;display:grid;grid-template-columns:repeat(4,1fr);width:100%}
+  .team-stats div{min-width:0;padding:10px 12px}
+  .team-stats dt{font-size:10px;white-space:normal}
+  .team-stats dd{font-size:19px}
+  .team-add{justify-content:center}
+  .team-toolbar{flex-wrap:wrap}
+  .team-search{flex:1 1 100%}
+  .team-select{flex:1 1 auto}
+  .team-grid{grid-template-columns:1fr;gap:12px}
+  .team-grid.is-list .person{grid-template-columns:42px minmax(0,1fr) auto;grid-template-areas:"photo main foot";gap:12px;padding:12px 14px}
+  .team-grid.is-list .person-meta,.team-grid.is-list .person-projects{display:none}
+}
+@media(prefers-reduced-motion:reduce){.person,.person-actions a,.team-add{transition:none}.person:hover{transform:none}}

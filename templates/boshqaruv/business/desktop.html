@@ -1,0 +1,48 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}SSB Boshqaruv · Windows{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/archive.css' %}?v=7"><link rel="stylesheet" href="{% static 'boshqaruv/desktop.css' %}?v=1">{% endblock %}
+{% block content %}
+<header class="page-heading"><div><span class="eyebrow">SSB BOSHQARUV / {{ app_section }}</span><h1>SSB Boshqaruv · Windows</h1></div></header>
+
+<section class="desktop-hero">
+  <span class="desktop-hero-icon">{% ui_icon 'desktop' %}</span>
+  <div class="desktop-hero-copy">
+    <h2>Ish maydoni kompyuteringizda</h2>
+    <p>Veb bilan bir xil hisob va ma’lumotlar, alohida oynada va Windows bildirishnomalari bilan.</p>
+    <ul class="desktop-meta"><li>Versiya {{ version }}</li><li>Windows 10 / 11 · x64</li>{% if available %}<li>{{ size|plain_filesize }}</li>{% endif %}</ul>
+  </div>
+  {% if available %}<button type="button" class="button primary desktop-cta" data-desktop-open>{% ui_icon 'download' %} Yuklab olish</button>{% else %}<span class="desktop-pending">Reliz tayyorlanmoqda</span>{% endif %}
+</section>
+
+<ul class="desktop-features">
+  <li><span>{% ui_icon 'overview' %}</span><strong>Bir xil ish maydoni</strong><small>Barcha bo‘limlar va ruxsatlaringiz</small></li>
+  <li><span>{% ui_icon 'bell' %}</span><strong>Windows bildirishnomalari</strong><small>Yangi xabar va vazifalar haqida</small></li>
+  <li><span>{% ui_icon 'settings' %}</span><strong>Oyna va sessiya saqlanadi</strong><small>Qayta ochganda davom etasiz</small></li>
+  <li><span>{% ui_icon 'check' %}</span><strong>Avtomatik qayta ulanish</strong><small>Internet uzilib qaytganda</small></li>
+</ul>
+
+{% if available %}
+<dialog class="archive-modal desktop-modal" id="desktop-dialog" aria-labelledby="desktop-dialog-title">
+  <button type="button" class="icon-button archive-modal-close" data-desktop-close aria-label="Yopish">{% ui_icon 'close' %}</button>
+  <div data-desktop-view="start">
+    <span class="archive-modal-icon">{% ui_icon 'desktop' %}</span>
+    <h2 id="desktop-dialog-title">Windows ilovasini yuklash</h2>
+    <p>Versiya {{ version }} · {{ size|plain_filesize }}</p>
+    <ol class="desktop-steps">
+      <li><b>1</b><span>O‘rnatuvchini yuklab oling va ishga tushiring.</span></li>
+      <li><b>2</b><span>Server manzilini kiriting. Uni rahbaringizdan oling.</span></li>
+      <li><b>3</b><span>Kompaniya login va parolingiz bilan kiring.</span></li>
+    </ol>
+    <p class="desktop-warning">Ilova hali raqamli imzolanmagan. Windows ogohlantirsa, “Batafsil”, keyin “Baribir ishga tushirish”ni bosing.</p>
+    <a class="button primary archive-modal-wide" id="desktop-download" href="{% url 'enterprise:desktop_download' %}" download>{% ui_icon 'download' %} Windows uchun yuklab olish</a>
+  </div>
+  <div data-desktop-view="done" hidden role="status">
+    <span class="archive-modal-icon is-success">{% ui_icon 'check' %}</span>
+    <h2>Yuklab olish boshlandi</h2>
+    <p>Fayl katta, biroz vaqt olishi mumkin. Tugagach, yuklamalar bo‘limidan ishga tushiring.</p>
+    <button type="button" class="button archive-modal-wide" data-desktop-close>Yopish</button>
+  </div>
+</dialog>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/desktop.js' %}?v=1" defer></script>{% endblock %}

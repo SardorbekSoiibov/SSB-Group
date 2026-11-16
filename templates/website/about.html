@@ -1,0 +1,121 @@
+{% extends "base_public.html" %}
+{% load site_tags %}
+{% block title %}Biz haqimizda — {{ site.company_name }}{% endblock %}
+{% block content %}
+{% include "website/_page_head.html" with heading="Biz haqimizda" lede="SSB Group kimlardan iborat, nimaga intiladi va loyihalarni qanday olib boradi." %}
+
+{% if site.about_text %}
+<section class="section pt-0">
+  <div class="wrap"><div class="prose lead-prose" data-reveal>{{ site.about_text|linebreaks }}</div></div>
+</section>
+{% endif %}
+
+{% if site.mission or site.vision %}
+<section class="section pt-0">
+  <div class="wrap duo-grid" data-stagger>
+    {% if site.mission %}
+    <div class="glass-card" data-tilt="4">
+      <span class="app-icon">{% include "website/_icon.html" with name="target" %}</span>
+      <h2 class="h3">Missiyamiz</h2>
+      <div class="prose muted">{{ site.mission|linebreaks }}</div>
+    </div>
+    {% endif %}
+    {% if site.vision %}
+    <div class="glass-card" data-tilt="4">
+      <span class="app-icon">{% include "website/_icon.html" with name="eye" %}</span>
+      <h2 class="h3">Vizyonimiz</h2>
+      <div class="prose muted">{{ site.vision|linebreaks }}</div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+{% if values %}
+<section class="section section-tinted">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <h2 class="h2">Qadriyatlarimiz</h2>
+      <p class="section-note">Har bir loyihada shu tamoyillarga tayanamiz.</p>
+    </div>
+    <div class="value-grid" data-stagger>
+      {% for v in values %}
+      {% cycle 'shield' 'sparkle' 'flag' 'bolt' as value_icon silent %}
+      <div class="glass-card" data-tilt="4">
+        <span class="app-icon sm">{% include "website/_icon.html" with name=value_icon %}</span>
+        <h3 class="card-title">{{ v.title }}</h3>
+        <p class="muted">{{ v.body }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if site.philosophy or site.team_structure %}
+<section class="section">
+  <div class="wrap stack-lg">
+    {% if site.philosophy %}
+    <div class="feature-panel" data-reveal>
+      <div class="cta-orbs" aria-hidden="true"><span></span><span></span></div>
+      <h2 class="feature-kicker">Ishlash falsafamiz</h2>
+      <div class="feature-text">{{ site.philosophy|linebreaksbr }}</div>
+    </div>
+    {% endif %}
+    {% if site.team_structure %}
+    <div class="glass-card split-card" data-reveal>
+      <h2 class="h3">Jamoa tuzilmasi</h2>
+      <div>
+        <div class="prose muted">{{ site.team_structure|linebreaks }}</div>
+        {% if team_count %}<a href="{% url 'website:team' %}" class="link-arrow">Jamoa bilan tanishish{% include "website/_icon.html" with name="chevron" %}</a>{% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+{% if expertise %}
+<section class="section section-tinted">
+  <div class="wrap">
+    <div class="section-head" data-reveal><h2 class="h2">Texnologik tajriba</h2></div>
+    <div class="expertise-grid" data-stagger>
+      {% for e in expertise %}
+      <div class="glass-card">
+        <h3 class="card-title">{{ e.title }}</h3>
+        <ul class="chip-row">{% for t in e.body|split_list %}<li class="chip is-static">{{ t }}</li>{% endfor %}</ul>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if milestones %}
+<section class="section">
+  <div class="wrap">
+    <div class="section-head" data-reveal><h2 class="h2">Yo‘limiz</h2></div>
+    <ol class="milestones" data-stagger>
+      {% for m in milestones %}
+      <li>
+        <span class="milestone-dot" aria-hidden="true"></span>
+        {% if m.date_label %}<p class="milestone-date">{{ m.date_label }}</p>{% endif %}
+        <h3 class="card-title">{{ m.title }}</h3>
+        {% if m.body %}<p class="muted">{{ m.body }}</p>{% endif %}
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+{% endif %}
+
+{% if site.objectives %}
+<section class="section">
+  <div class="wrap">
+    <div class="glass-card split-card" data-reveal><h2 class="h3">Uzoq muddatli maqsadlar</h2><div class="prose muted">{{ site.objectives|linebreaks }}</div></div>
+  </div>
+</section>
+{% endif %}
+
+{% include "website/_cta_band.html" %}
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'boshqaruv/base.html' %}{% load static boshqaruv %}
+{% block title %}Xodimlar chati{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/chat.css' %}?v=11">{% endblock %}
+{% block content %}
+<header class="page-heading chat-heading"><button type="button" class="icon-button mobile-only" data-open-nav aria-label="Menyuni ochish">{% ui_icon 'menu' %}</button><div><span class="eyebrow">SSB BOSHQARUV / MULOQOT</span><h1>Xodimlar chati</h1><p>Jamoangiz bilan bevosita va shaxsiy muloqot.</p></div><span class="status chat-connection" id="chat-connection" role="status">Ulanmoqda…</span></header>
+<section class="chat-workspace" id="staff-chat" data-user-id="{{ user.pk }}" data-upload-mb="{{ chat_upload_mb }}" data-time-zone="{{ chat_time_zone }}" aria-label="Xodimlar o‘rtasidagi chat">
+  <aside class="chat-contacts" aria-label="Suhbatdoshlar">
+    <header><h2>Suhbatlar <b id="chat-total">0</b></h2><label class="sr-only" for="chat-search">Xodimni qidirish</label><input id="chat-search" type="search" placeholder="Ism, lavozim yoki bo‘lim" maxlength="100" autocomplete="off"><div class="chat-filter" role="group" aria-label="Suhbatlarni saralash"><button type="button" data-chat-filter="all" aria-pressed="true">Barchasi</button><button type="button" data-chat-filter="unread" aria-pressed="false">O‘qilmagan</button></div></header>
+    <div id="chat-contacts" aria-live="polite"><p class="chat-empty">Xodimlar yuklanmoqda…</p></div>
+  </aside>
+  <div class="chat-conversation">
+    {% if chat_peer %}
+    <header class="chat-peer">
+      <a href="{% url 'chat:index' %}" class="icon-button chat-back" aria-label="Suhbatlarga qaytish">{% ui_icon 'arrow' %}</a>
+      <span class="chat-avatar" id="peer-initials" aria-hidden="true"></span>
+      <div class="chat-peer-text"><h2 id="peer-name"><span class="chat-name-text">{{ chat_peer.name }}</span>{% if chat_peer.verified %}<span class="chat-verified" title="Tasdiqlangan hisob" aria-label="Tasdiqlangan hisob"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 2 3.3-.3 1 3.1 2.8 1.8-1 3.2 1 3.2-2.8 1.8-1 3.1-3.3-.3L12 22l-2.6-2-3.3.3-1-3.1-2.8-1.8 1-3.2-1-3.2 2.8-1.8 1-3.1 3.3.3z"/><path class="tick" d="m8 12 3 3 5-6"/></svg></span>{% endif %}</h2><small id="peer-status" aria-live="polite">{{ chat_peer.role }}</small></div>
+      <button type="button" class="icon-button chat-tool" id="chat-find-toggle" aria-label="Suhbatdan qidirish" aria-expanded="false" title="Suhbatdan qidirish"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+    </header>
+    <div class="chat-findbar" id="chat-findbar" hidden><label class="sr-only" for="chat-find">Xabarlardan qidirish</label><input id="chat-find" type="search" maxlength="100" placeholder="Xabar yoki fayl nomini qidiring" autocomplete="off"><div id="chat-find-results" class="chat-find-results" aria-live="polite"></div></div>
+    <div class="chat-pinned" id="chat-pinned" hidden><button type="button" class="chat-pinned-open" id="chat-pinned-open"><span>📌 Qadalgan xabar</span><small id="chat-pinned-text"></small></button><button type="button" class="icon-button" id="chat-pinned-remove" aria-label="Qadashni olib tashlash" title="Qadashni olib tashlash">{% ui_icon 'close' %}</button></div>
+    <div class="chat-timeline" id="chat-timeline" role="log" aria-label="Suhbat xabarlari" aria-live="polite" aria-relevant="additions"><button type="button" class="button compact" id="chat-older" hidden>Oldingi xabarlarni yuklash</button><div id="chat-messages"></div><p id="chat-empty" class="chat-empty">Xabarlar yuklanmoqda…</p></div>
+    <button type="button" class="chat-down" id="chat-down" hidden aria-label="Oxirgi xabarlarga tushish"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg><b id="chat-down-count" hidden></b></button>
+    <div class="chat-drop" id="chat-drop" hidden><span>Faylni shu yerga tashlang</span></div>
+    <div class="chat-error" id="chat-error" role="alert" hidden></div>
+    <form id="chat-form" class="chat-composer" data-chat-form>{% csrf_token %}
+      <div class="chat-context" id="chat-context" hidden><span class="chat-context-icon" id="chat-context-icon" aria-hidden="true">↩</span><div><strong id="chat-context-title"></strong><small id="chat-context-text"></small></div><button type="button" class="icon-button" id="chat-context-cancel" aria-label="Bekor qilish">{% ui_icon 'close' %}</button></div>
+      <div class="chat-attachment" id="chat-attachment" hidden><span class="chat-attachment-thumb" id="chat-attachment-thumb" aria-hidden="true">📎</span><div><strong id="chat-attachment-name"></strong><small id="chat-attachment-size"></small></div><button type="button" class="icon-button" id="chat-attachment-remove" aria-label="Faylni olib tashlash">{% ui_icon 'close' %}</button></div>
+      <div class="chat-compose-row">
+        <button type="button" class="chat-tool" id="chat-attach" aria-label="Fayl biriktirish" title="Fayl yoki rasm biriktirish" {% if not chat_peer.active %}disabled{% endif %}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 11-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l9.2-9.2a3.7 3.7 0 0 1 5.2 5.2l-9.2 9.2a1.8 1.8 0 0 1-2.6-2.6l8.5-8.5"/></svg></button>
+        <input type="file" id="chat-file" hidden tabindex="-1">
+        <label class="sr-only" for="chat-body">Xabaringiz</label><textarea id="chat-body" name="body" rows="1" maxlength="4000" placeholder="Xabar yozing…" {% if not chat_peer.active %}disabled{% endif %}></textarea>
+        <button type="button" class="chat-tool" id="chat-emoji" aria-label="Emoji" aria-expanded="false" title="Emoji" {% if not chat_peer.active %}disabled{% endif %}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4.5 4.5 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/></svg></button>
+        <button class="chat-send" type="submit" aria-label="Yuborish" title="Yuborish" {% if not chat_peer.active %}disabled{% endif %}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-4 16-4-6.5L4 12Z"/><path d="m12 13.5 8-9.5"/></svg></button>
+      </div>
+      <div class="chat-emoji-panel" id="chat-emoji-panel" hidden role="group" aria-label="Emoji tanlash"></div>
+    </form>
+    {% else %}<div class="chat-welcome"><span>{% ui_icon 'chat' %}</span><h2>Suhbatni boshlang</h2><p>Ro‘yxatdan xodimni tanlang.<br>Xabarlaringizni faqat siz va suhbatdoshingiz ko‘rasiz.</p></div>{% endif %}
+  </div>
+  <div class="chat-menu" id="chat-menu" role="menu" aria-label="Xabar amallari" hidden><div class="chat-menu-reactions" id="chat-menu-reactions"></div><div id="chat-menu-actions"></div></div>
+  <dialog class="chat-dialog" id="chat-forward" aria-labelledby="chat-forward-title"><header><h2 id="chat-forward-title">Kimga uzatish?</h2><button type="button" class="icon-button" data-dialog-close aria-label="Yopish">{% ui_icon 'close' %}</button></header><label class="sr-only" for="chat-forward-search">Xodimni qidirish</label><input id="chat-forward-search" type="search" placeholder="Xodimni qidiring" autocomplete="off"><div id="chat-forward-list" class="chat-forward-list"></div></dialog>
+  <dialog class="chat-viewer" id="chat-viewer" aria-label="Rasmni ko‘rish"><img id="chat-viewer-image" alt=""><footer><span id="chat-viewer-name"></span><a id="chat-viewer-download" class="button compact" href="#">Yuklab olish</a><button type="button" class="button compact" data-dialog-close>Yopish</button></footer></dialog>
+</section>
+{{ chat_peer|json_script:'chat-peer-data' }}{{ chat_reactions|json_script:'chat-reactions-data' }}
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/chat.js' %}?v=8" defer></script>
+<script>
+// "Barchasi / O‘qilmagan" filtri: ro'yxat qayta chizilsa ham ishlaydi, chunki faqat konteyner klassi almashadi.
+(() => {
+  const list = document.getElementById('chat-contacts'), buttons = document.querySelectorAll('[data-chat-filter]');
+  if (!list) return;
+  buttons.forEach(b => b.addEventListener('click', () => {
+    const unread = b.dataset.chatFilter === 'unread';
+    list.classList.toggle('only-unread', unread);
+    buttons.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+})();
+</script>{% endblock %}

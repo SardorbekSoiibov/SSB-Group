@@ -1,0 +1,53 @@
+{
+  "name": "ssb-boshqaruv",
+  "version": "2.0.6",
+  "private": true,
+  "description": "SSB Group enterprise workspace",
+  "author": "SSB Group",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis --x64"
+  },
+  "dependencies": {
+    "electron-updater": "6.8.11"
+  },
+  "devDependencies": {
+    "electron": "45.2.1",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "uz.ssbgroup.management",
+    "productName": "SSB Boshqaruv",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.cjs",
+      "bridge.cjs",
+      "chrome.html",
+      "chrome.css",
+      "chrome.js",
+      "icon.ico",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico",
+      "artifactName": "SSB-Boshqaruv-Setup-${version}.${ext}",
+      "signAndEditExecutable": true
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SSB Boshqaruv",
+      "deleteAppDataOnUninstall": false,
+      "include": "installer.nsh"
+    },
+    "publish": null
+  }
+}

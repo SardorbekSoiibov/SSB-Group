@@ -1,0 +1,68 @@
+{% load boshqaruv %}
+<section class="panel earn" id="hisobim">
+  <header class="panel-head">
+    <h2>Mening shaxsiy hisobim · {{ currency }}</h2>
+    {% if my_currencies|length > 1 or currency not in my_currencies and my_currencies %}
+    <nav class="earn-currencies" aria-label="Valyuta">{% for code in my_currencies %}<a class="button compact{% if code == currency %} primary{% endif %}" href="?currency={{ code }}#hisobim">{{ code }}</a>{% endfor %}</nav>
+    {% else %}<span class="chart-key">Hisoblangan pul — to‘langan pul = qolgan qarz</span>{% endif %}
+  </header>
+  <div class="panel-body metric-group earn-cards">
+    <article class="metric-card"><span>Jami hisoblangan</span><strong>{{ account.earned|money }}</strong><small>{{ currency }} · loyiha ulushi, ish haqi, mukofot</small></article>
+    <article class="metric-card"><span>Olgan pulingiz</span><strong>{{ account.paid|money }}</strong><small>{{ currency }} · Sizga berilgan to‘lovlar</small></article>
+    <article class="metric-card earn-due"><span>Kompaniya Sizga qarz</span><strong>{{ account.payable|money }}</strong><small>{{ currency }} · hali to‘lanmagan</small></article>
+    {% if account.unconfirmed %}<article class="metric-card earn-warn"><span>Tasdig‘ingizni kutmoqda</span><strong>{{ account.unconfirmed|money }}</strong><small>{{ currency }} · to‘lovni olganingizni tasdiqlang</small></article>{% endif %}
+  </div>
+  {% if personal_salary or personal_bonus %}<p class="earn-note">Shundan ish haqi: {{ personal_salary|money }} · mukofotlar: {{ personal_bonus|money }} · loyihalardan: {{ personal_project_earnings|money }} {{ currency }}</p>{% endif %}
+  {% if account.rows %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Loyiha</th><th>Ulush</th><th class="number">Ishlab topilgan</th><th class="number">To‘langan</th><th class="number">Qoldiq</th><th>Yakunlangan</th><th>Holat</th></tr></thead>
+      <tbody>
+        {% for row in account.rows %}
+        <tr>
+          <td><strong>{% if row.project %}{{ row.project.name }}{% else %}Ish haqi / umumiy hisob{% endif %}</strong></td>
+          <td>{% if row.percent %}{{ row.percent }}%{% else %}—{% endif %}</td>
+          <td class="number">{{ row.earned|money }}</td>
+          <td class="number">{{ row.paid|money }}</td>
+          <td class="number"><strong>{{ row.remaining|money }}</strong></td>
+          <td>{% if row.completed_at %}{{ row.completed_at|date:"d.m.Y" }}{% else %}—{% endif %}</td>
+          <td><span class="status" data-status="{% if row.status == 'paid' %}approved{% elif row.status == 'partial' %}in_progress{% else %}under_review{% endif %}">{{ row.status_label }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</section>
+
+<section class="panel" id="{% if is_founder_view %}mening-tolovlarim{% else %}tolovlar{% endif %}">
+  <header class="panel-head"><h2>Menga qilingan to‘lovlar</h2><span class="chart-key">Har bir to‘lovni olganingizni tasdiqlang</span></header>
+  {% for item in my_payouts %}
+  <div class="payout-row{% if item.state == 'pending' %} is-ask{% endif %}">
+    <div class="payout-main">
+      <strong>{{ item.amount|money }} {{ item.currency }}</strong>
+      <p>{{ item.payout.paid_on|date:"d.m.Y" }} · {{ item.payout.get_method_display }}{% if item.project %} · {{ item.project.name }}{% endif %}</p>
+      <small>{{ item.description }}{% if item.payout.reference %} · {{ item.payout.reference }}{% endif %}</small>
+      {% if item.payout.proof %}<a class="payout-link" href="{% url 'enterprise:payout_proof' item.pk %}">Tasdiqlovchi hujjat</a>{% endif %}
+    </div>
+    <div class="payout-side">
+      {% if item.state == 'pending' %}
+      <p class="payout-question">Sizga {{ item.amount|money }} {{ item.currency }} to‘lov berildimi?</p>
+      <form method="post" action="{% url 'enterprise:payout_respond' item.pk %}" class="payout-answer">
+        {% csrf_token %}
+        <button class="button primary" name="answer" value="yes">Ha, oldim</button>
+        <details class="payout-no"><summary class="button danger">Yo‘q, olmadim</summary>
+          <textarea name="note" rows="2" maxlength="500" placeholder="Izoh (ixtiyoriy): nima noto‘g‘ri?"></textarea>
+          <button class="button danger" name="answer" value="no">E’tirozni yuborish</button>
+        </details>
+      </form>
+      {% else %}
+      <span class="status" data-status="{% if item.state == 'confirmed' %}approved{% elif item.state == 'disputed' %}rejected{% else %}cancelled{% endif %}">{{ item.state_label }}</span>
+      {% for event in item.events %}<small>{{ event.get_kind_display }} · {{ event.created_at|date:app_datetime_format }}</small>{% endfor %}
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <p class="panel-body text-tertiary">Hozircha qayd etilgan to‘lov yo‘q.</p>
+  {% endfor %}
+</section>

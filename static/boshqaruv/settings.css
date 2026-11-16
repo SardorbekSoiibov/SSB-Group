@@ -1,0 +1,30 @@
+/* Company settings overview. Editing happens in the shared record dialog. */
+.settings-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,380px);gap:16px;align-items:start}
+.settings-side{display:grid;gap:16px;min-width:0}
+.settings-card{min-width:0;padding:20px;border:1px solid var(--line);border-radius:20px;background:var(--surface);color:var(--ink)}
+section.settings-card h2{margin:0 0 14px;font-size:16px}
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:0}
+.settings-item{display:flex;align-items:center;gap:12px;min-width:0;padding:12px;border-radius:15px;background:var(--canvas)}
+.settings-item>span,.settings-link-icon{display:grid;place-items:center;width:40px;height:40px;flex-shrink:0;border-radius:13px;background:color-mix(in srgb,var(--apple-blue) 13%,transparent);color:var(--apple-blue)}
+.settings-item svg,.settings-link-icon svg{width:20px;height:20px}
+.settings-item>div{min-width:0}
+.settings-item dt{color:var(--ink-secondary);font-size:12px}
+.settings-item dd{margin:2px 0 0;font-size:15px;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.settings-types{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+section .settings-types h3{margin:0 0 10px;color:var(--ink-secondary);font-size:12.5px;font-weight:500}
+.settings-types ul{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.settings-types li{padding:4px 10px;border-radius:9px;background:var(--canvas);font-size:12.5px;font-weight:600}
+.settings-links{display:grid;gap:4px;margin:0;padding:0;list-style:none}
+.settings-links li{display:flex;align-items:center;gap:12px;min-width:0;padding:8px 0}
+.settings-links li>div,.settings-brand>div{flex:1;min-width:0}
+.settings-links strong,.settings-brand strong{display:block;font-size:14px}
+.settings-links small,.settings-brand small{display:block;margin-top:2px;color:var(--ink-secondary);font-size:12px;line-height:1.4}
+.settings-state{flex-shrink:0;padding:4px 10px;border-radius:12px;background:var(--canvas);color:var(--ink-secondary);font-size:11.5px;font-weight:600}
+.settings-state.is-on{background:color-mix(in srgb,#30a46c 16%,transparent);color:#30a46c}
+.settings-brand{display:flex;align-items:center;gap:12px;text-decoration:none;transition:border-color .15s ease,transform .15s ease}
+.settings-brand>svg{width:18px;height:18px;flex-shrink:0;color:var(--ink-secondary)}
+.settings-brand:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--apple-blue) 45%,var(--line))}
+.settings-brand:focus-visible{outline:3px solid #7a9fc6;outline-offset:2px}
+@media(max-width:1000px){.settings-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.settings-card{padding:16px}.settings-grid{grid-template-columns:minmax(0,1fr)}.heading-actions .button.primary{width:100%;justify-content:center}}
+@media(prefers-reduced-motion:reduce){.settings-brand{transition:none}.settings-brand:hover{transform:none}}

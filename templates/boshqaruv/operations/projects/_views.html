@@ -1,0 +1,6 @@
+{% load boshqaruv %}{% if user|can:'projects.views' or user|can:'projects.view_all' %}
+<nav class="work-views" aria-label="Loyihalarni ko‘rish usuli">
+  <a href="{% url 'crm:projects' %}" {% if active_view == 'list' %}aria-current="page"{% endif %}>{% ui_icon 'project' %}<span><strong>Loyihalar ro‘yxati</strong><small>Loyiha, mas’ul xodim va bajarilish foizi</small></span></a>
+  <a href="{% url 'crm:project_board' %}" {% if active_view == 'board' %}aria-current="page"{% endif %}>{% ui_icon 'kanban' %}<span><strong>Holatlar doskasi</strong><small>Qaysi loyiha qaysi bosqichda?</small></span></a>
+  <a href="{% url 'crm:calendar' %}" {% if active_view == 'calendar' %}aria-current="page"{% endif %}>{% ui_icon 'calendar' %}<span><strong>Muddatlar taqvimi</strong><small>Loyihalar qachon tugaydi?</small></span></a>
+</nav>{% endif %}

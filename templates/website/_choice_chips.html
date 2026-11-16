@@ -1,0 +1,12 @@
+<fieldset class="field">
+  <legend class="field-label">{{ field.label }}{% if not field.field.required %} <span class="optional">(ixtiyoriy)</span>{% endif %}</legend>
+  <div class="chip-row">
+    {% for opt in field %}
+    <label class="chip-option">
+      <input type="radio" name="{{ opt.data.name }}" value="{{ opt.data.value }}" class="sr-only" {% if opt.data.selected %}checked{% endif %}>
+      <span class="chip">{{ opt.choice_label }}</span>
+    </label>
+    {% endfor %}
+  </div>
+  {% for e in field.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+</fieldset>

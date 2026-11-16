@@ -1,0 +1,380 @@
+{% extends "base_public.html" %}
+{% load static site_tags %}
+
+{% block content %}
+{# ================================================================ HERO #}
+<section class="hero" aria-labelledby="hero-h" data-hero>
+  <div class="hero-glow" aria-hidden="true"><span></span><span></span></div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="hero-chip" data-reveal><span class="hero-chip-dot" aria-hidden="true"></span>SSB GROUP / RAQAMLI YECHIMLAR</p>
+      <h1 id="hero-h" class="hero-title" data-hero-title>{{ site.hero_title }}</h1>
+      <p class="hero-lede" data-reveal>{{ site.hero_text }}</p>
+      <div class="hero-cta" data-reveal>
+        <a href="#boshlash" data-scroll="boshlash" class="btn btn-filled btn-lg"><span>Loyiha boshlash</span>{% include "website/_icon.html" with name="arrow-up-right" %}</a>
+        <a href="#portfolio" data-scroll="portfolio" class="btn btn-glass btn-lg"><span>Ishlarimiz</span></a>
+      </div>
+      <ul class="hero-facts" data-reveal>
+        {% if services %}<li><b>{{ services|length }}</b><span>yo‘nalish</span></li>{% endif %}
+        <li><b>1</b><span>ish kunida javob</span></li>
+        <li><b>24/7</b><span>qo‘llab-quvvatlash</span></li>
+      </ul>
+    </div>
+
+    <div class="hero-stage" aria-hidden="true">
+      <div class="hero-world" data-hero-stage>
+        <div class="hero-floor"></div>
+
+        {# --- iPhone #}
+        <div class="device-phone">
+          <div class="phone-edge"></div>
+          <div class="phone-screen">
+            <div class="phone-island"></div>
+            <div class="phone-status"><b>9:41</b><span class="phone-signal"><i></i><i></i><i></i><i></i></span></div>
+            <div class="phone-widget">
+              <div class="phone-widget-head"><span class="mini-icon">{% include "website/_icon.html" with name="crm" %}</span><span><b>SSB Boshqaruv</b><small>Bugun</small></span></div>
+              <p class="phone-widget-num">128<small>+24%</small></p>
+              <svg class="hero-poster" viewBox="0 0 220 70" preserveAspectRatio="none"><defs><linearGradient id="hpfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a84ff" stop-opacity=".45"/><stop offset="1" stop-color="#0a84ff" stop-opacity="0"/></linearGradient></defs><path d="M0 58 C24 54 32 40 56 42 S92 22 116 30 154 10 178 16 206 6 220 4 V70 H0Z" fill="url(#hpfill)"/><path d="M0 58 C24 54 32 40 56 42 S92 22 116 30 154 10 178 16 206 6 220 4" fill="none" stroke="#0a84ff" stroke-width="3" stroke-linecap="round"/></svg>
+            </div>
+            <div class="phone-apps">
+              <span class="app"><i>{% include "website/_icon.html" with name="web" %}</i><small>Sayt</small></span>
+              <span class="app"><i>{% include "website/_icon.html" with name="crm" %}</i><small>CRM</small></span>
+              <span class="app"><i>{% include "website/_icon.html" with name="bot" %}</i><small>Bot</small></span>
+              <span class="app"><i>{% include "website/_icon.html" with name="design" %}</i><small>Dizayn</small></span>
+              <span class="app"><i>{% include "website/_icon.html" with name="automation" %}</i><small>Avto</small></span>
+              <span class="app"><i>{% include "website/_icon.html" with name="code" %}</i><small>Kod</small></span>
+              <span class="app"><i>{% include "website/_icon.html" with name="chat" %}</i><small>Chat</small></span>
+              <span class="app"><i>{% include "website/_icon.html" with name="shield" %}</i><small>Arxiv</small></span>
+            </div>
+            <div class="phone-dock"><span></span><span></span><span></span><span></span></div>
+            <div class="phone-home"></div>
+          </div>
+        </div>
+
+        {# --- Suzuvchi vidjetlar #}
+        <div class="float-card fc-notify">
+          <span class="mini-icon">{% include "website/_icon.html" with name="bolt" %}</span>
+          <div><b>Yangi murojaat</b><small>Klinika sayti · hozir</small></div>
+        </div>
+
+        <div class="float-card fc-crm">
+          <div class="fc-head"><b>Loyihalar</b><span class="live-dot"><i></i>jonli</span></div>
+          <div class="fc-ring"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" pathLength="100" class="ring-bg"/><circle cx="22" cy="22" r="18" pathLength="100" class="ring-fg" style="stroke-dashoffset:28"/></svg><span>72%</span></div>
+          <ul class="fc-rows">
+            <li><span class="fc-av">KS</span><b>Klinika sayti</b><em>Jarayonda</em></li>
+            <li><span class="fc-av">OD</span><b>Onlayn do‘kon</b><em>Yangi</em></li>
+            <li><span class="fc-av">YB</span><b>Yetkazish boti</b><em class="ok">Tayyor</em></li>
+          </ul>
+        </div>
+
+        <div class="float-card fc-chat">
+          <div class="fc-head"><span class="mini-icon">{% include "website/_icon.html" with name="bot" %}</span><b>SSB Buyurtma</b></div>
+          <p class="bubble in">Assalomu alaykum! Buyurtma berasizmi?</p>
+          <p class="bubble out">Ha, menyuni ko‘rsating</p>
+          <div class="kb"><span>Menyu</span><span>Savat</span></div>
+        </div>
+
+        <div class="float-pill fc-done"><span class="check">{% include "website/_icon.html" with name="check" %}</span>Ishga tushirildi</div>
+      </div>
+    </div>
+  </div>
+  <a href="#biz-haqimizda" data-scroll="biz-haqimizda" class="hero-cue"><span>PASTGA AYLANTIRING</span><i aria-hidden="true"></i></a>
+</section>
+
+{# ================================================================ TECHNOLOGIES #}
+{% if technologies %}
+<section class="tech" aria-label="Biz ishlatadigan texnologiyalar">
+  <div class="marquee">
+    {% for _ in "12" %}
+    <ul class="marquee-track" {% if forloop.last %}aria-hidden="true"{% endif %}>
+      {% for t in technologies %}<li>{{ t.name }}</li>{% endfor %}
+    </ul>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{# ================================================================ ABOUT #}
+<section id="biz-haqimizda" class="section" aria-labelledby="about-h">
+  <div class="wrap about-grid">
+    <div class="about-side" data-reveal>
+      <p class="eyebrow"><span>01</span>Biz haqimizda</p>
+      <h2 id="about-h" class="h2">{{ site.intro_title|default:"Biznes uchun ishlaydigan dasturlar quramiz" }}</h2>
+      <a href="{% url 'website:about' %}" class="link-arrow">Kompaniya haqida batafsil{% include "website/_icon.html" with name="chevron" %}</a>
+    </div>
+    <div class="statement" data-statement>{% if site.intro_text %}{{ site.intro_text|linebreaks }}{% else %}<p>{{ site.hero_text }}</p>{% endif %}</div>
+  </div>
+</section>
+
+{# ================================================================ PRODUCTS #}
+<section id="mahsulotlar" class="section section-tinted" aria-labelledby="reel-h" x-data="{ tab: 0 }">
+  <div class="wrap">
+    <div class="section-head center" data-reveal>
+      <p class="eyebrow"><span>02</span>Raqamli imkoniyatlar</p>
+      <h2 id="reel-h" class="h2">G‘oyangizga mos yechim.</h2>
+      <p class="section-sub">Uch yo‘nalish, bitta jamoa. Kerakli mahsulotni tanlab ko‘ring.</p>
+      <div class="segmented" role="tablist" aria-label="Mahsulotlar" style="--n:3" :style="`--i:${tab}`">
+        <span class="segmented-thumb" aria-hidden="true"></span>
+        {% for title in "Veb-sayt,CRM tizimi,Telegram bot"|split_list %}
+        <button type="button" role="tab" id="ptab-{{ forloop.counter0 }}" aria-controls="ppanel" @click="tab = {{ forloop.counter0 }}" :aria-selected="tab === {{ forloop.counter0 }}" {% if forloop.first %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>{{ title }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div id="ppanel" class="showcase" role="tabpanel" data-reveal>
+      {# --- 1. Veb-sayt #}
+      <div class="showcase-pane" x-show="tab === 0" x-transition:enter="pane-enter" x-transition:enter-start="pane-from" x-transition:enter-end="pane-to">
+        <div class="showcase-copy">
+          <span class="app-icon">{% include "website/_icon.html" with name="web" %}</span>
+          <h3>Veb-saytlar</h3>
+          <p>Kompaniya saytlari, landing sahifalar va onlayn do‘konlar — tez, mobilga mos va qidiruv tizimlarida topiladigan.</p>
+          <ul class="check-list">
+            <li>Mobil qurilmalarga to‘liq moslashgan</li>
+            <li>Kontentni o‘zingiz boshqarasiz</li>
+            <li>SEO uchun to‘g‘ri tuzilma</li>
+          </ul>
+        </div>
+        <div class="showcase-device device-browser">
+          <div class="browser-bar"><span class="lights"><i></i><i></i><i></i></span><span class="browser-url">{% include "website/_icon.html" with name="shield" %}ssbgroup.uz</span></div>
+          <div class="browser-body">
+            <div class="mock-nav"><b>Sino<span>Klinika</span></b><em></em><em></em><em></em><strong>Qabulga yozilish</strong></div>
+            <div class="mock-hero">
+              <div><span class="mock-pill">Onlayn navbat</span><p class="mock-h">Shifokoringiz<br>bir bosishda</p><span class="mock-line w70"></span><span class="mock-line w50"></span><span class="mock-btn"></span></div>
+              <div class="mock-art"><span class="mock-stat"><small>Bugungi qabul</small><b>128</b></span></div>
+            </div>
+            <div class="mock-cards"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      </div>
+
+      {# --- 2. CRM #}
+      <div class="showcase-pane" x-show="tab === 1" x-cloak x-transition:enter="pane-enter" x-transition:enter-start="pane-from" x-transition:enter-end="pane-to">
+        <div class="showcase-copy">
+          <span class="app-icon">{% include "website/_icon.html" with name="crm" %}</span>
+          <h3>CRM tizimlari</h3>
+          <p>Mijozlar, buyurtmalar, xodimlar va hisobotlarni bitta tizimda yuritish uchun sizning jarayoningizga moslangan CRM.</p>
+          <ul class="check-list">
+            <li>Rollar va kirish huquqlari</li>
+            <li>Hisobot va eksport</li>
+            <li>Bosqichma-bosqich joriy etish</li>
+          </ul>
+        </div>
+        <div class="showcase-device device-tablet">
+          <div class="tablet-side"><b>CRM</b><span class="on"></span><span></span><span></span><span></span></div>
+          <div class="tablet-main">
+            <div class="tablet-kpis"><span><small>Yangi</small><b>24</b></span><span><small>Jarayonda</small><b>12</b></span><span><small>Tekshiruvda</small><b>5</b></span></div>
+            <div class="tablet-chart"><i style="--h:42%"></i><i style="--h:64%"></i><i style="--h:50%"></i><i style="--h:80%"></i><i style="--h:68%"></i><i style="--h:92%"></i><i style="--h:74%"></i></div>
+            <ul class="tablet-rows">
+              <li><span class="fc-av">KS</span><b>Kassa integratsiyasi</b><em>Jarayonda</em></li>
+              <li><span class="fc-av">MA</span><b>To‘lov sahifasi</b><em class="ok">Tayyor</em></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {# --- 3. Telegram bot #}
+      <div class="showcase-pane" x-show="tab === 2" x-cloak x-transition:enter="pane-enter" x-transition:enter-start="pane-from" x-transition:enter-end="pane-to">
+        <div class="showcase-copy">
+          <span class="app-icon">{% include "website/_icon.html" with name="bot" %}</span>
+          <h3>Telegram botlar</h3>
+          <p>Buyurtma qabul qilish, mijozlarga xizmat ko‘rsatish va ichki jarayonlar uchun Telegram botlar.</p>
+          <ul class="check-list">
+            <li>Buyurtma va so‘rovlarni avtomatlashtirish</li>
+            <li>CRM va sayt bilan integratsiya</li>
+            <li>Ko‘p tilli interfeys</li>
+          </ul>
+        </div>
+        <div class="showcase-device device-chat">
+          <div class="chat-top"><span class="mini-icon">{% include "website/_icon.html" with name="bot" %}</span><div><b>Dasturxon bot</b><small>bot</small></div></div>
+          <div class="chat-body">
+            <p class="bubble out">Salom! Menyuni ko‘rsating</p>
+            <p class="bubble in">Bugungi menyu tayyor. Nima buyurtma qilasiz?</p>
+            <div class="kb"><span>Osh · 45 000</span><span>Lag‘mon · 38 000</span><span>Manti · 32 000</span><span>Ichimliklar</span></div>
+            <p class="bubble out">Osh × 2</p>
+            <p class="bubble in">Buyurtma qabul qilindi ✓<br><small>90 000 so‘m · 35 daqiqada yetkaziladi</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ================================================================ SERVICES #}
+<section id="xizmatlar" class="section" aria-labelledby="services-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <div>
+        <p class="eyebrow"><span>03</span>Xizmatlar</p>
+        <h2 id="services-h" class="h2">Nimalar qilamiz</h2>
+      </div>
+      <a href="{% url 'website:services' %}" class="link-arrow">Barcha xizmatlar{% include "website/_icon.html" with name="chevron" %}</a>
+    </div>
+    {% if services %}
+    <div class="service-grid" data-stagger>
+      {% for s in services %}
+      <article class="service-card{% if forloop.first %} is-wide{% endif %}" data-tilt="5">
+        <div class="service-top">
+          <span class="app-icon">{% include "website/_icon.html" with name=s.icon %}</span>
+          <span class="service-num">{{ forloop.counter|stringformat:"02d" }}</span>
+        </div>
+        <h3>{{ s.title }}</h3>
+        <p>{{ s.summary }}</p>
+        {% if s.benefit_list %}<ul class="check-list compact">{% for b in s.benefit_list|slice:":3" %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
+        <div class="service-actions">
+          <a href="{{ s.get_absolute_url }}" class="btn btn-tinted btn-sm">Batafsil</a>
+          <a href="#boshlash" data-scroll="boshlash" x-data @click="$dispatch('brief-service', '{{ s.pk }}')" class="btn btn-plain btn-sm">Shu xizmatga murojaat{% include "website/_icon.html" with name="chevron" %}</a>
+        </div>
+        <span class="card-sheen" aria-hidden="true"></span>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-card" data-reveal><span class="app-icon">{% include "website/_icon.html" with name="layers" %}</span><p>Xizmatlar ro‘yxati yangilanmoqda.</p><a href="#boshlash" data-scroll="boshlash" class="btn btn-tinted">Biz bilan bog‘lanish</a></div>
+    {% endif %}
+  </div>
+</section>
+
+{# ================================================================ PORTFOLIO #}
+<section id="portfolio" class="section section-tinted" aria-labelledby="work-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <div>
+        <p class="eyebrow"><span>04</span>Ishlarimiz</p>
+        <h2 id="work-h" class="h2">Tanlangan loyihalar</h2>
+      </div>
+      {% if featured %}<a href="{% url 'website:portfolio' %}" class="link-arrow">Butun portfolio{% include "website/_icon.html" with name="chevron" %}</a>{% endif %}
+    </div>
+    {% if featured %}
+    <div class="work-grid" data-stagger>
+      {% for p in featured %}
+      <div class="work-item{% if forloop.first %} is-large{% endif %}">{% include "website/_project_card.html" with project=p large=forloop.first %}</div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-card" data-reveal>
+      <div class="stack3d" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div>
+        <h3>Portfolio yangilanmoqda</h3>
+        <p>Ishlarimiz haqidagi ma’lumotlar yangilanmoqda. Ishlarimiz bilan yaqindan tanishish uchun biz bilan bog‘laning.</p>
+        <a class="btn btn-filled" href="#boshlash" data-scroll="boshlash">Biz bilan bog‘lanish</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{# ================================================================ WHY US #}
+{% if reasons %}
+<section class="section why" aria-labelledby="why-h">
+  <div class="wrap why-layout">
+    <div class="why-intro" data-reveal>
+      <p class="eyebrow"><span>05</span>Yondashuvimiz</p>
+      <h2 id="why-h" class="h2">Nega SSB Group</h2>
+      <p class="why-lead">Biz faqat kod yozmaymiz — biznesingiz uchun natija beradigan tizim quramiz va uni ishga tushirgandan keyin ham yoningizda bo‘lamiz.</p>
+      <ul class="why-badges" aria-label="Qisqacha">
+        <li><strong>{{ reasons|length }}</strong><span>asosiy tamoyil</span></li>
+        <li><strong>1</strong><span>mas’ul jamoa</span></li>
+        {% if process %}<li><strong>{{ process|length }}</strong><span>bosqichli jarayon</span></li>{% endif %}
+      </ul>
+      <a href="#boshlash" data-scroll="boshlash" class="btn btn-filled btn-lg why-cta"><span>Loyiha boshlash</span>{% include "website/_icon.html" with name="arrow-up-right" %}</a>
+    </div>
+    <ol class="why-list" data-stagger>
+      {% for r in reasons %}
+      <li class="why-card">
+        {% cycle 'people' 'eye' 'pin' 'shield' 'bolt' 'heart' as reason_icon silent %}
+        <span class="why-num" aria-hidden="true">{{ forloop.counter|stringformat:"02d" }}</span>
+        <span class="why-icon">{% include "website/_icon.html" with name=reason_icon %}</span>
+        <div class="why-text">
+          <h3>{{ r.title }}</h3>
+          <p>{{ r.body }}</p>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+{% endif %}
+
+{# ================================================================ PROCESS #}
+{% if process %}
+<section class="section process" aria-labelledby="process-h">
+  <div class="wrap" x-data="{ step: 0, total: {{ process|length }} }">
+    <div class="section-head" data-reveal>
+      <div>
+        <p class="eyebrow"><span>06</span>Ish jarayoni</p>
+        <h2 id="process-h" class="h2">Loyiha qanday kechadi</h2>
+      </div>
+      <div class="step-nav">
+        <button type="button" class="round-btn" @click="step = Math.max(0, step - 1)" :disabled="step === 0" aria-label="Oldingi bosqich">{% include "website/_icon.html" with name="arrow-left" %}</button>
+        <button type="button" class="round-btn" @click="step = Math.min(total - 1, step + 1)" :disabled="step === total - 1" aria-label="Keyingi bosqich">{% include "website/_icon.html" with name="arrow" %}</button>
+      </div>
+    </div>
+    <div class="process-track" aria-hidden="true"><i :style="`width: ${((step + 1) / total) * 100}%`" style="width: {% widthratio 1 process|length 100 %}%"></i></div>
+    <ol class="steps" role="list" data-stagger style="--n: {{ process|length }}">
+      {% for p in process %}
+      <li>
+        <button type="button" class="step" @click="step = {{ forloop.counter0 }}" @mouseenter="step = {{ forloop.counter0 }}"
+                :class="{ 'is-done': step >= {{ forloop.counter0 }}, 'is-current': step === {{ forloop.counter0 }} }" :aria-current="step === {{ forloop.counter0 }} ? 'step' : null">
+          <span class="step-num">{{ forloop.counter }}</span>
+          <span class="step-title">{{ p.title }}</span>
+          <span class="step-body">{{ p.body }}</span>
+        </button>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+{% endif %}
+
+{# ================================================================ TEAM #}
+<section id="jamoa" class="section section-tinted" aria-labelledby="team-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <div>
+        <p class="eyebrow"><span>07</span>Jamoa</p>
+        <h2 id="team-h" class="h2">SSB Group jamoasi</h2>
+      </div>
+      <p class="section-note">Loyihalarni birga yaratadigan mutaxassislarimiz bilan tanishing.{% if team %} <a href="{% url 'website:team' %}" class="link-arrow">Butun jamoa{% include "website/_icon.html" with name="chevron" %}</a>{% endif %}</p>
+    </div>
+    {% if team %}
+    <ul class="team-grid" data-stagger>
+      {% for m in team %}<li>{% include "website/_member.html" with member=m %}</li>{% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-card" data-reveal><div class="stack3d" aria-hidden="true"><span></span><span></span><span></span></div><div><h3>Jamoamiz bilan tanishing</h3><p>Xodimlarimiz haqidagi ma’lumotlar tez orada shu yerda e’lon qilinadi.</p><a href="#boshlash" data-scroll="boshlash" class="btn btn-tinted">Biz bilan bog‘lanish</a></div></div>
+    {% endif %}
+  </div>
+</section>
+
+{# ================================================================ TESTIMONIALS #}
+{% if testimonials %}
+<section class="section" aria-labelledby="testimonials-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal><div><p class="eyebrow"><span>08</span>Fikrlar</p><h2 id="testimonials-h" class="h2">Mijozlarimiz fikri</h2></div></div>
+    <div class="quote-grid" data-stagger>
+      {% for t in testimonials %}
+      <figure class="quote-card" data-tilt="4">
+        <span class="quote-mark" aria-hidden="true">“</span>
+        <blockquote>{{ t.quote }}</blockquote>
+        <figcaption><span class="avatar-sm" aria-hidden="true">{{ t.author|slice:":1" }}</span><span><b>{{ t.author }}</b>{% if t.author_title or t.company %}<small>{{ t.author_title }}{% if t.author_title and t.company %}, {% endif %}{{ t.company }}</small>{% endif %}</span></figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ================================================================ INQUIRY #}
+<section id="boshlash" class="section contact" aria-labelledby="cta-h">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <div>
+        <p class="eyebrow"><span>09</span>Aloqa</p>
+        <h2 id="cta-h" class="h2">Loyihangiz haqida gaplashamiz</h2>
+      </div>
+      <p class="section-note">To‘rt savolga javob bering. Bir ish kuni ichida qo‘ng‘iroq qilib, muddat va narxni aniqlaymiz.</p>
+    </div>
+    {% include "website/_inquiry_wizard.html" %}
+  </div>
+</section>
+{% endblock %}

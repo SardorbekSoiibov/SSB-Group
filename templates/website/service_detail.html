@@ -1,0 +1,54 @@
+{% extends "base_public.html" %}
+{% block title %}{{ service.title }} — {{ site.company_name }}{% endblock %}
+{% block description %}{{ service.seo_description|default:service.summary }}{% endblock %}
+{% block og_title %}{{ service.title }} — {{ site.company_name }}{% endblock %}
+{% block og_description %}{{ service.seo_description|default:service.summary }}{% endblock %}
+{% block content %}
+{% if preview %}<div class="preview-flag">Oldindan ko‘rish: bu xizmat hali nashr qilinmagan.</div>{% endif %}
+{% url 'website:services' as services_url %}
+{% include "website/_page_head.html" with heading=service.title lede=service.summary crumb="Xizmatlar" crumb_url=services_url %}
+<section class="section pt-0">
+  <div class="wrap detail-grid">
+    <div class="detail-main" data-reveal>
+      {% if service.image %}<img src="{{ service.image.url }}" alt="" class="detail-image" loading="lazy">{% endif %}
+      {% if service.description %}<div class="prose">{{ service.description|linebreaks }}</div>{% endif %}
+      {% if process %}
+      <h2 class="h3 mt-xl">Ish qanday kechadi</h2>
+      <ol class="timeline" data-stagger>
+        {% for p in process %}
+        <li class="timeline-item"><span class="step-num">{{ forloop.counter }}</span>
+          <div><p class="timeline-title">{{ p.title }}</p><p class="timeline-body">{{ p.body }}</p></div></li>
+        {% endfor %}
+      </ol>
+      {% endif %}
+    </div>
+    <aside class="detail-aside">
+      <div class="glass-card sticky-card" data-reveal>
+        <span class="app-icon">{% include "website/_icon.html" with name=service.icon %}</span>
+        {% if service.benefit_list %}
+        <div>
+          <h2 class="card-title">Siz nimaga ega bo‘lasiz</h2>
+          <ul class="check-list">{% for b in service.benefit_list %}<li>{{ b }}</li>{% endfor %}</ul>
+        </div>
+        {% endif %}
+        {% if service.technologies.all %}
+        <div>
+          <h2 class="card-title">Texnologiyalar</h2>
+          <ul class="chip-row">{% for t in service.technologies.all %}<li class="chip is-static">{{ t.name }}</li>{% endfor %}</ul>
+        </div>
+        {% endif %}
+        <a href="{% url 'website:contact' %}?xizmat={{ service.slug }}" class="btn btn-filled btn-lg btn-block">Shu xizmat bo‘yicha murojaat</a>
+      </div>
+    </aside>
+  </div>
+</section>
+{% if related %}
+<section class="section section-tinted">
+  <div class="wrap">
+    <div class="section-head" data-reveal><h2 class="h2">Shu yo‘nalishdagi loyihalar</h2></div>
+    <div class="work-grid is-three" data-stagger>{% for p in related %}<div class="work-item">{% include "website/_project_card.html" with project=p %}</div>{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+{% include "website/_cta_band.html" with cta_service=service.slug %}
+{% endblock %}

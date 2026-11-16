@@ -1,0 +1,83 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static absence %}
+{% block title %}Haftalik ish va navbatchilik jadvali{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/schedule.css' %}?v=8">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / ISH JADVALLARI</span>
+    <h1>{% if form %}Haftalik ish va navbatchilik jadvali{% else %}Ish jadvalim{% endif %}</h1>
+    <p>{% if form %}Xodimlarning ish soatlari, navbatchilik smenalari va dam olish kunlari.{% else %}Rahbar ish grafigingizni belgilaganda tizim orqali bildirishnoma olasiz.{% endif %}</p>
+  </div>
+  <div class="heading-actions">{% if form %}<button type="button" class="button primary" data-record-template="shift-form" data-record-title="Yangi smena" data-shift-add data-shift-day="{{ today|date:'Y-m-d' }}">{% ui_icon 'plus' %} Smena qo‘shish</button>{% endif %}</div>
+</header>
+
+<div class="schedule-toolbar">
+  <nav class="schedule-nav" aria-label="Haftalar bo‘yicha o‘tish">
+    <a href="?{{ prev_query }}" class="icon-button schedule-back" aria-label="Oldingi hafta" title="Oldingi hafta">{% ui_icon 'arrow' %}</a>
+    <strong>{{ period_label }}<small>Dushanba — Yakshanba</small></strong>
+    <a href="?{{ next_query }}" class="icon-button" aria-label="Keyingi hafta" title="Keyingi hafta">{% ui_icon 'arrow' %}</a>
+    {% if is_this_week %}<span class="schedule-now">Joriy hafta</span>{% else %}<a href="?{{ week_query }}" class="button">Bu haftaga qaytish</a>{% endif %}
+  </nav>
+  <div class="schedule-tools">
+    <form class="schedule-range" aria-label="Haftani tanlash">
+      <label>Haftaga o‘tish<input type="date" name="dan" value="{{ start|date:'Y-m-d' }}" data-auto-submit aria-label="Shu sana tushgan haftani ochish"></label>
+    </form>
+    {% if form and has_last_week %}
+    <form method="post" data-confirm="O‘tgan haftaning smenalari shu haftaga ko‘chiriladi. Band vaqtlar o‘tkazib yuboriladi.">{% csrf_token %}<input type="hidden" name="action" value="copy_week"><input type="hidden" name="hafta" value="{{ start|date:'Y-m-d' }}"><button class="button">{% ui_icon 'calendar' %} O‘tgan haftadan nusxa</button></form>
+    {% endif %}
+  </div>
+</div>
+
+<dl class="schedule-stats">
+  <div><dt>Smenalar</dt><dd>{{ stats.shifts }}</dd></div>
+  <div><dt>Xodimlar</dt><dd>{{ stats.people }}</dd></div>
+  <div><dt>Jami soat</dt><dd>{{ stats.hours }}</dd></div>
+</dl>
+
+{% absence_panel %}
+
+<div class="schedule-board">
+  {% for day in days %}
+  <section class="schedule-day{% if day.is_today %} is-today{% endif %}" aria-label="{{ day.name }}, {{ day.date.day }} {{ day.month }}">
+    <header>
+      <div><span>{{ day.name }}</span><strong>{{ day.date.day }} {{ day.month }}</strong></div>
+      {% if form %}<button type="button" class="schedule-add" data-record-template="shift-form" data-record-title="Yangi smena" data-shift-day="{{ day.date|date:'Y-m-d' }}" aria-label="{{ day.date.day }} {{ day.month }} uchun smena qo‘shish" title="Smena qo‘shish">{% ui_icon 'plus' %}</button>{% endif %}
+    </header>
+    <div class="schedule-list">
+      {% for shift in day.shifts %}
+      <article class="shift-card{% if shift.cancelled %} is-cancelled{% endif %}">
+        <time>{{ shift.starts_at|date:'H:i' }}–{{ shift.ends_at|date:'H:i' }}{% if shift.overnight %} +1{% endif %}</time>
+        <div class="shift-person">{% include 'boshqaruv/components/avatar.html' with person=shift.employee avatar_class='small' %}<strong title="{{ shift.employee.display_name }}">{{ shift.employee.display_name }}</strong></div>
+        {% if shift.notes %}<small>{{ shift.notes }}</small>{% endif %}
+        <div class="shift-foot">
+          <span class="shift-place" title="{{ shift.location }}">{% if shift.cancelled %}Bekor qilingan{% else %}{{ shift.location|default:'Ofis' }}{% endif %}</span>
+          {% if manager and not shift.cancelled %}
+          <div class="shift-tools">
+            <a href="?edit={{ shift.pk }}&amp;{{ period_query }}" data-form-modal data-record-title="Smenani tahrirlash" aria-label="Smenani tahrirlash" title="Tahrirlash">{% ui_icon 'edit' %}</a>
+            <form method="post" action="{% url 'enterprise:cancel_shift' shift.pk %}" data-confirm="Smena jadvaldan butunlay o‘chiriladi va xodimga bildirishnoma yuboriladi.">{% csrf_token %}<button aria-label="Smenani o‘chirish" title="O‘chirish">{% ui_icon 'close' %}</button></form>
+          </div>
+          {% elif not manager and not shift.cancelled and shift.employee_id == request.user.pk and shift.starts_at|date:'Y-m-d' >= today|date:'Y-m-d' %}
+          <button type="button" class="shift-absent" data-absence-day="{{ shift.starts_at|date:'Y-m-d' }}">Kela olmayman</button>
+          {% endif %}
+        </div>
+      </article>
+      {% empty %}
+      <p class="schedule-empty">Smena yo‘q</p>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</div>
+
+{% if form %}
+<noscript><style>.profile-form-fallback{display:block!important}</style></noscript>
+<div id="shift-form" class="profile-form-fallback" data-record-template-source>
+  <form data-modal-source method="post" class="form-grid shift-form"{% if editing %} data-editing="true"{% endif %}>
+    {% csrf_token %}
+    {% include "boshqaruv/components/form.html" with form=form %}
+    <div class="form-footer"><a href="{% url 'enterprise:schedule' %}?{{ period_query }}" class="button">Bekor qilish</a><button class="button primary" type="submit">{% ui_icon 'check' %} Smenani saqlash</button></div>
+  </form>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/schedule.js' %}?v=1" defer></script>{% endblock %}

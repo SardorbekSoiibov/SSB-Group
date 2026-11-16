@@ -1,0 +1,15 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Moliyaviy amal kiritish{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/operation-new.css' %}?v=2">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / MOLIYA</span>
+    <h1>Moliyaviy amal kiritish</h1>
+    <p>Nima bo‘lganini tanlang — faqat kerakli maydonlar chiqadi va pul qanday bo‘linishi oldindan ko‘rsatiladi.</p>
+  </div>
+  <div class="heading-actions"><a class="button" href="{% url 'enterprise:finance' %}">Orqaga</a></div>
+</header>
+{% include 'boshqaruv/business/_operation_body.html' %}
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/operation-new.js' %}?v=2" defer></script>{% endblock %}

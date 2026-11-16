@@ -1,0 +1,28 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Sayt va portfolio boshqaruvi{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / SAYT VA PORTFOLIO</span>
+    <h1>Sayt va portfolio boshqaruvi</h1>
+    <p>Kompaniyaning tashqi veb-saytidagi xizmatlar, portfolio loyihalari, mijozlar fikrlari va jamoa bloklari.</p>
+  </div>
+  <div class="heading-actions">
+    <a href="{% url 'crm:cms_site' %}" class="button">{% ui_icon 'settings' %} Sayt umumiy sozlamalari</a>
+  </div>
+</header>
+
+<div class="list-cards">
+  {% for item in sections %}
+  <a class="list-card" href="{% url 'crm:cms_list' item.key %}" style="transition:var(--transition-smooth);">
+    <span class="eyebrow">KONTENT BO‘LIMI</span>
+    <h2 style="font-size:18px; margin:4px 0 6px;">{{ item.title }}</h2>
+    <p style="color:var(--ink-secondary); font-size:13px;">{{ item.total }} ta yozuv · <strong>{{ item.published|default:0 }}</strong> ta nashr qilingan</p>
+    <footer style="margin-top:16px; display:flex; align-items:center; justify-content:space-between; color:var(--apple-blue); font-weight:600;">
+      <span>Boshqarish</span>
+      {% ui_icon 'arrow' %}
+    </footer>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

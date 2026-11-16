@@ -1,0 +1,74 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Xodimlar bandligi{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/work-views.css' %}?v=2">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / LOYIHALAR</span>
+    <h1>Xodimlar bandligi</h1>
+    <p>Xodimlar o‘rtasida ochiq vazifalar, jarayondagi ishlar va kechikkan topshiriqlar taqsimoti.</p>
+  </div>
+  <div class="heading-actions">
+    {% if can_create_task %}
+    <a href="{% url 'crm:task_create' %}" class="button primary">{% ui_icon 'plus' %} Yangi vazifa</a>
+    {% endif %}
+  </div>
+</header>
+
+{% include 'boshqaruv/operations/projects/_views.html' with active_view='workload' %}
+
+<p class="work-view-hint">Bajarilmagan · hali yakunlanmagan barcha vazifalar. Qolgan ustunlar shu vazifalarning holatini ko‘rsatadi. Kechikkan · muddati o‘tgan vazifalar; ular boshqa ustunlarda ham hisoblanadi.</p>
+<section class="panel">
+  <header class="panel-head">
+    <h2>Xodimlar bo‘yicha ish taqsimoti</h2>
+    <span class="chart-key">Haqiqiy faol vazifalar</span>
+  </header>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Xodim</th>
+          <th>Bajarilmagan</th>
+          <th>Jarayonda</th>
+          <th>Tekshiruvda</th>
+          <th>To‘xtab qolgan</th>
+          <th>Kechikkan</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for person in rows %}
+        <tr>
+          <td>
+            <strong>{{ person.display_name }}</strong>
+            <small>{{ person.department|default:'Bo‘limsiz' }}</small>
+          </td>
+          <td><div class="workload-count"><span class="badge-number">{{ person.open_count }} ta</span><progress value="{{ person.open_count }}" max="{{ peak }}" aria-label="{{ person.display_name }}: {{ person.open_count }} ta bajarilmagan vazifa"></progress></div></td>
+          <td>{{ person.in_progress }}</td>
+          <td>{{ person.review }}</td>
+          <td>
+            {% if person.blocked > 0 %}
+            <span class="text-danger font-bold">{{ person.blocked }}</span>
+            {% else %}
+            0
+            {% endif %}
+          </td>
+          <td>
+            {% if person.overdue > 0 %}
+            <span class="status" data-status="urgent">{{ person.overdue }}</span>
+            {% else %}
+            <span class="text-secondary">0</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align:center; padding:32px 20px; color:var(--ink-tertiary);">
+            Hozircha xodimlarda ochiq vazifalar mavjud emas.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

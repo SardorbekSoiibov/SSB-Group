@@ -1,0 +1,144 @@
+{% extends 'boshqaruv/base.html' %}{% load static boshqaruv %}
+{% block title %}Baholash va reyting{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/performance-board.css' %}?v=4">{% endblock %}
+{% block content %}
+<header class="page-heading pb-heading">
+  <div>
+    <span class="eyebrow">ISH MAYDONI</span>
+    <h1>Baholash va reyting</h1>
+    <p>Har hafta dushanbadan yakshanbagacha bajarilgan ishlar bo‘yicha. {% if manager %}Siz hafta davomida baho qo‘yasiz, {% else %}Rahbar baho qo‘yadi, {% endif %}SSB AI tahlil qiladi, natija dushanba 00:00 da e’lon qilinadi.</p>
+  </div>
+</header>
+
+<section class="pb-countdown" aria-label="Keyingi e’lon">
+  <div class="pb-countdown-text">
+    <span class="pb-label">Joriy hafta</span>
+    <strong>{{ start|date:'d.m' }} — {{ end|date:'d.m.Y' }}</strong>
+    <small>Natija: {{ close_at|date:'d.m.Y' }}, dushanba 00:00 da e’lon qilinadi</small>
+  </div>
+  <div class="pb-timer" data-close-at="{{ close_at_iso }}" aria-live="off">
+    <span><b data-unit="d">–</b><small>kun</small></span>
+    <span><b data-unit="h">–</b><small>soat</small></span>
+    <span><b data-unit="m">–</b><small>daqiqa</small></span>
+    <span><b data-unit="s">–</b><small>soniya</small></span>
+  </div>
+</section>
+
+<ol class="pb-steps" aria-label="Qanday ishlaydi">
+  <li><b>1</b><div><strong>Ish bajariladi</strong><small>Dushanba–yakshanba: rahbar qabul qilgan vazifalar hisobga olinadi</small></div></li>
+  <li><b>2</b><div><strong>Rahbar baholaydi</strong><small>Hafta davomida ball (0–100) va izoh · {{ weights.manager }}% ulush</small></div></li>
+  <li><b>3</b><div><strong>SSB AI tahlil qiladi</strong><small>{% if ai_configured %}Claude har bir xodimning haftasini o‘qib chiqadi{% else %}AI kaliti ulanmagan — ochiq formula ishlaydi{% endif %}</small></div></li>
+  <li><b>4</b><div><strong>Dushanba 00:00</strong><small>Reyting va haftaning eng faol xodimi e’lon qilinadi</small></div></li>
+</ol>
+
+{% if mine %}
+<section class="panel pb-mine">
+  <header class="panel-head"><h2>Mening shu haftam</h2><small>Jonli holat · yakuniy natija dushanba 00:00 da</small></header>
+  <div class="pb-stats">
+    <div><small>Qabul qilingan vazifalar</small><strong>{{ mine.evidence.completed }}</strong></div>
+    <div><small>Muddatida</small><strong>{{ mine.evidence.on_time }}</strong></div>
+    <div><small>Qaytarilgan</small><strong>{{ mine.evidence.corrections }}</strong></div>
+    <div><small>Loyihalar</small><strong>{{ mine.projects|length }}</strong></div>
+  </div>
+  {% if mine.projects %}<p class="pb-chips">{% for p in mine.projects %}<span>{{ p }}</span>{% endfor %}</p>{% endif %}
+  <p class="eval-note">Vazifa “Bajarildi” deb qabul qilingan paytdan hisobga olinadi. Rahbar bahosi va AI tahlili e’londa ko‘rinadi.</p>
+</section>
+{% endif %}
+
+{% if manager %}
+<section class="panel pb-board" id="baholash">
+  <header class="panel-head">
+    <div><h2>Xodimlarni baholash</h2><small>{{ start|date:'d.m' }} — {{ end|date:'d.m' }} · yakshanba 23:59 gacha o‘zgartirish mumkin</small></div>
+    <div class="pb-progress-wrap"><span class="pb-progress-label"><b data-scored>{{ scored_count }}</b> / <span data-scorable>{{ scorable_count }}</span> baholandi</span>
+      <div class="pb-progress" role="progressbar" aria-label="Baholangan xodimlar" aria-valuemin="0" aria-valuemax="{{ scorable_count }}" aria-valuenow="{{ scored_count }}"><span data-progress style="--done: {% if scorable_count %}{% widthratio scored_count scorable_count 100 %}{% else %}0{% endif %}%"></span></div></div>
+  </header>
+  <div class="pb-list" role="list">
+    <div class="pb-list-head" aria-hidden="true"><span>Xodim</span><span>Shu hafta</span><span>Ball</span><span>Izoh (xodim ko‘radi)</span><span></span></div>
+  {% for row in board %}
+    <form method="post" class="pb-row{% if row.manager %} is-scored{% endif %}" id="xodim-{{ row.person.pk }}" role="listitem" data-score-form novalidate>{% csrf_token %}
+      <input type="hidden" name="employee" value="{{ row.person.pk }}">
+      <div class="pb-row-person">
+        {% include 'boshqaruv/components/avatar.html' with person=row.person %}
+        <div class="pb-person-name"><strong>{{ row.person.display_name }}</strong><small>{{ row.person.job_title|default:row.person.role|default:'' }}</small></div>
+      </div>
+      <div class="pb-row-facts" title="Taxminiy yakuniy ball: {{ row.preview|stringformat:'s' }}">
+        <span class="pb-fact" title="Qabul qilingan vazifalar"><b>{{ row.evidence.completed }}</b> bajarildi</span>
+        <span class="pb-fact" title="Muddatida qabul qilingan"><b>{{ row.evidence.on_time }}</b> muddatida</span>
+        {% if row.evidence.corrections %}<span class="pb-fact is-warn" title="Rahbar qaytargan"><b>{{ row.evidence.corrections }}</b> qaytarildi</span>{% endif %}
+        {% if row.projects %}<span class="pb-fact is-project" title="{{ row.projects|join:', ' }}">{{ row.projects|first }}{% if row.projects|length > 1 %} +{{ row.projects|length|add:'-1' }}{% endif %}</span>{% endif %}
+      </div>
+      {% if row.can_score %}
+      <label class="pb-row-score"><span class="visually-hidden">{{ row.person.display_name }} uchun ball (0–100)</span>
+        <input type="number" name="score" min="0" max="100" step="1" inputmode="numeric" required value="{% if row.manager %}{{ row.manager.score|floatformat:'0' }}{% endif %}" placeholder="—"></label>
+      <label class="pb-row-comment"><span class="visually-hidden">{{ row.person.display_name }} uchun izoh</span>
+        <textarea name="comment" rows="1" minlength="10" maxlength="2000" required placeholder="Nima yaxshi bo‘ldi, nimaga e’tibor bersin…">{% if row.manager %}{{ row.manager.comment }}{% endif %}</textarea></label>
+      <div class="pb-row-action">
+        <button class="button primary compact" type="submit">{% if row.manager %}Saqlandi ✓{% else %}Saqlash{% endif %}</button>
+      </div>
+      <p class="pb-row-status" data-status aria-live="polite">{% if row.manager %}{{ row.manager.author.display_name }} · {{ row.manager.updated_at|date:'d.m H:i' }}{% endif %}</p>
+      {% else %}
+      <p class="pb-row-self">Siz o‘zingizni baholay olmaysiz</p>
+      {% endif %}
+    </form>
+  {% empty %}
+    <p class="pb-empty">Baholanadigan xodim yo‘q.</p>
+  {% endfor %}
+  </div>
+  <p class="pb-foot">Ball 0–100, izoh kamida 10 belgi. Baho qo‘yilmagan xodimning balli faqat vazifalar va AI tahlili bo‘yicha hisoblanadi.</p>
+</section>
+{% endif %}
+
+<section class="panel pb-result" id="reyting">
+  <header class="panel-head">
+    <div><h2>Haftalik reyting</h2>{% if week %}<small>{{ week.starts_on|date:'d.m' }} — {{ week_end|date:'d.m.Y' }} · e’lon: {{ week.published_at|date:'d.m.Y H:i' }}</small>{% endif %}</div>
+    {% if weeks|length > 1 %}<form method="get" class="pb-week-select"><label class="visually-hidden" for="pb-week">Hafta</label><select id="pb-week" name="week" onchange="this.form.submit()">{% for w in weeks %}<option value="{{ w.starts_on|date:'Y-m-d' }}" {% if week.pk == w.pk %}selected{% endif %}>{{ w.starts_on|date:'d.m.Y' }} haftasi</option>{% endfor %}</select><noscript><button class="button">Ko‘rsatish</button></noscript></form>{% endif %}
+  </header>
+  {% if ranking %}
+    {% if winner %}
+    <div class="pb-winner">
+      <div class="pb-winner-badge">🏆</div>
+      <div class="pb-winner-body">
+        <span class="pb-label">Haftaning eng faol xodimi</span>
+        <div class="pb-winner-person">{% if winner.person %}{% include 'boshqaruv/components/avatar.html' with person=winner.person avatar_class='avatar-lg' %}{% endif %}<div><h3>{{ winner.name }}</h3><small>{{ winner.role }}</small></div></div>
+        <p>{{ winner.score }}/100 ball · {% firstof winner.completed winner.achievements|length %} ta vazifa bajarildi</p>
+      </div>
+    </div>
+    {% else %}<p class="eval-note pb-note">Bu hafta hech kim vazifa topshirmagani uchun eng faol xodim aniqlanmadi.</p>{% endif %}
+    {% if personal %}<p class="pb-personal">Sizning natijangiz: <strong>{{ personal.place }}-o‘rin</strong> · {{ personal.score }}/100 · <a href="{% url 'enterprise:evaluation_detail' personal.evaluation_id %}">AI tahlili va rahbar izohi →</a></p>{% endif %}
+    <ol class="pb-ranking">
+    {% for row in ranking %}
+      <li class="pb-rank-row{% if row.employee_id == user.pk %} is-me{% endif %}">
+        <span class="pb-place pb-place-{{ row.place }}">{{ row.place }}</span>
+        {% if row.person %}{% include 'boshqaruv/components/avatar.html' with person=row.person %}{% endif %}
+        <div class="pb-rank-name"><strong>{{ row.name }}{% if row.employee_id == user.pk %} <em>(siz)</em>{% endif %}</strong><small>{{ row.role }}{% if row.manager_scored is False %} · rahbar baholamagan{% endif %}</small></div>
+        <span class="pb-rank-tasks">{% firstof row.completed row.achievements|length '0' %} vazifa</span>
+        <div class="pb-rank-score"><span class="pb-bar"><span style="width: {{ row.score }}%"></span></span><strong>{{ row.score }}</strong></div>
+        {% if manager or row.employee_id == user.pk %}<a class="pb-rank-link" href="{% url 'enterprise:evaluation_detail' row.evaluation_id %}" aria-label="{{ row.name }} tahlili">Tahlil</a>{% endif %}
+      </li>
+    {% endfor %}
+    </ol>
+    <p class="eval-note pb-note">Ball teng bo‘lsa: ko‘proq vazifa bajargan, so‘ng ko‘proq vazifani muddatida topshirgan xodim yuqorida turadi. Har bir xodimning batafsil tahlilini faqat o‘zi va rahbar ko‘radi.</p>
+  {% else %}
+    <div class="pb-empty"><strong>Hali e’lon qilingan reyting yo‘q</strong><p>Birinchi natija {{ close_at|date:'d.m.Y' }}, dushanba 00:00 da chiqadi. Hafta davomida kamida bitta vazifa qabul qilingan bo‘lishi kerak.</p></div>
+  {% endif %}
+</section>
+
+{% if week and rewards or reward_form %}
+<section class="panel" id="mukofotlar">
+  <header class="panel-head"><h2>Mukofotlar</h2><small>1-, 2- va 3-o‘rin</small></header>
+  <div class="panel-body"><div class="weekly-rewards pb-rewards">{% for reward in rewards %}<article><strong>{{ reward.place }}-o‘rin · {{ reward.get_kind_display }}</strong><p>{{ reward.description }}</p><p>{{ reward.value }} {{ reward.currency }} · {{ reward.get_status_display }}</p>{% if reward.employee %}<p>{{ reward.employee.display_name }}</p>{% endif %}{% if reward.operation %}<p>Moliyaviy holat: {{ reward.operation.get_status_display }}</p>{% endif %}{% if company_manager %}{% if reward.status == 'draft' or reward.kind != 'cash' and reward.status == 'approved' %}<details><summary>Boshqarish</summary>{% include 'boshqaruv/business/_reward_editor.html' with reward_form=reward.edit_form %}</details>{% endif %}{% endif %}</article>{% empty %}<p>Bu hafta uchun mukofot belgilanmagan.</p>{% endfor %}</div>
+  {% if reward_form %}<details class="eval-prepare"><summary>Mukofot qo‘shish</summary>{% include 'boshqaruv/business/_reward_editor.html' %}</details>{% endif %}</div>
+</section>
+{% endif %}
+
+<details class="pb-formula">
+  <summary>Ball qanday hisoblanadi?</summary>
+  <div class="pb-formula-body">
+    <ul>{% for key, label in criteria_labels.items %}<li><strong>{{ label }}</strong> — {% for k, w in weights.items %}{% if k == key %}{{ w }}%{% endif %}{% endfor %}</li>{% endfor %}</ul>
+    <p>Bajarilish: shu hafta qabul qilingan vazifalar / muddati shu haftaga tushgan vazifalar. Sifat: qabul qilingan / (qabul qilingan + qaytarilgan). Hissa: xodimning loyihadagi qabul qilingan vazifalar ulushi. Muddat: muddatida topshirilganlar ulushi.</p>
+    <p>SSB AI (Claude) bu to‘rt mezonni dalil asosida ko‘pi bilan ±15 ballga tuzatishi va har bir xodimga xulosa, kuchli tomonlar va tavsiyalar yozishi mumkin. Rahbar bahosini faqat rahbar qo‘yadi. Rahbar baho qo‘ymagan bo‘lsa, qolgan mezonlar 100% ga keltiriladi.</p>
+    <p>Asoschi baholanmaydi. Hafta: dushanba 00:00 — yakshanba 23:59 (Toshkent vaqti).</p>
+  </div>
+</details>
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/performance-board.js' %}?v=2" defer></script>{% endblock %}

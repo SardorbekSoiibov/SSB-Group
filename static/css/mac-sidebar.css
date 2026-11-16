@@ -1,0 +1,215 @@
+/* macOS-style sidebar (Finder / System Settings). Loaded after workspace.css, overrides the card-accordion look. */
+body[data-app] .app-rail{
+  --mac-bg:color-mix(in srgb,var(--surface) 82%,var(--canvas));
+  --mac-ink:var(--rail-text);--mac-ink2:color-mix(in srgb,var(--rail-text) 72%,var(--rail-muted));--mac-ink3:var(--rail-muted);
+  --mac-fill:color-mix(in srgb,var(--rail-text) 7%,transparent);--mac-hover:color-mix(in srgb,var(--rail-text) 6%,transparent);
+  --mac-sel:color-mix(in srgb,var(--rail-text) 11%,transparent);--mac-accent:var(--apple-blue,#0a84ff);
+  --mac-line:color-mix(in srgb,var(--rail-text) 10%,transparent);
+  width:248px!important;padding:0!important;background:var(--mac-bg)!important;color:var(--mac-ink)!important;
+  border-right:1px solid var(--mac-line)!important;box-shadow:none!important;
+  -webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%)
+}
+:root[data-theme="dark"] body[data-app] .app-rail{--mac-ink:#ececf1;--mac-ink3:#9a9aa6;--mac-bg:color-mix(in srgb,var(--surface) 88%,#000);--mac-line:rgb(255 255 255/.07)}
+body[data-app] .app-body{margin-left:248px!important}
+
+/* brand */
+body[data-app] .app-rail .app-brand{margin:0!important;padding:18px 18px 10px!important;min-height:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important}
+body[data-app] .app-rail .brand-copy strong{font-size:14px!important;font-weight:700!important;color:var(--mac-ink)!important;letter-spacing:-.01em}
+body[data-app] .app-rail .brand-copy small{font-size:11.5px!important;color:var(--mac-ink3)!important}
+
+/* search field */
+body[data-app] .app-rail .rail-tools{padding:2px 12px 8px!important}
+body[data-app] .app-rail .rail-search{min-height:30px!important;height:30px;padding:0 9px!important;gap:6px!important;border:0!important;border-radius:8px!important;background:var(--mac-fill)!important;box-shadow:none!important;color:var(--mac-ink3)!important}
+body[data-app] .app-rail .rail-search .ui-icon{width:14px;height:14px}
+body[data-app] .app-rail .rail-search input{font-size:13px!important;color:var(--mac-ink)!important;background:none!important;border:0!important}
+body[data-app] .app-rail .rail-search input::placeholder{color:var(--mac-ink3)}
+body[data-app] .app-rail .rail-search:focus-within{box-shadow:0 0 0 3px color-mix(in srgb,var(--mac-accent) 35%,transparent)!important}
+
+/* groups: plain, no cards */
+body[data-app] .app-rail .app-navigation{padding:4px 10px 12px!important}
+body[data-app] .app-rail .nav-group{margin:0 0 10px!important;padding:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;overflow:visible!important}
+body[data-app] .app-rail .nav-group:hover,body[data-app] .app-rail .nav-group:has(a[aria-current="page"]),body[data-app] .app-rail .nav-group.is-collapsed{border:0!important;background:none!important;box-shadow:none!important}
+body[data-app] .app-rail .nav-group>p{
+  min-height:24px!important;margin:6px 0 2px!important;padding:0 4px 0 10px!important;border-radius:6px!important;background:none!important;
+  color:var(--mac-ink3)!important;font-size:11px!important;font-weight:600!important;letter-spacing:0!important;text-transform:none!important;
+  display:flex!important;align-items:center;justify-content:space-between
+}
+body[data-app] .app-rail .nav-group>p:hover{background:none!important;color:var(--mac-ink2)!important}
+body[data-app] .app-rail .nav-group:has(a[aria-current="page"])>p,body[data-app] .app-rail .nav-group.is-collapsed>p{color:var(--mac-ink3)!important}
+/* the chevron only appears on hover, like macOS "Show / Hide" */
+body[data-app] .app-rail .nav-group-collapse{width:20px!important;height:20px!important;min-width:20px!important;border:0!important;border-radius:5px!important;background:none!important;box-shadow:none!important;color:var(--mac-ink3)!important;opacity:0;transition:opacity .15s ease,transform .2s ease!important}
+body[data-app] .app-rail .nav-group>p:hover .nav-group-collapse,body[data-app] .app-rail .nav-group-collapse:focus-visible,body[data-app] .app-rail .nav-group.is-collapsed .nav-group-collapse{opacity:1}
+body[data-app] .app-rail .nav-group-collapse:hover{background:var(--mac-hover)!important;color:var(--mac-ink)!important}
+body[data-app] .app-rail .nav-group-collapse .material-symbols-rounded{font-size:16px!important}
+
+/* items */
+body[data-app] .app-rail .app-navigation .nav-group>a{
+  position:relative;min-height:30px!important;height:30px;margin:1px 0!important;padding:0 10px!important;gap:9px!important;
+  border:0!important;border-radius:7px!important;background:none!important;box-shadow:none!important;transform:none!important;
+  color:var(--mac-ink)!important;font-size:13px!important;font-weight:450!important;display:flex;align-items:center
+}
+body[data-app] .app-rail .nav-group>a>.ui-icon{width:16px!important;height:16px!important;color:var(--mac-accent)!important;opacity:.95}
+body[data-app] .app-rail .nav-group>a>span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-app] .app-rail .nav-group>a:hover{background:var(--mac-hover)!important}
+body[data-app] .app-rail .nav-group>a[aria-current="page"]{background:var(--mac-sel)!important;color:var(--mac-ink)!important;font-weight:600!important}
+body[data-app] .app-rail .nav-group>a[aria-current="page"]::before,body[data-app] .app-rail .nav-group>a>i{display:none!important}
+body[data-app] .app-rail .nav-group>a.is-pending{opacity:.6}
+body[data-app] .app-rail .chat-nav-badge{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--mac-accent);color:#fff;font-size:10.5px;font-weight:700;display:inline-grid;place-items:center}
+body[data-app] .app-rail .rail-empty{padding:10px;color:var(--mac-ink3);font-size:12px}
+
+/* bottom: compact account + app rows */
+body[data-app] .app-rail .rail-bottom{margin:0!important;padding:8px 10px 10px!important;border:0!important;border-top:1px solid var(--mac-line)!important;border-radius:0!important;background:none!important;box-shadow:none!important;-webkit-backdrop-filter:none;backdrop-filter:none;display:grid;gap:2px}
+body[data-app] .app-rail .rail-bottom>a{min-height:0!important;margin:0!important;padding:7px 8px!important;gap:10px!important;border:0!important;border-radius:8px!important;background:none!important;color:var(--mac-ink)!important;font-size:13px!important;display:flex;align-items:center}
+body[data-app] .app-rail .rail-bottom>a:hover{background:var(--mac-hover)!important}
+body[data-app] .app-rail .rail-bottom>a>span:not(.avatar){flex:1;min-width:0;display:block;line-height:1.3;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-app] .app-rail .rail-bottom>a>span small{display:block;margin-top:1px;white-space:nowrap;color:var(--mac-ink3)!important;font-size:11.5px!important;font-weight:400;overflow:hidden;text-overflow:ellipsis}
+body[data-app] .app-rail .rail-bottom>a>.ui-icon{width:16px;height:16px;color:var(--mac-ink3)}
+body[data-app] .app-rail .rail-bottom>a:not(.account)>.ui-icon:first-child{color:var(--mac-accent)}
+body[data-app] .app-rail .rail-bottom>a:not(.account){font-size:12.5px!important}
+body[data-app] .app-rail .rail-bottom>a:not(.account)>span{font-weight:500}
+body[data-app] .app-rail .rail-bottom .account{border:0!important;margin:0!important;padding:8px!important}
+body[data-app] .app-rail .rail-bottom .account .avatar{flex:none!important;width:32px!important;height:32px!important;box-shadow:0 0 0 1px var(--mac-line)!important}
+
+@media(max-width:1023px){
+  body[data-app] .app-body{margin-left:0!important}
+  body[data-app] .app-rail{width:min(280px,86vw)!important;background:var(--surface)!important}
+}
+@media(prefers-reduced-motion:reduce){body[data-app] .app-rail .nav-group-collapse{transition:none!important}}
+
+/* Footer: no white strip, aligned with the page content, thin divider. */
+body[data-app] .app-footer{
+  display:flex!important;align-items:center;justify-content:space-between;gap:16px;
+  max-width:1580px;margin:0 clamp(20px,3vw,42px)!important;padding:14px 0 20px!important;
+  background:none!important;box-shadow:none!important;border:0!important;
+  border-top:1px solid color-mix(in srgb,var(--line) 80%,transparent)!important;
+  color:var(--ink-tertiary)!important;font-size:12px!important;text-align:left!important;flex-direction:row!important
+}
+body[data-app] .app-footer i{margin:0 6px;font-style:normal;opacity:.6}
+@media(min-width:1700px){body[data-app] .app-footer{margin-inline:auto!important;width:calc(100% - 84px)}}
+@media(max-width:767px){body[data-app] .app-footer{margin:0 16px!important;font-size:11px!important}}
+body[data-app] .app-rail .rail-bottom>a{width:100%;min-width:0;overflow:hidden}
+body[data-app] .app-rail .rail-bottom>a>.ui-icon{flex:none!important}
+body[data-app] .app-rail .rail-bottom>a>span:not(.avatar){width:auto!important;max-width:none!important}
+
+/* KPI strip: four separate cards with a gap (no card-inside-card corners). */
+body[data-app] .stat-strip{gap:14px;padding:0!important;border:0!important;border-radius:0!important;background:none!important;box-shadow:none!important;overflow:visible!important}
+body[data-app] .stat-strip .stat-cell{border:1px solid color-mix(in srgb,var(--line) 82%,transparent)!important;border-radius:16px!important;background:var(--surface)!important;box-shadow:0 1px 2px rgb(16 24 40/.04)!important;padding:18px 20px!important}
+body[data-app] .stat-strip .stat-cell:hover{box-shadow:0 4px 14px rgb(16 24 40/.06)!important}
+@media(max-width:1023px){body[data-app] .stat-strip{gap:12px}body[data-app] .stat-strip .stat-cell{border-bottom:1px solid color-mix(in srgb,var(--line) 82%,transparent)!important}}
+
+/* Brand: single "SSB Premium" wordmark with an app-icon style mark. */
+body[data-app] .app-rail .app-brand{display:flex!important;align-items:center;gap:10px!important;padding:18px 16px 12px!important}
+body[data-app] .app-rail .brand-mark{
+  width:30px;height:30px;flex:none;display:grid;place-items:center;border-radius:9px;
+  background:linear-gradient(145deg,#2c4669 0%,#182535 100%);color:#fff;
+  font-size:16px;font-weight:800;letter-spacing:-.04em;line-height:1;
+  box-shadow:inset 0 1px 0 rgb(255 255 255/.18),0 4px 10px rgb(24 37 53/.25)
+}
+:root[data-theme="dark"] body[data-app] .app-rail .brand-mark{background:linear-gradient(145deg,#5b7aa3 0%,#2c4669 100%)}
+body[data-app] .app-rail .brand-copy{display:block!important}
+body[data-app] .app-rail .brand-copy strong{display:block;font-size:15px!important;font-weight:750!important;letter-spacing:-.02em!important;line-height:1.1!important;white-space:nowrap}
+body[data-app] .app-rail .brand-copy strong em{
+  font-style:normal;font-weight:500;letter-spacing:-.01em;
+  background:linear-gradient(90deg,#3d6fb3,#7a5cd6);-webkit-background-clip:text;background-clip:text;color:transparent
+}
+:root[data-theme="dark"] body[data-app] .app-rail .brand-copy strong em{background-image:linear-gradient(90deg,#7fb0ff,#b19cff)}
+body[data-app] .app-rail .brand-copy small{display:none!important}
+
+/* Brand: plain "SSB Group" in the main font, no icon. */
+body[data-app] .app-rail .brand-mark{display:none!important}
+body[data-app] .app-rail .brand-copy strong{font-size:16px!important;font-weight:700!important;letter-spacing:-.02em!important;color:var(--mac-ink)!important}
+body[data-app] .app-rail .brand-copy strong em{all:unset}
+
+body[data-app] .app-rail .app-brand{padding:22px 18px 16px!important}
+body[data-app] .app-rail .brand-copy strong{font-size:21px!important;font-weight:800!important;letter-spacing:-.03em!important;line-height:1.1!important}
+
+/* Brand accent: dark blue (to'q ko'k) everywhere in SSB Boshqaruv. */
+:root,body[data-app]{--apple-blue:#1e3a6e;--apple-blue-hover:#16305c;--apple-blue-light:#e9eef7;--ios-blue:#1e3a6e}
+:root[data-theme="dark"],:root[data-theme="dark"] body[data-app]{--apple-blue:#8fb0e6;--apple-blue-hover:#a9c3ee;--apple-blue-light:#1a2a45;--ios-blue:#8fb0e6}
+body[data-app] ::selection{background:color-mix(in srgb,var(--apple-blue) 22%,transparent)}
+
+/* Accent colour chosen by each user (account menu). */
+:root[data-accent="navy"],:root[data-accent="navy"] body[data-app]{--apple-blue:#1e3a6e;--apple-blue-hover:#16305c;--apple-blue-light:#e9eef7;--ios-blue:#1e3a6e}
+:root[data-theme="dark"][data-accent="navy"],:root[data-theme="dark"][data-accent="navy"] body[data-app]{--apple-blue:#8fb0e6;--apple-blue-hover:#a9c3ee;--apple-blue-light:#1a2a45;--ios-blue:#8fb0e6}
+:root[data-accent="blue"],:root[data-accent="blue"] body[data-app]{--apple-blue:#0a6cff;--apple-blue-hover:#0058d6;--apple-blue-light:#e8f1ff;--ios-blue:#0a6cff}
+:root[data-theme="dark"][data-accent="blue"],:root[data-theme="dark"][data-accent="blue"] body[data-app]{--apple-blue:#6aa8ff;--apple-blue-hover:#8fbdff;--apple-blue-light:#13294a;--ios-blue:#6aa8ff}
+:root[data-accent="indigo"],:root[data-accent="indigo"] body[data-app]{--apple-blue:#4f46e5;--apple-blue-hover:#4338ca;--apple-blue-light:#eeedfd;--ios-blue:#4f46e5}
+:root[data-theme="dark"][data-accent="indigo"],:root[data-theme="dark"][data-accent="indigo"] body[data-app]{--apple-blue:#a5a1ff;--apple-blue-hover:#bebbff;--apple-blue-light:#25234d;--ios-blue:#a5a1ff}
+:root[data-accent="purple"],:root[data-accent="purple"] body[data-app]{--apple-blue:#7c3aed;--apple-blue-hover:#6d28d9;--apple-blue-light:#f3edfe;--ios-blue:#7c3aed}
+:root[data-theme="dark"][data-accent="purple"],:root[data-theme="dark"][data-accent="purple"] body[data-app]{--apple-blue:#c4a5ff;--apple-blue-hover:#d4bdff;--apple-blue-light:#2e2147;--ios-blue:#c4a5ff}
+:root[data-accent="teal"],:root[data-accent="teal"] body[data-app]{--apple-blue:#0f766e;--apple-blue-hover:#0b5f59;--apple-blue-light:#e6f4f2;--ios-blue:#0f766e}
+:root[data-theme="dark"][data-accent="teal"],:root[data-theme="dark"][data-accent="teal"] body[data-app]{--apple-blue:#5fd3c4;--apple-blue-hover:#86e0d4;--apple-blue-light:#14332f;--ios-blue:#5fd3c4}
+:root[data-accent="green"],:root[data-accent="green"] body[data-app]{--apple-blue:#15803d;--apple-blue-hover:#116a32;--apple-blue-light:#e8f5ec;--ios-blue:#15803d}
+:root[data-theme="dark"][data-accent="green"],:root[data-theme="dark"][data-accent="green"] body[data-app]{--apple-blue:#6fd68e;--apple-blue-hover:#94e2aa;--apple-blue-light:#16301f;--ios-blue:#6fd68e}
+:root[data-accent="orange"],:root[data-accent="orange"] body[data-app]{--apple-blue:#c2410c;--apple-blue-hover:#a3370a;--apple-blue-light:#fdf0e9;--ios-blue:#c2410c}
+:root[data-theme="dark"][data-accent="orange"],:root[data-theme="dark"][data-accent="orange"] body[data-app]{--apple-blue:#ffad7a;--apple-blue-hover:#ffc49f;--apple-blue-light:#3a2417;--ios-blue:#ffad7a}
+:root[data-accent="red"],:root[data-accent="red"] body[data-app]{--apple-blue:#b91c1c;--apple-blue-hover:#991818;--apple-blue-light:#fceaea;--ios-blue:#b91c1c}
+:root[data-theme="dark"][data-accent="red"],:root[data-theme="dark"][data-accent="red"] body[data-app]{--apple-blue:#ff8b8b;--apple-blue-hover:#ffadad;--apple-blue-light:#3a1c1e;--ios-blue:#ff8b8b}
+:root[data-accent="graphite"],:root[data-accent="graphite"] body[data-app]{--apple-blue:#374151;--apple-blue-hover:#1f2937;--apple-blue-light:#eceef1;--ios-blue:#374151}
+:root[data-theme="dark"][data-accent="graphite"],:root[data-theme="dark"][data-accent="graphite"] body[data-app]{--apple-blue:#c3c9d4;--apple-blue-hover:#d6dbe3;--apple-blue-light:#262a31;--ios-blue:#c3c9d4}
+/* custom accent */
+:root[data-accent="custom"],:root[data-accent="custom"] body[data-app]{--apple-blue:var(--accent-custom);--apple-blue-hover:color-mix(in srgb,var(--accent-custom) 82%,#000);--apple-blue-light:color-mix(in srgb,var(--accent-custom) 12%,#fff);--ios-blue:var(--accent-custom)}
+:root[data-theme="dark"][data-accent="custom"],:root[data-theme="dark"][data-accent="custom"] body[data-app]{--apple-blue:color-mix(in srgb,var(--accent-custom) 60%,#fff);--apple-blue-hover:color-mix(in srgb,var(--accent-custom) 45%,#fff);--apple-blue-light:color-mix(in srgb,var(--accent-custom) 22%,#111);--ios-blue:color-mix(in srgb,var(--accent-custom) 60%,#fff)}
+/* accent picker: collapsed row inside the account menu */
+.account-menu .accent-picker{margin:4px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.account-menu .accent-picker>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;color:var(--ink);font-size:13px}
+.account-menu .accent-picker>summary::-webkit-details-marker{display:none}
+.account-menu .accent-picker>summary:hover{background:var(--surface-secondary)}
+.account-menu .accent-picker>summary::after{content:"";order:3;width:7px;height:7px;margin-left:2px;border-right:1.6px solid var(--ink-tertiary);border-bottom:1.6px solid var(--ink-tertiary);transform:rotate(-45deg);transition:transform .2s ease}
+.account-menu .accent-picker[open]>summary::after{transform:rotate(45deg)}
+.account-menu .accent-current{order:2;margin-left:auto;width:14px;height:14px;border-radius:50%;background:var(--apple-blue);box-shadow:inset 0 0 0 1px rgb(0 0 0/.1)}
+.account-menu .accent-body{padding:4px 12px 12px}
+.account-menu .accent-sub{margin:10px 0 6px;color:var(--ink-tertiary);font-size:11px;font-weight:600}
+.account-menu .accent-swatches{display:flex;flex-wrap:wrap;gap:8px 10px}
+.account-menu .accent-swatches button{width:20px;height:20px;padding:0;border:0;border-radius:50%;background:var(--swatch);cursor:pointer;box-shadow:inset 0 0 0 1px rgb(0 0 0/.08);transition:transform .15s ease,box-shadow .15s ease}
+.account-menu .accent-swatches button:hover{transform:scale(1.12)}
+.account-menu .accent-swatches button[aria-pressed="true"],.account-menu .accent-swatches button:focus-visible{outline:none;box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--swatch)}
+.account-menu .accent-add{position:relative;width:20px;height:20px;display:grid;place-items:center;border-radius:50%;border:1.5px dashed var(--line-strong);color:var(--ink-secondary);font-size:14px;line-height:1;cursor:pointer;overflow:hidden}
+.account-menu .accent-add:hover{border-color:var(--apple-blue);color:var(--apple-blue)}
+.account-menu .accent-add input{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;opacity:0;cursor:pointer}
+
+/* ---------- Project form (page + modal): clear numbered sections ---------- */
+.pf{display:grid;gap:16px}
+.pf-section{border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden}
+.pf-head{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--apple-blue) 3%,var(--surface))}
+.pf-head h2{margin:0;font-size:14.5px;font-weight:650;letter-spacing:-.01em}
+.pf-head p{margin:2px 0 0;color:var(--ink-tertiary);font-size:12px}
+.pf-step{flex:none;width:26px;height:26px;display:grid;place-items:center;border-radius:8px;background:var(--apple-blue);color:#fff;font-size:12.5px;font-weight:700}
+.pf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px;padding:16px 18px 18px}
+.pf-grid .field{margin:0;min-width:0}
+.pf-grid .field[data-field="name"],.pf-grid .field[data-field="manager"],.pf-grid .field[data-field="members"],.pf-grid .field[data-field="files"],.pf-grid .field[data-field="internal_notes"]{grid-column:1/-1}
+.pf-grid .field>label,.pf-grid .field>.field-label{display:block;margin-bottom:6px;color:var(--ink);font-size:12.5px;font-weight:600;letter-spacing:0;text-transform:none}
+.pf-grid .field>label>span,.pf-grid .field>.field-label>span{color:var(--danger,#ff3b30);margin-left:2px}
+.pf-grid input:not([type=checkbox]):not([type=radio]):not([type=search]):not([type=file]),.pf-grid select,.pf-grid textarea{width:100%;min-height:40px;padding:9px 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:13.5px;box-shadow:none;transition:border-color .15s ease,box-shadow .15s ease}
+.pf-grid textarea{min-height:84px;resize:vertical;line-height:1.5}
+.pf-grid input:focus,.pf-grid select:focus,.pf-grid textarea:focus{outline:none;border-color:var(--apple-blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--apple-blue) 16%,transparent)}
+.pf-grid input[type=file]{width:100%;padding:10px;border:1.5px dashed var(--line-strong);border-radius:10px;background:var(--canvas);font-size:13px;cursor:pointer}
+.pf-grid input[type=file]:hover{border-color:var(--apple-blue)}
+.pf-grid small{display:block;margin-top:5px;color:var(--ink-tertiary);font-size:11.5px;line-height:1.45}
+.pf-footer{position:sticky;bottom:0;z-index:2;display:flex;justify-content:flex-end;gap:10px;margin:0;padding:12px 0 2px;border-top:1px solid var(--line);background:linear-gradient(to top,var(--surface) 75%,transparent)}
+.record-dialog .pf-section{box-shadow:none}
+@media(max-width:640px){.pf-grid{grid-template-columns:1fr}}
+
+/* People picker: one clean search field (fixes the doubled input) */
+.people-picker .people-search{height:40px!important;padding:0 12px!important;border:1px solid var(--line-strong)!important;border-radius:10px!important;background:var(--surface)!important;box-shadow:none!important}
+.people-picker .people-search:focus-within{border-color:var(--apple-blue)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--apple-blue) 16%,transparent)!important}
+.people-picker .people-search input[type=search],.people-picker .people-search input[type=search]:focus{flex:1;min-width:0;width:auto!important;height:100%!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;outline:0!important;font-size:13.5px}
+.people-picker .people-tools select{height:40px!important;border-radius:10px!important}
+.people-picker .people-list{max-height:260px;border-radius:12px}
+.people-picker .people-row{padding:7px 10px;border-radius:10px}
+.people-picker .people-load{padding:3px 8px;border-radius:99px;background:var(--surface-secondary,var(--canvas));font-size:11.5px}
+.people-picker .people-load.is-busy{background:color-mix(in srgb,#ff9f0a 14%,transparent);color:#b45309}
+
+/* Employee form: function checkboxes (works in the page and in the modal) */
+.perm-intro{margin:0 0 14px;color:var(--ink-secondary);font-size:13px;line-height:1.55}
+.perm-tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.perm-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.perm-group{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.perm-group>header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--surface-secondary,var(--canvas))}
+.perm-group>header strong{font-size:13px}
+.perm-group>header button{border:0;background:none;color:var(--apple-blue);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.perm-group ul{list-style:none;margin:0;padding:6px 0}
+.perm-group li label{display:flex;align-items:flex-start;gap:10px;margin:0;padding:8px 14px;font-size:13px;font-weight:400;line-height:1.4;cursor:pointer;text-transform:none;letter-spacing:0;color:var(--ink)}
+.perm-group li label:hover{background:color-mix(in srgb,var(--apple-blue) 5%,transparent)}
+.perm-group input[type=checkbox]{width:16px;height:16px;margin-top:1px;flex:none;accent-color:var(--apple-blue)}
+.perm-count{color:var(--ink-tertiary);font-size:12px}

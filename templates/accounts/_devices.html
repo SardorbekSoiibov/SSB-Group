@@ -1,0 +1,39 @@
+{% load boshqaruv %}<header class="dv-head">
+  <div><h2 id="devices-title">Qurilmalar</h2><p>Hisobingizga kirilgan barcha qurilmalar. Tanimagan qurilmani darhol chiqarib yuboring.</p></div>
+  <button type="button" class="icon-button" data-devices-close aria-label="Yopish">{% ui_icon 'close' %}</button>
+</header>
+{% if notice %}<p class="dv-notice" role="status">{% ui_icon 'check' %} {{ notice }}</p>{% endif %}
+<div class="dv-body">
+  {% for item in items %}
+  {% if forloop.first %}<h3 class="dv-label">{% if item.current %}Joriy qurilma{% else %}Faol qurilmalar{% endif %}</h3>{% endif %}
+  {% if forloop.counter == 2 and not forloop.first and items.0.current %}<h3 class="dv-label">Boshqa qurilmalar · {{ others }}</h3>{% endif %}
+  <article class="dv-item{% if item.current %} is-current{% endif %}">
+    <span class="dv-icon" data-kind="{{ item.info.kind }}" aria-hidden="true">
+      {% if item.info.kind == 'phone' %}<svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>
+      {% elif item.info.kind == 'tablet' %}<svg viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>
+      {% elif item.info.kind == 'app' %}<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4M7 8h4"/></svg>
+      {% else %}<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>{% endif %}
+    </span>
+    <div class="dv-main">
+      <strong>{{ item.info.name }} <span>· {{ item.info.os }}</span></strong>
+      <small>{% if item.current %}<b class="dv-online">● Hozir shu qurilmadasiz</b>{% else %}Oxirgi faollik: {{ item.obj.last_seen|timesince }} oldin{% endif %}</small>
+      <small>{% if item.obj.ip %}IP {{ item.obj.ip }} · {% endif %}Kirgan: {{ item.obj.created_at|date:"d.m.Y H:i" }}{% if item.obj.remembered %} · 30 kun eslab qolingan{% endif %}</small>
+    </div>
+    {% if not item.current %}
+    <form method="post" action="{% url 'accounts:device_revoke' item.obj.pk %}" data-devices-action>{% csrf_token %}
+      <button class="dv-kick" aria-label="Shu qurilmadan chiqarish" title="Shu qurilmadan chiqarish">{% ui_icon 'close' %}<span>Chiqarish</span></button>
+    </form>
+    {% endif %}
+  </article>
+  {% empty %}
+  <p class="dv-empty">Faol qurilma topilmadi.</p>
+  {% endfor %}
+</div>
+<footer class="dv-foot">
+  {% if others %}
+  <form method="post" action="{% url 'accounts:device_revoke_others' %}" data-devices-action data-confirm-text="Joriy qurilmadan tashqari barcha {{ others }} ta qurilmadan chiqarilasiz. Davom etasizmi?">{% csrf_token %}
+    <button class="button danger dv-all">{% ui_icon 'shield' %} Boshqa barcha qurilmalardan chiqish ({{ others }})</button>
+  </form>
+  {% else %}<p class="dv-safe">{% ui_icon 'shield' %} Faqat shu qurilmada kirilgan. Hammasi xavfsiz.</p>{% endif %}
+  <small>Parolni o‘zgartirsangiz ham boshqa barcha qurilmalardan avtomatik chiqasiz.</small>
+</footer>

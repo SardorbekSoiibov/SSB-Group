@@ -1,0 +1,77 @@
+{% extends "base_public.html" %}
+{% block title %}{{ project.title }} — Ishlarimiz — {{ site.company_name }}{% endblock %}
+{% block description %}{{ project.seo_description|default:project.summary }}{% endblock %}
+{% block og_title %}{{ project.title }} — {{ site.company_name }}{% endblock %}
+{% block og_description %}{{ project.seo_description|default:project.summary }}{% endblock %}
+{% block og_image %}{% if project.cover %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ project.cover.url }}">{% endif %}{% endblock %}
+{% block content %}
+{% if preview %}<div class="preview-flag">Oldindan ko‘rish: bu loyiha hali nashr qilinmagan.</div>{% endif %}
+<article>
+  {% url 'website:portfolio' as portfolio_url %}
+  {% include "website/_page_head.html" with heading=project.title lede=project.summary crumb="Ishlarimiz" crumb_url=portfolio_url %}
+  <div class="wrap">
+    <dl class="meta-grid" data-stagger>
+      {% if project.category %}<div class="meta-cell"><dt>Yo‘nalish</dt><dd>{{ project.category.name }}</dd></div>{% endif %}
+      {% if project.public_client %}<div class="meta-cell"><dt>Mijoz</dt><dd>{{ project.public_client }}</dd></div>{% endif %}
+      <div class="meta-cell"><dt>Holati</dt><dd><span class="status-dot" aria-hidden="true"></span>{{ project.get_project_state_display }}</dd></div>
+      {% if project.completed_on %}<div class="meta-cell"><dt>Yakunlangan</dt><dd>{{ project.completed_on|date:"F Y" }}</dd></div>{% endif %}
+      {% if project.live_url %}<div class="meta-cell"><dt>Havola</dt><dd><a href="{{ project.live_url }}" target="_blank" rel="noopener" class="link">Saytni ochish {% include "website/_icon.html" with name="external" %}</a></dd></div>{% endif %}
+    </dl>
+  </div>
+
+  {% if project.cover %}
+  <div class="wrap">
+    <img src="{{ project.cover.url }}" alt="{{ project.title }}" width="{{ project.cover_width }}" height="{{ project.cover_height }}" class="cover-image" fetchpriority="high" data-reveal>
+  </div>
+  {% endif %}
+
+  <div class="section">
+    <div class="wrap detail-grid">
+      <div class="detail-main" data-reveal>
+        {% if project.description %}<div class="prose">{{ project.description|linebreaks }}</div>{% endif %}
+        {% if project.case_study %}
+        <h2 class="h3 mt-xl">Vazifa, yechim va natija</h2>
+        <div class="prose muted">{{ project.case_study|linebreaks }}</div>
+        {% endif %}
+      </div>
+      <aside class="detail-aside">
+        <div class="glass-card sticky-card" data-reveal>
+          {% if project.technologies.all %}
+          <div><h2 class="card-title">Texnologiyalar</h2>
+            <ul class="chip-row">{% for t in project.technologies.all %}<li class="chip is-static">{{ t.name }}</li>{% endfor %}</ul></div>
+          {% endif %}
+          {% if project.services.all %}
+          <div><h2 class="card-title">Xizmatlar</h2>
+            <ul class="link-list">{% for s in project.services.all %}{% if s.is_published %}<li><a href="{{ s.get_absolute_url }}">{{ s.title }}{% include "website/_icon.html" with name="chevron" %}</a></li>{% endif %}{% endfor %}</ul></div>
+          {% endif %}
+          {% if testimonial %}
+          <figure class="mini-quote"><blockquote>{{ testimonial.quote }}</blockquote><figcaption><b>{{ testimonial.author }}</b>{% if testimonial.company %}<span>, {{ testimonial.company }}</span>{% endif %}</figcaption></figure>
+          {% endif %}
+          <a href="{% url 'website:contact' %}" class="btn btn-filled btn-lg btn-block">Shunga o‘xshash loyiha</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  {% if project.images.all %}
+  <section class="wrap gallery" data-reveal aria-label="Galereya">
+    {% for img in project.images.all %}
+    <figure class="{% if forloop.first %}is-wide{% endif %}">
+      <img src="{{ img.image.url }}" alt="{{ img.caption|default:project.title }}" width="{{ img.width }}" height="{{ img.height }}" loading="lazy" decoding="async">
+      {% if img.caption %}<figcaption>{{ img.caption }}</figcaption>{% endif %}
+    </figure>
+    {% endfor %}
+  </section>
+  {% endif %}
+</article>
+
+{% if related %}
+<section class="section section-tinted">
+  <div class="wrap">
+    <div class="section-head" data-reveal><h2 class="h2">O‘xshash loyihalar</h2></div>
+    <div class="work-grid is-three" data-stagger>{% for p in related %}<div class="work-item">{% include "website/_project_card.html" with project=p %}</div>{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+{% include "website/_cta_band.html" with cta_title="Shunga o'xshash tizim kerakmi?" %}
+{% endblock %}

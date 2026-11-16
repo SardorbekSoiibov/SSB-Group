@@ -1,0 +1,54 @@
+{% extends 'boshqaruv/base.html' %}{% load static boshqaruv %}
+{% block title %}{{ item.employee.display_name }} · Haftalik baholash{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/performance-board.css' %}?v=2">{% endblock %}
+{% block content %}
+<header class="page-heading pb-heading">
+  <div><span class="eyebrow">HAFTALIK BAHOLASH</span><h1>{{ item.employee.display_name }}</h1><p>{{ item.week.starts_on|date:'d.m' }} — {{ week_end|date:'d.m.Y' }}</p></div>
+  <a class="button" href="{% url 'enterprise:performance' %}?week={{ item.week.starts_on|date:'Y-m-d' }}#reyting">← Reytingga qaytish</a>
+</header>
+
+<div class="pb-stats pb-detail-stats">
+  <div><small>O‘rin</small><strong>{% if place %}{{ place }} <em>/ {{ total }}</em>{% else %}—{% endif %}</strong></div>
+  <div><small>Yakuniy ball</small><strong>{{ item.final_score }}<em>/100</em></strong></div>
+  <div><small>Bajarilgan vazifalar</small><strong>{{ item.evidence.completed }}</strong></div>
+  <div><small>Tahlil</small><strong class="pb-source">{% if item.source == 'ai' %}SSB AI (Claude){% else %}Ochiq formula{% endif %}</strong></div>
+</div>
+
+<section class="panel">
+  <header class="panel-head"><h2>Rahbar bahosi va izohi</h2>{% if item.reviewed_by %}<small>{{ item.reviewed_by.display_name }}</small>{% endif %}</header>
+  <div class="panel-body">{% if manager_scored %}<p class="pb-feedback">{{ item.feedback|linebreaksbr }}</p>{% else %}<p class="eval-note">Rahbar bu hafta baho qo‘ymagan. Ball vazifalar va AI tahlili asosida hisoblandi.</p>{% endif %}</div>
+</section>
+
+<section class="panel">
+  <header class="panel-head"><h2>{% if item.source == 'ai' %}SSB AI tahlili{% else %}Natijalar tahlili{% endif %}</h2></header>
+  <div class="panel-body pb-analysis">
+    {% if item.analysis.summary %}<p class="pb-summary">{{ item.analysis.summary }}</p>{% endif %}
+    <div class="pb-analysis-grid">
+      <div><h3>Kuchli tomonlar</h3><ul>{% for text in item.analysis.strengths %}<li>{{ text }}</li>{% empty %}<li>—</li>{% endfor %}</ul></div>
+      <div><h3>O‘sish uchun</h3><ul>{% for text in item.analysis.weaknesses %}<li>{{ text }}</li>{% empty %}<li>—</li>{% endfor %}</ul></div>
+      <div><h3>Keyingi haftaga tavsiya</h3><ul>{% for text in item.analysis.recommendations %}<li>{{ text }}</li>{% empty %}<li>—</li>{% endfor %}</ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <header class="panel-head"><h2>Mezonlar</h2><small>Yakuniy ball = mezon × ulush</small></header>
+  <div class="pb-criteria">
+    {% for row in criteria %}
+    <div class="pb-criterion{% if row.skipped %} is-skipped{% endif %}">
+      <div><strong>{{ row.label }}</strong><small>{{ row.weight }}% ulush{% if row.rule and row.rule != row.final and not row.skipped %} · formula: {{ row.rule }}{% endif %}</small></div>
+      <span class="pb-bar"><span style="width: {% if row.skipped %}0{% else %}{{ row.final }}{% endif %}%"></span></span>
+      <b>{% if row.skipped %}hisobga olinmadi{% else %}{{ row.final }}{% endif %}</b>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="panel">
+  <header class="panel-head"><h2>Shu hafta bajarilgan vazifalar</h2><small>{{ item.evidence.on_time }} tasi muddatida</small></header>
+  <div class="table-wrap"><table class="data-table"><thead><tr><th>Vazifa</th><th>Loyiha</th><th>Muddat</th></tr></thead><tbody>
+  {% for task in tasks %}<tr><td><a href="{{ task.url }}">{{ task.title }}</a></td><td>{{ task.project }}</td><td>{{ task.deadline|default:'—' }}</td></tr>
+  {% empty %}<tr><td colspan="3">Bu hafta qabul qilingan vazifa yo‘q.</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'boshqaruv/base.html' %}{% load static boshqaruv %}
+{% block title %}Umumiy loyiha arxivi{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/archive.css' %}?v=7">{% endblock %}
+{% block content %}
+<header class="page-heading"><div><span class="eyebrow">SSB BOSHQARUV / UMUMIY ARXIV</span><h1>Jamoaning loyiha arxivi</h1><p>Kompaniya loyihalari bir joyda: toping, yuklab oling, o‘zingiznikini qo‘shing.</p></div>{% if unlocked %}<div class="archive-actions"><button type="button" class="button primary" data-record-template="archive-upload" data-record-title="Loyiha qo‘shish">{% ui_icon 'plus' %} Loyiha qo‘shish</button>{% if founder %}<button type="button" class="button" data-archive-open="archive-code-dialog">{% ui_icon 'shield' %} Kodni yangilash</button>{% endif %}<form method="post" action="{% url 'enterprise:archive_lock' %}">{% csrf_token %}<button class="button">{% ui_icon 'shield' %} Qulflash</button></form></div>{% endif %}</header>
+
+{% if not unlocked %}
+<div class="archive-ghost" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<dialog open closedby="none" class="archive-modal" id="archive-gate" data-archive-gate aria-labelledby="archive-gate-title">
+  <div data-archive-view="unlock"{% if founder and code_form.errors or not code_configured and founder %} hidden{% endif %}>
+    <span class="archive-modal-icon{% if unlock_form.errors %} is-error{% endif %}">{% ui_icon 'shield' %}</span>
+    <h2 id="archive-gate-title">Arxivga kirish</h2>
+    {% if code_configured %}
+    <p>Bo‘limga kirish kodini kiriting. Kod har tashrifda so‘raladi.</p>
+    <form method="post" action="{% url 'enterprise:archive_unlock' %}" class="archive-modal-form{% if unlock_form.errors %} has-error{% endif %}" id="archive-unlock-form">{% csrf_token %}{% include 'boshqaruv/components/form.html' with form=unlock_form %}<button class="button primary" type="submit">Arxivga kirish {% ui_icon 'arrow' %}</button></form>
+    {% else %}
+    <p>Asoschi hali kirish kodini o‘rnatmagan. Kodni Asoschidan oling.</p>
+    {% endif %}
+    <footer><a href="{% url 'enterprise:overview' %}">Bosh sahifaga qaytish</a>{% if founder and code_configured %}<button type="button" data-archive-switch="code">Kodni almashtirish</button>{% endif %}</footer>
+  </div>
+  {% if founder %}
+  <div data-archive-view="code"{% if code_configured and not code_form.errors %} hidden{% endif %}>
+    <span class="archive-modal-icon">{% ui_icon 'shield' %}</span>
+    <h2>{% if code_configured %}Kodni almashtirish{% else %}Arxiv kodini o‘rnating{% endif %}</h2>
+    {% include 'boshqaruv/business/archive_code_settings.html' %}
+    <footer>{% if code_configured %}<button type="button" data-archive-switch="unlock">Kodni kiritishga qaytish</button>{% else %}<a href="{% url 'enterprise:overview' %}">Bosh sahifaga qaytish</a>{% endif %}</footer>
+  </div>
+  {% endif %}
+</dialog>
+{% else %}
+<dl class="archive-stats" aria-label="Arxiv ko‘rsatkichlari">
+  <div class="archive-stat"><span>{% ui_icon 'project' %}</span><div><dd>{{ stats.total|default:0 }}</dd><dt>Loyiha</dt></div></div>
+  <div class="archive-stat"><span>{% ui_icon 'people' %}</span><div><dd>{{ stats.authors|default:0 }}</dd><dt>Muallif</dt></div></div>
+  <div class="archive-stat"><span>{% ui_icon 'file' %}</span><div><dd>{{ stats.size|default:0|plain_filesize }}</dd><dt>Umumiy hajm</dt></div></div>
+</dl>
+<form class="archive-toolbar" method="get" id="archive-filter">
+  <label class="archive-search">{% ui_icon 'search' %}<span class="sr-only">Loyiha, fayl yoki muallifni qidirish</span><input type="search" name="q" value="{{ q }}" maxlength="150" placeholder="Loyiha, fayl yoki muallifni qidiring"></label>
+  <label class="archive-sort"><span class="sr-only">Saralash</span><select name="sort" data-archive-autosubmit><option value="new"{% if sort == 'new' %} selected{% endif %}>Avval yangilari</option><option value="old"{% if sort == 'old' %} selected{% endif %}>Avval eskilari</option><option value="name"{% if sort == 'name' %} selected{% endif %}>Nomi bo‘yicha</option><option value="size"{% if sort == 'size' %} selected{% endif %}>Eng kattalari</option></select></label>
+  <button class="button">Qidirish</button>{% if q %}<a href="{% url 'enterprise:archives' %}" class="text-link">Tozalash</a>{% endif %}
+</form>
+<section id="archive-list" aria-label="Kompaniya loyihalari">
+{% if items %}<div class="archive-grid">{% for item in items %}<article class="archive-card">
+  <header><span class="archive-type">{{ item.file_type }}</span><div><h3 title="{{ item.display_project_name }}">{{ item.display_project_name }}</h3><small title="{{ item.filename }}">{{ item.filename }}</small></div></header>
+  <div class="archive-author"><span aria-hidden="true">{{ item.uploader.display_name|slice:':1'|upper }}</span><div><strong>{{ item.uploader.display_name }}{% if item.uploader_id == user.pk %} <em>Siz</em>{% endif %}</strong><small>Muallif · {{ item.created_at|date:app_datetime_format }}</small></div></div>
+  <footer><span>{{ item.size|plain_filesize }}</span><a class="button primary compact" href="{% url 'enterprise:archive_download' item.pk %}">{% ui_icon 'download' %} Yuklab olish</a>{% if founder or item.uploader_id == user.pk %}<form method="post" action="{% url 'enterprise:archive_delete' item.pk %}" data-secure-delete="Loyiha: {{ item.display_project_name }}|Fayl: {{ item.filename }}" data-secure-title="Loyihani o‘chirasizmi?">{% csrf_token %}<button class="icon-button archive-remove" aria-label="O‘chirish: {{ item.display_project_name }}" title="Loyihani o‘chirish">{% ui_icon 'trash' %}</button></form>{% endif %}</footer>
+  <details><summary>Tekshiruv ma’lumoti</summary><small>{% if item.scan_status == 'clean' %}Antivirus tekshiruvidan o‘tgan{% else %}Antivirus ulanmagan{% endif %}</small><small class="archive-hash">SHA-256: {{ item.sha256 }}</small></details>
+</article>{% endfor %}</div>{% if page.has_other_pages %}{% include 'boshqaruv/components/pagination.html' %}{% endif %}
+{% elif q %}<div class="archive-empty"><span>{% ui_icon 'search' %}</span><h2>Qidiruvga mos fayl topilmadi</h2><p>Boshqa so‘z bilan urinib ko‘ring.</p><a class="button" href="{% url 'enterprise:archives' %}">Filtrni tozalash</a></div>
+{% else %}<div class="archive-empty"><span>{% ui_icon 'project' %}</span><h2>Arxiv hozircha bo‘sh</h2><p>Birinchi loyihani RAR yoki ZIP ko‘rinishida qo‘shing.</p><button type="button" class="button primary" data-record-template="archive-upload" data-record-title="Loyiha qo‘shish">{% ui_icon 'plus' %} Loyiha qo‘shish</button></div>{% endif %}
+</section>
+<div id="archive-upload" data-record-template-source hidden><form data-modal-source method="post" action="{% url 'enterprise:archives' %}" enctype="multipart/form-data" class="form-grid archive-upload-form" id="archive-upload-form">{% csrf_token %}{% include 'boshqaruv/components/form.html' with form=form %}<div class="form-footer"><button class="button primary">Arxivga saqlash</button></div></form></div>
+{% if founder %}
+<dialog class="archive-modal" id="archive-code-dialog"{% if code_form.errors %} data-archive-autoopen{% endif %} aria-labelledby="archive-code-title">
+  <button type="button" class="icon-button archive-modal-close" data-archive-close aria-label="Yopish">{% ui_icon 'close' %}</button>
+  <span class="archive-modal-icon">{% ui_icon 'shield' %}</span>
+  <h2 id="archive-code-title">Kodni yangilash</h2>
+  {% include 'boshqaruv/business/archive_code_settings.html' %}
+</dialog>
+{% endif %}
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/archive.js' %}?v=5" defer></script>{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base_public.html" %}
+{% block title %}Xizmatlar — {{ site.company_name }}{% endblock %}
+{% block description %}Veb-saytlar, CRM tizimlari, Telegram botlar, Interfeys dizayni va biznesni avtomatlashtirish — {{ site.company_name }} xizmatlari.{% endblock %}
+{% block content %}
+{% include "website/_page_head.html" with heading="Xizmatlar" lede="Har bir loyihani biznesingizdagi aniq muammodan boshlaymiz va o'lchanadigan natija bilan yakunlaymiz." %}
+<section class="section pt-0">
+  <div class="wrap">
+    {% if services %}
+    <ul class="service-grid is-catalog" role="list" data-stagger>
+      {% for s in services %}
+      <li>
+        <a href="{{ s.get_absolute_url }}" class="service-card is-link" data-tilt="5">
+          <div class="service-top">
+            <span class="app-icon">{% include "website/_icon.html" with name=s.icon %}</span>
+            <span class="service-num">{{ forloop.counter|stringformat:"02d" }}</span>
+          </div>
+          <h2>{{ s.title }}</h2>
+          <p>{{ s.summary }}</p>
+          {% if s.benefit_list %}<ul class="check-list compact">{% for b in s.benefit_list|slice:":3" %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
+          <span class="link-arrow service-more">Batafsil{% include "website/_icon.html" with name="chevron" %}</span>
+          <span class="card-sheen" aria-hidden="true"></span>
+        </a>
+      </li>
+      {% endfor %}
+      <li class="service-cta-cell">
+        <div class="service-card is-accent">
+          <span class="app-icon is-light">{% include "website/_icon.html" with name="sparkle" %}</span>
+          <h2>Kerakli xizmat ro‘yxatda yo‘qmi?</h2>
+          <p>Vazifangizni yozing, mos yechimni birga topamiz va taklif yuboramiz.</p>
+          <a href="{% url 'website:contact' %}" class="btn btn-white">Loyiha boshlash</a>
+        </div>
+      </li>
+    </ul>
+    {% else %}
+    <div class="empty-card"><span class="app-icon is-muted">{% include "website/_icon.html" with name="layers" %}</span><p>Xizmatlar ro‘yxati tez orada e’lon qilinadi.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

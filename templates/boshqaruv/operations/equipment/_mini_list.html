@@ -1,0 +1,7 @@
+{% load boshqaruv %}{% if items %}
+<ul class="eq-mini">{% for item in items %}<li><a href="{{ item.get_absolute_url }}">
+  <span class="eq-mini-icon">{% if item.photo %}<img src="{% url 'crm:equipment_photo' item.pk %}?v={{ item.photo_version }}" alt="">{% else %}{% ui_icon item.icon %}{% endif %}</span>
+  <span class="eq-mini-main"><strong>{{ item.name }}</strong><small>{{ item.inventory_number }} · {{ item.get_category_display }}{% if item.needs_ack %} · <i class="eq-pending">Tasdiqlanmagan</i>{% endif %}</small></span>
+  <span class="eq-status" data-s="{{ item.status }}">{{ item.get_status_display }}</span>
+</a></li>{% endfor %}</ul>
+{% else %}<div class="eq-mini-empty"><span>{% ui_icon 'desktop' %}</span>{{ empty_text|default:"Biriktirilgan jihoz yo‘q." }}</div>{% endif %}

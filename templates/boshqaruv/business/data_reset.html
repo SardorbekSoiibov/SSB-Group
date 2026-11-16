@@ -1,0 +1,39 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv %}
+{% block title %}Ma’lumotlarni tozalash{% endblock %}
+{% block head %}<style>
+.reset-warning{display:flex;gap:12px;align-items:flex-start;margin:0 0 16px;padding:14px 16px;border:1px solid color-mix(in srgb,var(--danger,#e5484d) 45%,transparent);border-radius:14px;background:color-mix(in srgb,var(--danger,#e5484d) 10%,transparent)}
+.reset-warning p{margin:0;color:var(--ink-secondary)}
+.reset-warning strong{display:block;margin-bottom:2px;color:var(--ink)}
+.reset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.reset-card{display:flex;flex-direction:column;gap:10px;min-width:0;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.reset-card header{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.reset-card h2{margin:0;font-size:15px}
+.reset-card .reset-count{flex:none;color:var(--ink-secondary);font-size:12px}
+.reset-card p{flex:1;margin:0;color:var(--ink-secondary);font-size:13px}
+.reset-card form{margin:0}
+.reset-card .button{width:100%;justify-content:center}
+</style>{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / TIZIM</span>
+    <h1>Ma’lumotlarni tozalash</h1>
+    <p>Tanlangan bo‘lim bazadan butunlay o‘chiriladi va noldan boshlanadi. Faqat Asoschi uchun.</p>
+  </div>
+</header>
+
+<div class="reset-warning" role="note">{% ui_icon 'shield' %}<div><strong>Ikki bosqichli himoya</strong><p>1-bosqich: nima o‘chishini ko‘rasiz. 2-bosqich: parolingizni kiritasiz. O‘chirilgan ma’lumotni qaytarib bo‘lmaydi. Hisoblar, rollar va tizim sozlamalari saqlanadi.</p></div></div>
+
+<div class="reset-grid">
+  {% for section in sections %}
+  <section class="reset-card" aria-labelledby="reset-{{ section.key }}">
+    <header><h2 id="reset-{{ section.key }}">{{ section.title }}</h2><span class="reset-count">{{ section.total }} ta</span></header>
+    <p>{{ section.text }}</p>
+    <form method="post" data-secure-title="«{{ section.title }}» bo‘limi tozalansinmi?" data-secure-delete="{{ section.items|join:'|' }}">
+      {% csrf_token %}<input type="hidden" name="bolim" value="{{ section.key }}">
+      <button class="button danger"{% if not section.total %} disabled title="Bo‘lim allaqachon bo‘sh"{% endif %}>{% ui_icon 'trash' %} Tozalash</button>
+    </form>
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

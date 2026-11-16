@@ -1,0 +1,57 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}{% if department %}{{ department.name }}{% else %}Yangi bo‘lim{% endif %}{% endblock %}
+{% block head %}<style>
+.dp{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+.dp-card{border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:0 1px 2px rgb(16 24 40/.04);overflow:hidden}
+.dp-card>header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.dp-card>header h2{margin:0;font-size:15px;font-weight:650}
+.dp-card>header span{color:var(--ink-tertiary);font-size:12px}
+.dp-members{list-style:none;margin:0;padding:6px}
+.dp-members a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;color:var(--ink)}
+.dp-members a:hover{background:color-mix(in srgb,var(--apple-blue) 6%,transparent)}
+.dp-members .avatar{width:32px;height:32px;flex:none;font-size:11px}
+.dp-members span{min-width:0}
+.dp-members strong,.dp-members small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dp-members strong{font-size:13px;font-weight:600}
+.dp-members small{color:var(--ink-tertiary);font-size:11.5px}
+.dp-members em{margin-left:auto;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--apple-blue) 12%,transparent);color:var(--apple-blue);font-size:11px;font-style:normal;font-weight:700}
+.dp-note{margin:0;padding:16px 18px;color:var(--ink-tertiary);font-size:12.5px;line-height:1.55}
+@media(max-width:1000px){.dp{grid-template-columns:1fr}}
+</style>{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / KOMPANIYA TUZILMASI</span>
+    <h1>{% if department %}{{ department.name }}{% else %}Yangi bo‘lim{% endif %}</h1>
+    <p>{% if department %}Bo‘lim nomi va rahbarini o‘zgartiring.{% else %}Bo‘lim nomini yozing va xohlasangiz rahbar tanlang.{% endif %}</p>
+  </div>
+  <div class="heading-actions"><a href="{% url 'crm:roles' %}" class="button">{% ui_icon 'arrow' %} Tuzilmaga qaytish</a></div>
+</header>
+
+<div class="dp">
+  <form data-modal-source method="post" class="pf">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="form-alert" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+    <section class="pf-section">
+      <header class="pf-head"><span class="pf-step">1</span><div><h2>Bo‘lim</h2><p>Sxemada shu nom bilan ko‘rinadi.</p></div></header>
+      <div class="pf-grid">{% include 'boshqaruv/components/field.html' with field=form.name %}</div>
+    </section>
+    <section class="pf-section">
+      <header class="pf-head"><span class="pf-step">2</span><div><h2>Rahbar</h2><p>Bo‘lim uchun mas’ul shaxs.</p></div></header>
+      <div class="pf-grid"><div style="grid-column:1/-1">{% include 'boshqaruv/components/field.html' with field=form.head %}</div></div>
+    </section>
+    <div class="form-footer pf-footer">
+      <a href="{% url 'crm:roles' %}" class="button">Bekor qilish</a>
+      <button class="button primary" type="submit">{% ui_icon 'check' %} Bo‘limni saqlash</button>
+    </div>
+  </form>
+
+  <aside class="dp-card">
+    <header><h2>Bo‘lim xodimlari</h2><span>{{ members|length }} nafar</span></header>
+    {% if members %}
+    <ul class="dp-members">{% for person in members %}<li><a href="{% url 'crm:employee_detail' person.pk %}">{% include 'boshqaruv/components/avatar.html' with person=person avatar_class='small' %}<span><strong>{{ person.display_name }}</strong><small>{{ person.job_title|default:'Xodim' }}</small></span>{% if department.head_id == person.pk %}<em>Rahbar</em>{% endif %}</a></li>{% endfor %}</ul>
+    {% else %}<p class="dp-note">{% if department %}Bu bo‘limda hali xodim yo‘q.{% else %}Bo‘lim saqlangach, xodimlarni ularning profilidagi «Bo‘lim» maydoni orqali qo‘shasiz.{% endif %}</p>{% endif %}
+    {% if department %}<p class="dp-note">Xodimni bo‘limga qo‘shish yoki chiqarish uchun uning profilini tahrirlang va «Bo‘lim» maydonini o‘zgartiring.</p>{% endif %}
+  </aside>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}{% if role %}Lavozimni tahrirlash{% else %}Yangi lavozim yaratish{% endif %}{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / ROLLAR VA XAVFSIZLIK</span>
+    <h1>{% if role %}Lavozimni tahrirlash: {{ role.name }}{% else %}Yangi lavozim va rol yaratish{% endif %}</h1>
+    <p>Lavozim nomi, boshqaruv iyerarxiya darajasi va tizim huquqlarini (capabilities) sozlang.</p>
+  </div>
+  <div class="heading-actions">
+    <a href="{% url 'crm:roles' %}" class="button">Bekor qilish</a>
+  </div>
+</header>
+<section class="panel">
+  <header class="panel-head">
+    <h2>Lavozim va huquqlar</h2>
+    <span class="chart-key">* bilan belgilangan maydonlar to‘ldirilishi shart</span>
+  </header>
+  <form data-modal-source method="post" enctype="multipart/form-data" class="form-grid">
+    {% csrf_token %}
+    {% include "boshqaruv/components/form.html" with form=form %}
+    <div class="form-footer" style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; padding-top:16px; border-top:1px solid var(--line);">
+      <a href="{% url 'crm:roles' %}" class="button">Bekor qilish</a>
+      <button class="button primary" type="submit">{% ui_icon 'check' %} Lavozimni saqlash</button>
+    </div>
+  </form>
+</section>
+{% endblock %}

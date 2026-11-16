@@ -1,0 +1,195 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}{{ project.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/project.css' %}?v=3">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / {{ app_section }}</span>
+    <h1>{{ project.name }}</h1>
+    <p class="project-sub"><code>{{ project.code }}</code><span class="status" data-status="{{ project.status }}">{{ project.get_status_display }}</span>{% if project.is_overdue %}<span class="pc-chip is-bad">Muddati o‘tgan</span>{% endif %}</p>
+  </div>
+  <div class="heading-actions">
+    {% if can_edit_details %}<a href="{% url 'crm:project_edit' project.pk %}" class="button">{% ui_icon 'edit' %} Tahrirlash</a>{% endif %}
+  </div>
+</header>
+
+{% if project.cover %}<div class="ws-banner"><img src="{% url 'crm:project_cover' project.pk %}" alt=""></div>{% endif %}
+
+{# ------------------------------------------------ Boshqaruv markazi: holat yo'li va keyingi qadam #}
+<section class="panel pc-control" data-ios-collapsible="false" aria-label="Loyiha holati">
+  <ol class="pc-steps{% if control.paused %} is-paused{% endif %}{% if control.cancelled %} is-cancelled{% endif %}">
+    {% for step in control.steps %}<li class="is-{{ step.state }}"><i>{% if step.state == 'done' %}{% ui_icon 'check' %}{% else %}{{ forloop.counter }}{% endif %}</i><span>{{ step.label }}</span></li>{% endfor %}
+  </ol>
+  <div class="pc-body">
+    <div class="pc-now">
+      <p class="pc-now-text">{% if control.paused %}<b>To‘xtatilgan.</b> {% elif control.cancelled %}<b>Bekor qilingan.</b> {% endif %}{{ control.now }}</p>
+      {% if project.status == 'new' or project.status == 'planning' or project.status == 'awaiting_approval' %}
+      <ul class="pc-check">{% for c in checklist %}<li class="{% if c.ok %}is-ok{% else %}is-miss{% endif %}"><i>{% if c.ok %}{% ui_icon 'check' %}{% else %}!{% endif %}</i><span>{{ c.text }}{% if not c.ok %} <small>— {{ c.hint }}</small>{% endif %}</span></li>{% endfor %}</ul>
+      {% endif %}
+      {% if control.blockers %}<div class="pc-blockers"><strong>Yakunlashdan oldin:</strong> {{ control.blockers|join:'; ' }}. <a href="#bosqichlar" data-pc-tab="bosqichlar">Bosqichlarga o‘tish</a></div>{% endif %}
+    </div>
+    <div class="pc-actions">
+      {% for a in control.actions %}{% if a.primary %}
+      <button type="button" class="button primary pc-primary" data-pc-action="{{ a.to }}" data-label="{{ a.label }}" data-effect="{{ a.effect }}"{% if a.blocked %} data-blocked="{{ a.blocked|join:'; ' }}"{% endif %}>{{ a.label }} {% ui_icon 'arrow' %}</button>
+      <small class="pc-effect">{{ a.effect }}</small>
+      {% endif %}{% endfor %}
+      {% with others=control.actions %}{% if others %}
+      <div class="pc-more">{% for a in others %}{% if not a.primary %}<button type="button" class="button compact{% if a.danger %} danger{% endif %}" data-pc-action="{{ a.to }}" data-label="{{ a.label }}" data-effect="{{ a.effect }}"{% if a.needs_comment %} data-needs-comment="1"{% endif %}>{{ a.label }}</button>{% endif %}{% endfor %}</div>
+      {% endif %}{% endwith %}
+      {% if not control.actions %}<p class="pc-effect">Hozir Siz uchun amal yo‘q.{% if project.status == 'awaiting_approval' %} Asoschi tasdig‘i kutilmoqda.{% endif %}</p>{% endif %}
+    </div>
+  </div>
+</section>
+
+<dl class="project-stats">
+  <div><dt>Bajarilishi</dt><dd data-pc-progress>{{ progress }}%</dd><span class="progress-track" aria-hidden="true"><span data-pc-bar style="width:{{ progress }}%"></span></span></div>
+  <div><dt>Bosqichlar</dt><dd>{% if milestones or steps_editable %}<span data-pc-done>{{ done_count }}</span> / <span data-pc-total>{{ milestones|length }}</span> bajarildi{% else %}—{% endif %}</dd></div>
+  <div><dt>Yakuniy muddat</dt><dd>{{ project.deadline|date:app_date_format|default:'Belgilanmagan' }}</dd>{% if days_left is not None and not project.is_closed %}<small class="pc-days{% if days_left < 0 %} is-bad{% elif days_left <= 7 %} is-warn{% endif %}">{% if days_left < 0 %}{{ days_left|stringformat:'d'|slice:'1:' }} kun o‘tib ketdi{% elif days_left == 0 %}Bugun topshiriladi{% else %}{{ days_left }} kun qoldi{% endif %}</small>{% endif %}</div>
+  {% if can_budget %}<div><dt>Byudjet (reja)</dt><dd>{{ project.budget|money }} {{ project.currency }}</dd></div>{% else %}<div><dt>Jamoa</dt><dd>{{ team|length }} nafar</dd></div>{% endif %}
+</dl>
+
+<div class="project-layout">
+  <div class="project-column">
+    <nav class="pc-tabs" role="tablist" aria-label="Loyiha bo‘limlari" data-default="{% if project.is_closed %}umumiy{% else %}bosqichlar{% endif %}">
+      <button type="button" role="tab" data-pc-tab="umumiy">Umumiy</button>
+      <button type="button" role="tab" data-pc-tab="bosqichlar">Bosqichlar{% if milestones %} <b>{{ done_count }}/{{ milestones|length }}</b>{% endif %}</button>
+      <button type="button" role="tab" data-pc-tab="faoliyat">Muhokama <b>{{ comments|length }}</b></button>
+      <button type="button" role="tab" data-pc-tab="fayllar">Fayllar <b>{{ project_files|length }}</b></button>
+      <button type="button" role="tab" data-pc-tab="tarix">Tarix</button>
+    </nav>
+
+    <section class="panel pc-pane" id="umumiy" data-pc-pane="umumiy" data-ios-collapsible="false">
+      <header class="panel-head"><h2>Loyiha haqida</h2></header>
+      <div class="panel-body pc-about">
+        {% if project.description %}<p class="project-description">{{ project.description }}</p>{% else %}<p class="pc-effect">Tavsif kiritilmagan.{% if can_edit_details %} «Tahrirlash» orqali qo‘shishingiz mumkin.{% endif %}</p>{% endif %}
+        {% if project.objectives %}<p class="ws-label">Loyiha maqsadlari</p><p class="project-description">{{ project.objectives }}</p>{% endif %}
+        <dl class="project-facts">
+          <div><dt>Mas’ul xodim</dt><dd>{{ project.manager.display_name|default:'Belgilanmagan' }}</dd></div>
+          <div><dt>Mijoz</dt><dd>{{ project.client|default:'Ichki loyiha' }}</dd></div>
+          <div><dt>Boshlanish</dt><dd>{{ project.start_date|date:app_date_format|default:'Belgilanmagan' }}</dd></div>
+          <div><dt>Ustuvorlik</dt><dd>{{ project.get_priority_display }}</dd></div>
+        </dl>
+        {% if on_team %}<p class="pc-myrole">{% if project.manager_id == user.pk %}Siz bu loyihaning <b>mas’ul xodimisiz</b>: bosqichlarni belgilab boring va tayyor bo‘lgach tekshiruvga topshiring.{% else %}Siz loyiha jamoasidasiz{% if my_role %} — <b>{{ my_role }}</b>{% endif %}. Fayl va izohlar orqali ishtirok eting.{% endif %}</p>{% endif %}
+        <div class="pc-about-links">
+          {% if can_portfolio %}<form method="post" action="{% url 'crm:project_to_portfolio' project.pk %}" data-confirm="Portfolio uchun qoralama yaratiladi.">{% csrf_token %}<button class="button compact">Portfolio qoralamasi yaratish</button></form>{% endif %}
+          <a class="button compact" href="{% url 'enterprise:archives' %}">Loyiha xavfsiz arxivi</a>
+        </div>
+      </div>
+      {% if can_erase %}
+      <div class="pc-danger">
+        <div><strong>Loyihani o‘chirish</strong><small>Loyiha va unga bog‘liq hamma narsa bazadan butunlay o‘chadi.</small></div>
+        <form method="post" action="{% url 'crm:project_erase' project.pk %}" data-secure-title="«{{ project.name }}» loyihasi o‘chirilsinmi?" data-secure-delete="{{ erase_items|join:'|' }}">{% csrf_token %}<button class="button danger compact">{% ui_icon 'trash' %} O‘chirish</button></form>
+      </div>
+      {% endif %}
+    </section>
+
+    <section class="panel pc-pane" id="bosqichlar" data-pc-pane="bosqichlar" data-ios-collapsible="false">
+      <header class="panel-head"><div><h2>Bosqichlar</h2><small class="pc-sub">Bajarilgan bosqichni belgilang — foiz avtomatik hisoblanadi. Loyihani yakunlash uchun barcha bosqichlar bajarilgan bo‘lishi kerak.</small></div></header>
+      <template data-pc-check-icon>{% ui_icon 'check' %}</template>
+      <ul class="project-steps" data-pc-steps>
+        {% for m in milestones %}<li{% if m.is_done %} class="is-done"{% endif %}>
+          {% if steps_editable %}<form method="post" action="{% url 'crm:milestone_toggle' project.pk m.pk %}" data-pc-toggle>{% csrf_token %}<button class="project-step-check" aria-label="{% if m.is_done %}Qayta ochish{% else %}Bajarildi deb belgilash{% endif %}">{% ui_icon 'check' %}</button></form>{% else %}<span class="project-step-check">{% ui_icon 'check' %}</span>{% endif %}
+          <div><strong>{{ m.title }}</strong><small>{% if m.is_done %}Bajarilgan{% else %}Bajarilmagan{% endif %}</small></div>
+          {% if steps_editable %}<form method="post" action="{% url 'crm:milestone_toggle' project.pk m.pk %}" data-secure-delete="Bosqich: {{ m.title }}" data-secure-title="Bosqich o‘chirilsinmi?">{% csrf_token %}<button name="delete" value="1" class="project-step-remove" aria-label="Bosqichni o‘chirish">{% ui_icon 'close' %}</button></form>{% endif %}
+        </li>{% endfor %}
+      </ul>
+      <p class="project-empty" data-pc-steps-empty{% if milestones %} hidden{% endif %}>Bosqichlar belgilanmagan.{% if steps_editable %} Ishni bosqichlarga bo‘ling: masalan «Dizayn», «Dasturlash», «Test», «Topshirish».{% endif %}</p>
+      {% if steps_editable %}
+      <form method="post" action="{% url 'crm:milestone_add' project.pk %}" class="project-add-step" data-pc-add>
+        {% csrf_token %}
+        <input name="title" required maxlength="200" placeholder="Yangi bosqich nomi" aria-label="Yangi bosqich nomi">
+        <button class="button">{% ui_icon 'plus' %} Qo‘shish</button>
+      </form>
+      {% endif %}
+    </section>
+
+    <section class="panel pc-pane" id="faoliyat" data-pc-pane="faoliyat" data-ios-collapsible="false">
+      <header class="panel-head"><h2>Muhokama va e’lonlar</h2><span class="chart-key">{{ comments|length }} ta</span></header>
+      {% url 'crm:project_comment' project.pk as comment_url %}
+      {% include 'boshqaruv/operations/tasks/_thread.html' with comments=comments post_url=comment_url %}
+      <form method="post" action="{{ comment_url }}" class="ws-compose">{% csrf_token %}
+        <textarea name="body" required maxlength="5000" aria-label="Izoh matni" placeholder="Jamoaga yozing…"></textarea>
+        {% if can_edit %}<label class="ws-check"><input type="checkbox" name="is_announcement"> Jamoaga e’lon sifatida yuborish</label>{% endif %}
+        <button class="button">Yuborish</button>
+      </form>
+    </section>
+
+    <section class="panel pc-pane" id="fayllar" data-pc-pane="fayllar" data-ios-collapsible="false">
+      <header class="panel-head"><h2>Loyiha fayllari</h2><span class="chart-key">{{ project_files|length }} ta</span></header>
+      {% include 'boshqaruv/operations/tasks/_files.html' with files=project_files route='crm:project_file_download' empty_text='Loyiha fayllari yuklanmagan.' %}
+      {% if can_share %}<form method="post" action="{% url 'crm:project_file_upload' project.pk %}" enctype="multipart/form-data" class="ws-upload">{% csrf_token %}<input type="file" name="files" multiple required aria-label="Fayllarni tanlang"><button class="button">Fayl yuklash</button></form>{% endif %}
+    </section>
+
+    <section class="panel pc-pane" id="tarix" data-pc-pane="tarix" data-ios-collapsible="false">
+      <header class="panel-head"><h2>Loyiha tarixi</h2></header>
+      {% if activity %}
+      <ul class="ws-timeline">{% for item in activity %}<li><div>{% if item.kind == 'file' %}<strong>Fayl yuklandi: {{ item.file.original_name }}</strong>{% else %}<strong>{{ item.action|audit_label }}</strong>{% endif %}<small>{{ item.actor.display_name|default:'Tizim' }}{% if item.detail %} · {{ item.detail }}{% endif %}</small></div><time>{{ item.when|date:'d.m H:i' }}</time></li>{% endfor %}</ul>
+      {% else %}<p class="project-empty">Tarix hali bo‘sh.</p>{% endif %}
+    </section>
+  </div>
+
+  <aside class="project-column">
+    {% if fin %}
+    <section class="panel pc-fin" data-ios-collapsible="false">
+      <header class="panel-head"><h2>Loyiha moliyasi</h2>{% if fin.agreement %}<span class="chart-key">{{ fin.currency }}</span>{% endif %}</header>
+      <div class="panel-body">
+        {% if fin.agreement %}
+        <div class="pc-fin-paid"><div><span>Mijoz to‘ladi</span><strong>{{ fin.totals.client_receipts|money }}</strong><small>{{ fin.agreement.amount|money }} dan · qoldi {{ fin.totals.outstanding_client|money }}</small></div><span class="progress-track" aria-hidden="true"><span style="width:{{ fin.received_pct }}%"></span></span></div>
+        <dl class="pc-fin-grid">
+          <div><dt>Kompaniya ulushi · {{ fin.company_percent }}%</dt><dd>{{ fin.totals.company_revenue|money }}</dd></div>
+          <div><dt>Sof foyda (hozir)</dt><dd>{{ fin.totals.net_profit|money }}</dd></div>
+        </dl>
+        {% if fin.totals.outstanding_client > 0 %}<p class="pc-fin-note">Mijoz qolgan <b>{{ fin.totals.outstanding_client|money }}</b> ni to‘lagach, kompaniya foydasi <b>{{ fin.expected_profit|money }} {{ fin.currency }}</b> bo‘ladi.{% if fin.totals.net_profit < 0 %} Hozirgi minus — xodimlar ulushi yakunda to‘liq shartnoma summasidan hisoblangani uchun.{% endif %}</p>{% endif %}
+        <p class="ws-label">Jamoa ulushlari</p>
+        <ul class="pc-shares">{% for s in fin.shares %}<li>
+          <div><strong>{{ s.person.display_name|default:'Xodim' }}</strong><small>{{ s.percent }}% · {{ s.target|money }}{% if s.earned %} · hisoblangan {{ s.earned|money }}{% endif %}{% if s.paid %} · to‘langan {{ s.paid|money }}{% endif %}</small></div>
+          {% if fin.can_pay and s.remaining > 0 %}<a class="button compact" data-fin-modal="Xodimga pul berish" href="{% url 'enterprise:payout_create' %}?employee={{ s.person.pk }}&project={{ project.pk }}&amount={{ s.remaining|stringformat:'s' }}&currency={{ fin.currency }}">To‘lash {{ s.remaining|money }}</a>{% elif s.target and s.paid >= s.target %}<span class="pc-chip is-ok">To‘langan</span>{% endif %}
+        </li>{% endfor %}</ul>
+        <div class="pc-fin-actions">
+          {% if fin.can_manage %}<a class="button primary compact" data-fin-modal="Mijozdan pul keldi" href="{% url 'enterprise:operation_new' %}?kind=receipt&project={{ project.pk }}&currency={{ fin.currency }}">{% ui_icon 'plus' %} Mijozdan pul keldi</a>{% endif %}
+          {% if fin.can_distribute %}<a class="button compact" data-fin-modal="Loyiha kelishuvi" href="{% url 'enterprise:operation_new' %}?kind=agreement&project={{ project.pk }}&currency={{ fin.currency }}">Ulushlarni o‘zgartirish</a>{% endif %}
+        </div>
+        {% else %}
+        <p class="pc-fin-empty">Bu loyiha uchun moliyaviy kelishuv kiritilmagan. Kelishuvda shartnoma summasi va pul kimga necha foizdan bo‘linishi belgilanadi — shundan keyin mijoz to‘lovlari avtomatik bo‘linadi.</p>
+        {% if fin.can_distribute %}<a class="button primary project-wide" data-fin-modal="Loyiha kelishuvi" href="{% url 'enterprise:operation_new' %}?kind=agreement&project={{ project.pk }}">{% ui_icon 'plus' %} Kelishuv kiritish</a>{% endif %}
+        {% endif %}
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="panel" data-ios-collapsible="false">
+      <header class="panel-head"><h2>Loyiha jamoasi</h2><span class="chart-key">{{ team|length }} nafar</span></header>
+      {% if team %}
+      <ul class="ws-people">{% for person in team %}<li>{% include 'boshqaruv/components/avatar.html' with person=person avatar_class='small' %}<div><strong>{{ person.display_name }}{% if person.pk == user.pk %} <small class="pc-you">Siz</small>{% endif %}</strong>{% if person.is_project_manager %}<small>Mas’ul xodim{% if person.project_role %} · {{ person.project_role }}{% endif %}</small>{% elif person.project_role %}<small>{{ person.project_role }}</small>{% else %}<small class="is-missing">Mas’uliyat belgilanmagan</small>{% endif %}</div></li>{% endfor %}</ul>
+      {% else %}<p class="project-empty">Jamoa a’zolari qo‘shilmagan.</p>{% endif %}
+      {% if members_form %}
+      <div class="project-panel-foot"><button type="button" class="button project-wide" data-record-template="team-form" data-record-title="Jamoani tahrirlash">{% ui_icon 'people' %} Jamoani tahrirlash</button></div>
+      <noscript><style>.profile-form-fallback{display:block!important}</style></noscript>
+      <div id="team-form" class="profile-form-fallback" data-record-template-source>
+        <form data-modal-source method="post" action="{% url 'crm:project_members' project.pk %}" class="form-grid">
+          {% csrf_token %}
+          {% include 'boshqaruv/components/form.html' with form=members_form %}
+          <div class="form-footer"><button class="button primary">Jamoani saqlash</button></div>
+        </form>
+      </div>
+      {% endif %}
+    </section>
+
+  </aside>
+</div>
+
+{# Holatni o'zgartirishni tasdiqlash oynasi #}
+<dialog class="pc-confirm" id="pc-confirm" aria-labelledby="pc-confirm-title">
+  <form method="post" action="{% url 'crm:project_transition' project.pk %}">
+    {% csrf_token %}
+    <input type="hidden" name="to" data-pc-to>
+    <h2 id="pc-confirm-title" data-pc-title></h2>
+    <p class="pc-confirm-effect" data-pc-effect></p>
+    <div class="pc-blockers" data-pc-blocked hidden></div>
+    <label class="pc-confirm-note"><span data-pc-note-label>Izoh (ixtiyoriy)</span><textarea name="comment" rows="3" maxlength="300" placeholder="Jamoaga qisqa izoh…"></textarea></label>
+    <div class="pc-confirm-actions"><button type="button" class="button" data-pc-cancel>Bekor qilish</button><button class="button primary" data-pc-submit>Tasdiqlash</button></div>
+  </form>
+</dialog>
+{% if fin %}{% include 'boshqaruv/components/fin_modal.html' %}{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/project-page.js' %}?v=2" defer></script>{% endblock %}

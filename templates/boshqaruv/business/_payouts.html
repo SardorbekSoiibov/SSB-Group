@@ -1,0 +1,68 @@
+{% load boshqaruv %}
+{% if payout_rows %}<section class="panel" id="tolovlar">
+  <header class="panel-head">
+    <h2>Xodimlarga to‘lovlar · {{ currency }}</h2>
+    <div class="payout-head-actions">
+      {% if disputed_count %}<span class="status" data-status="rejected">{{ disputed_count }} ta e’tiroz</span>{% endif %}
+      {% if awaiting_count %}<span class="status" data-status="submitted">{{ awaiting_count }} ta tasdiq kutilmoqda</span>{% endif %}
+      <a class="button primary" href="{% url 'enterprise:payout_create' %}?currency={{ currency }}" data-fin-modal="Xodimga pul berish">To‘lovni amalga oshirish</a>
+    </div>
+  </header>
+  <p class="earn-note">Loyiha yakunlanib tasdiqlanganda xodim ulushi avtomatik «To‘lanishi kerak» bo‘ladi. Bu hali to‘lov emas. Pulni haqiqatan bergandan keyingina to‘lovni qayd eting. Jami qarz: <strong>{{ payout_due_total|money }} {{ currency }}</strong></p>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Xodim</th><th>Loyiha</th><th class="number">Qarz (ishlab topgan)</th><th class="number">To‘langan</th><th class="number">Qoldiq</th><th>Holat</th><th></th></tr></thead>
+      <tbody>
+        {% for row in payout_rows %}
+        <tr>
+          <td><strong>{{ row.employee.display_name }}</strong>{% if not row.employee.is_active %}<small>Faol emas</small>{% endif %}</td>
+          <td>{% if row.project %}{{ row.project.name }}{% if row.percent %}<small>{{ row.percent }}% ulush{% if row.completed_at %} · {{ row.completed_at|date:"d.m.Y" }}{% endif %}</small>{% endif %}{% else %}Ish haqi / umumiy{% endif %}</td>
+          <td class="number">{{ row.earned|money }}</td>
+          <td class="number">{{ row.paid|money }}</td>
+          <td class="number"><strong>{{ row.remaining|money }}</strong></td>
+          <td><span class="status" data-status="{% if row.status == 'paid' %}approved{% elif row.status == 'partial' %}in_progress{% else %}under_review{% endif %}">{{ row.status_label }}</span>{% if row.awaiting %}<small class="payout-awaiting">{{ row.awaiting|money }} — xodim tasdig‘ini kutmoqda</small>{% endif %}</td>
+          <td>{% if row.remaining > 0 %}<a class="button compact" data-fin-modal="Xodimga pul berish" href="{% url 'enterprise:payout_create' %}?employee={{ row.employee.pk }}{% if row.project %}&project={{ row.project.pk }}{% endif %}&amount={{ row.remaining|stringformat:'s' }}&currency={{ currency }}">To‘lash</a>{% endif %}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">Hozircha xodimlarga hisoblangan daromad yo‘q.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endif %}
+
+{% if payout_list %}<section class="panel">
+  <header class="panel-head"><h2>To‘lovlar tarixi va xodim tasdiqlari</h2><span class="chart-key">Barcha to‘lovlar saqlanadi · o‘chirilmaydi</span></header>
+  {% for item in payout_list %}
+  <div class="payout-row{% if item.state == 'disputed' %} is-dispute{% endif %}">
+    <div class="payout-main">
+      <strong>{{ item.employee.display_name }} · {{ item.amount|money }} {{ item.currency }}</strong>
+      <p>{{ item.payout.paid_on|date:"d.m.Y" }} · {{ item.payout.get_method_display }}{% if item.project %} · {{ item.project.name }}{% endif %}{% if item.payout.reference %} · {{ item.payout.reference }}{% endif %}</p>
+      <small>{{ item.description }} · qayd etdi: {{ item.administrator.display_name }}, {{ item.created_at|date:app_datetime_format }}</small>
+      {% if item.payout.proof %}<a class="payout-link" href="{% url 'enterprise:payout_proof' item.pk %}">Tasdiqlovchi hujjat</a>{% endif %}
+      {% for event in item.events %}<small class="payout-event">{{ event.get_kind_display }} · {{ event.actor.display_name }} · {{ event.created_at|date:app_datetime_format }}{% if event.note %} — «{{ event.note }}»{% endif %}</small>{% endfor %}
+    </div>
+    <div class="payout-side">
+      <span class="status" data-status="{% if item.state == 'confirmed' %}approved{% elif item.state == 'disputed' %}rejected{% elif item.state == 'reversed' %}cancelled{% else %}submitted{% endif %}">{{ item.state_label }}</span>
+      {% if item.state == 'pending' %}
+      <small>Xodim hali javob bermagan. Unga har sahifada tasdiqlash oynasi chiqadi.</small>
+      <form method="post" action="{% url 'enterprise:payout_remind' item.pk %}">{% csrf_token %}<button class="button compact">{% ui_icon 'bell' %} Eslatma yuborish</button></form>
+      {% elif item.state == 'confirmed' %}
+      <small>Xodim pulni olganini tasdiqladi.</small>
+      {% endif %}
+      {% if item.state == 'disputed' %}
+      <form method="post" action="{% url 'enterprise:payout_resolve' item.pk %}" class="payout-resolve" data-confirm="Qaror o‘zgarmas tarixga yoziladi. Davom etasizmi?">
+        {% csrf_token %}
+        <textarea name="note" rows="2" minlength="5" required placeholder="Tekshiruv natijasi (majburiy)"></textarea>
+        <div><button class="button" name="action" value="reask">Xodimdan qayta so‘rash</button>
+        <button class="button danger" name="action" value="reverse">To‘lovni tuzatish bilan bekor qilish</button></div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <p class="panel-body text-tertiary">Hali to‘lov qayd etilmagan.</p>
+  {% endfor %}
+</section>{% endif %}

@@ -1,0 +1,43 @@
+<form method="post" action="{% url 'website:contact' %}" novalidate class="stack-form" x-data="{ sending: false }" @submit="sending = true">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+  <div class="form-alert" role="alert">{% for e in form.non_field_errors %}{{ e }}{% endfor %}</div>
+  {% endif %}
+  <div class="hp-field" aria-hidden="true"><label>Sayt <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+  {{ form.issued }}
+  <div class="form-split">
+    {% include "website/_public_field.html" with field=form.name %}
+    {% include "website/_public_field.html" with field=form.contact %}
+  </div>
+  <fieldset class="field">
+    <legend class="field-label">{{ form.preferred_method.label }}</legend>
+    <div class="chip-row">
+      {% for radio in form.preferred_method %}
+      <label class="chip-option">
+        <input type="radio" name="{{ radio.data.name }}" value="{{ radio.data.value }}" class="sr-only" {% if radio.data.selected %}checked{% endif %} required>
+        <span class="chip">{{ radio.choice_label }}</span>
+      </label>
+      {% endfor %}
+    </div>
+    {% for e in form.preferred_method.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+  </fieldset>
+  {% include "website/_choice_chips.html" with field=form.service %}
+  {% include "website/_choice_chips.html" with field=form.budget %}
+  <div class="field" x-data="{ n: {{ form.description.value|default:''|length }} }">
+    <div class="field-label-row">
+      <label for="{{ form.description.id_for_label }}" class="field-label">{{ form.description.label }}</label>
+      <span class="counter-inline" :class="n >= 20 && 'is-ok'" x-text="n < 20 ? `yana ${20 - n} belgi` : 'yetarli'"></span>
+    </div>
+    <textarea name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}" rows="5" required
+              class="input input-area" placeholder="{{ form.description.field.widget.attrs.placeholder }}"
+              {% if form.description.errors %}aria-invalid="true"{% endif %}
+              @input="n = $el.value.trim().length">{{ form.description.value|default:'' }}</textarea>
+    {% for e in form.description.errors %}<p class="field-error">{{ e }}</p>{% endfor %}
+  </div>
+  <div class="form-foot">
+    <p class="fine-print">Yuborish orqali <a href="{% url 'website:privacy' %}">maxfiylik siyosati</a>ga rozilik bildirasiz.</p>
+    <button type="submit" class="btn btn-filled btn-lg" :disabled="sending">
+      <span x-text="sending ? 'Yuborilmoqda…' : 'Murojaat yuborish'">Murojaat yuborish</span>
+    </button>
+  </div>
+</form>

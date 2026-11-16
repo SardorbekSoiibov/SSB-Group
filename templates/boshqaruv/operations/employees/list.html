@@ -1,0 +1,88 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Xodimlar va jamoa{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/employees.css' %}?v=4">{% endblock %}
+{% block content %}
+<div class="team" data-team>
+  <header class="team-hero">
+    <div class="team-hero-text">
+      <span class="team-eyebrow">{% ui_icon 'people' %} Jamoa</span>
+      <h1>Xodimlar</h1>
+      <p>Kompaniyaning har bir a’zosi — lavozimi, bo‘limi va ish holati bilan bir joyda.</p>
+    </div>
+    <dl class="team-stats">
+      <div><dt>Jamoa</dt><dd>{{ team_stats.team }}</dd></div>
+      <div><dt>Faol</dt><dd>{{ team_stats.active }}</dd></div>
+      <div><dt>Taklif kutmoqda</dt><dd>{{ team_stats.invited }}</dd></div>
+      <div><dt>Bo‘limlar</dt><dd>{{ team_stats.departments }}</dd></div>
+    </dl>
+    {% if can_manage %}<a class="team-add" href="{% url 'crm:employee_create' %}">{% ui_icon 'plus' %}<span>Yangi xodim</span></a>{% endif %}
+  </header>
+
+  <nav class="team-tabs" aria-label="Holat bo‘yicha">
+    {% for tab in status_tabs %}<a href="{{ tab.url }}" {% if tab.active %}aria-current="true"{% endif %}>{{ tab.label }}<b>{{ tab.count }}</b></a>{% endfor %}
+  </nav>
+
+  <form class="team-toolbar" method="get" aria-label="Xodimlarni saralash">
+    {% if request.GET.holat %}<input type="hidden" name="holat" value="{{ request.GET.holat }}">{% endif %}
+    <label class="team-search">{% ui_icon 'search' %}<span class="sr-only">Qidirish</span><input type="search" name="q" value="{{ request.GET.q }}" placeholder="Ism, lavozim yoki ko‘nikma…" autocomplete="off"></label>
+    <label class="team-select"><span class="sr-only">Bo‘lim</span><select name="bolim" data-auto-submit>
+      <option value="">Barcha bo‘limlar</option>
+      {% for dept in departments %}<option value="{{ dept.pk }}" {% if request.GET.bolim == dept.pk|stringformat:'s' %}selected{% endif %}>{{ dept.name }}</option>{% endfor %}
+    </select></label>
+    <button class="sr-only" type="submit">Qidirish</button>
+    {% if filtered %}<a class="team-clear" href="{% url 'crm:employees' %}{% if request.GET.holat %}?holat={{ request.GET.holat }}{% endif %}">{% ui_icon 'close' %}Tozalash</a>{% endif %}
+    <div class="team-view" role="group" aria-label="Ko‘rinish">
+      <button type="button" data-team-view="grid" aria-pressed="true" title="Kartochkalar">{% ui_icon 'overview' %}<span class="sr-only">Kartochkalar</span></button>
+      <button type="button" data-team-view="list" aria-pressed="false" title="Ro‘yxat">{% ui_icon 'menu' %}<span class="sr-only">Ro‘yxat</span></button>
+    </div>
+  </form>
+
+  <section class="team-grid" data-team-list aria-label="Xodimlar ro‘yxati">
+    {% for person in page %}
+    <article class="person" data-status="{{ person.status }}">
+      <div class="person-top">
+        <span class="person-photo">{% include 'boshqaruv/components/avatar.html' with person=person %}<i class="person-dot" title="{{ person.get_status_display }}"></i></span>
+        {% if person.is_owner %}<span class="person-badge">{% ui_icon 'star' %}Asoschi</span>{% endif %}
+      </div>
+      <div class="person-main">
+        <h2><a class="person-link" href="{% url 'crm:employee_detail' person.pk %}">{{ person.display_name }}</a>{% if person.is_verified %}<span class="person-verified" title="Tasdiqlangan hisob">{% ui_icon 'check' %}</span>{% endif %}</h2>
+        <p class="person-role">{{ person.job_title|default:person.role }}</p>
+      </div>
+      <div class="person-meta">
+        <span class="person-dept">{{ person.department|default:"Bo‘limsiz" }}</span>
+        <span class="person-state">{{ person.get_status_display }}</span>
+      </div>
+      {% if person.skills %}<ul class="person-skills" aria-label="Ko‘nikmalar">{% for skill in person.skills|slice:":3" %}<li>{{ skill }}</li>{% endfor %}{% if person.skills|length > 3 %}<li class="more">+{{ person.skills|length|add:"-3" }}</li>{% endif %}</ul>{% endif %}
+      <footer class="person-foot">
+        <span class="person-projects"><b>{{ person.active_projects }}</b> faol loyiha</span>
+        <span class="person-actions">
+          {% if person.pk != user.pk and person.status == 'active' %}<a href="{% url 'chat:conversation' person.pk %}" title="Xabar yozish" aria-label="{{ person.display_name }} bilan chat">{% ui_icon 'chat' %}</a>{% endif %}
+          {% if person.telegram %}<a href="https://t.me/{{ person.telegram|cut:'@' }}" target="_blank" rel="noopener" title="Telegram" aria-label="Telegram">{% ui_icon 'send' %}</a>{% endif %}
+          {% if person.phone %}<a href="tel:{{ person.phone|cut:' ' }}" title="{{ person.phone }}" aria-label="Qo‘ng‘iroq qilish">{% ui_icon 'phone' %}</a>{% endif %}
+        </span>
+      </footer>
+    </article>
+    {% empty %}
+    <div class="team-empty">{% include 'boshqaruv/components/empty.html' with empty_title='Xodim topilmadi' empty_text='Qidiruv yoki bo‘lim filtrini o‘zgartirib ko‘ring.' %}</div>
+    {% endfor %}
+  </section>
+
+  {% include "boshqaruv/components/pagination.html" %}
+</div>
+{% endblock %}
+{% block scripts %}<script>
+(() => {
+  const root = document.querySelector('[data-team]'); if (!root) return;
+  const list = root.querySelector('[data-team-list]'), buttons = root.querySelectorAll('[data-team-view]');
+  const apply = mode => { list.classList.toggle('is-list', mode === 'list'); buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.teamView === mode))); };
+  let saved = 'grid'; try { saved = localStorage.getItem('ssb-team-view') || 'grid'; } catch {}
+  apply(saved);
+  buttons.forEach(b => b.addEventListener('click', () => { apply(b.dataset.teamView); try { localStorage.setItem('ssb-team-view', b.dataset.teamView); } catch {} }));
+  // Butun kartochka bosiladi, ichidagi tugmalar o'z ishini qiladi.
+  list.addEventListener('click', e => {
+    const card = e.target.closest('.person'); if (!card || e.target.closest('a,button')) return;
+    if (window.getSelection && String(window.getSelection()).length) return;
+    card.querySelector('.person-link')?.click();
+  });
+})();
+</script>{% endblock %}

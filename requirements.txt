@@ -1,0 +1,15 @@
+Django==5.2.18
+django-environ==0.14.0
+psycopg[binary]==3.3.6
+pillow==12.3.0
+whitenoise==6.12.0
+gunicorn==23.0.0
+redis==5.2.1
+
+djangorestframework==3.18.3
+rarfile==4.5
+
+openpyxl==3.1.5
+reportlab==5.1.0
+waitress==3.0.2
+anthropic==1.17.0

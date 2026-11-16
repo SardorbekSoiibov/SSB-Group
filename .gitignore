@@ -1,0 +1,23 @@
+.env
+__pycache__/
+*.pyc
+node_modules/
+media/
+private_media/
+staticfiles/
+.venv/
+.pg/
+.pgdata/
+.pg_pw
+db.sqlite3
+
+.setup/
+desktop/release/
+
+desktop/release-next/
+
+# deploy (domen rejimi)
+deploy/run/
+deploy/logs/
+deploy/bin/
+deploy/production.env

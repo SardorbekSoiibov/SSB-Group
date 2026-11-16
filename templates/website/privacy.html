@@ -1,0 +1,18 @@
+{% extends "base_public.html" %}
+{% block title %}Maxfiylik siyosati — {{ site.company_name }}{% endblock %}
+{% block content %}
+{% include "website/_page_head.html" with heading="Maxfiylik siyosati" %}
+<section class="section pt-0">
+  <div class="wrap">
+    <div class="glass-card prose-card" data-reveal>
+      <div class="prose">
+        {% if site.privacy_text %}{{ site.privacy_text|linebreaks }}{% else %}
+        <p>Sayt orqali yuborilgan murojaatdagi ism, aloqa ma’lumoti va loyiha tavsifi faqat siz bilan bog‘lanish va loyihani muhokama qilish uchun ishlatiladi.</p>
+        <p>Bu ma’lumotlar uchinchi shaxslarga sotilmaydi va berilmaydi. Ularga faqat {{ site.company_name }} xodimlari ichki tizim orqali, ruxsat doirasida kira oladi.</p>
+        <p>Ma’lumotlaringizni o‘chirishni so‘rash uchun {% if site.email %}<a class="link" href="mailto:{{ site.email }}">{{ site.email }}</a>{% else %}biz{% endif %} bilan bog‘laning.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

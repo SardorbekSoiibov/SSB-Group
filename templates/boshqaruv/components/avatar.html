@@ -1,0 +1,1 @@
+{% load boshqaruv %}<span class="avatar {{ avatar_class }}">{{ person|initials }}{% if person.photo %}<img src="{% url 'crm:employee_photo' person.pk %}?v={{ person.photo_version }}" alt="" loading="lazy">{% endif %}</span>

@@ -1,0 +1,84 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Hamkorlar{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/badge.css' %}?v=6"><link rel="stylesheet" href="{% static 'boshqaruv/partners.css' %}?v=2">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / HAMKORLAR</span>
+    <h1>Hamkorlar</h1>
+    <p>Hamkorlik shartnomalari va logolar. Belgilangan logolar barcha xodimlar bedjigida chiqadi. Bu bo‘limni faqat Asoschi ko‘radi.</p>
+  </div>
+  <div class="heading-actions">
+    <button type="button" class="button primary" data-open-partner="new">{% ui_icon 'plus' %} Hamkor qo‘shish</button>
+  </div>
+</header>
+
+<div class="pt-layout">
+  <div class="pt-main">
+    <div class="pt-stats">
+      <div><b>{{ partners|length }}</b><span>Jami hamkorlar</span></div>
+      <div><b>{{ badge_count }}</b><span>Bedjikda ko‘rinadi</span></div>
+      <div><b>{{ max_badge_partners }}</b><span>Bedjikdagi o‘rinlar</span></div>
+    </div>
+    {% if badge_count > max_badge_partners %}<p class="pt-warn">{% ui_icon 'bell' %} Bedjikka faqat dastlabki {{ max_badge_partners }} ta logo sig‘adi. Tartibni o‘q tugmalari bilan o‘zgartiring.</p>{% endif %}
+
+    {% if rows %}
+    <ul class="pt-grid">
+      {% for partner, form, is_open in rows %}
+      <li class="pt-card{% if not partner.show_on_badge %} is-muted{% endif %}">
+        <div class="pt-logo"><img src="{% url 'crm:partner_logo' partner.pk %}?v={{ partner.logo_version }}" alt="{{ partner.name }} logotipi" loading="lazy"></div>
+        <div class="pt-body">
+          <div class="pt-title">
+            <h3>{{ partner.name }}</h3>
+            {% if partner.show_on_badge %}<span class="pt-chip is-on">Bedjikda{% if forloop.counter > max_badge_partners %} · sig‘madi{% endif %}</span>{% else %}<span class="pt-chip">Yashirin</span>{% endif %}
+          </div>
+          <p class="pt-meta">
+            <a href="{% url 'crm:partner_contract' partner.pk %}" target="_blank" rel="noopener" class="pt-doc">{% ui_icon 'file' %}<span>Shartnoma</span><i>{{ partner.contract_ext }}</i></a>
+            {% if partner.signed_on %}<span>{% ui_icon 'calendar' %} {{ partner.signed_on|date:app_date_format }}</span>{% endif %}
+            {% if partner.website %}<a href="{{ partner.website }}" target="_blank" rel="noopener noreferrer">{{ partner.website|cut:'https://'|cut:'http://'|truncatechars:28 }}</a>{% endif %}
+          </p>
+          {% if partner.note %}<p class="pt-note">{{ partner.note }}</p>{% endif %}
+        </div>
+        <div class="pt-actions">
+          <form method="post" action="{% url 'crm:partner_toggle' partner.pk %}">{% csrf_token %}
+            <button class="pt-toggle" role="switch" aria-checked="{{ partner.show_on_badge|yesno:'true,false' }}" title="Bedjikda ko‘rsatish">
+              <span class="pt-switch-ui" aria-hidden="true"></span><span>Bedjikda</span></button>
+          </form>
+          <div class="pt-tools">
+            <form method="post" action="{% url 'crm:partner_move' partner.pk %}">{% csrf_token %}<input type="hidden" name="dir" value="up"><button class="icon-button" aria-label="Yuqoriga" title="Yuqoriga"{% if forloop.first %} disabled{% endif %}>↑</button></form>
+            <form method="post" action="{% url 'crm:partner_move' partner.pk %}">{% csrf_token %}<input type="hidden" name="dir" value="down"><button class="icon-button" aria-label="Pastga" title="Pastga"{% if forloop.last %} disabled{% endif %}>↓</button></form>
+            <button type="button" class="icon-button" data-open-partner="{{ partner.pk }}" aria-label="Tahrirlash" title="Tahrirlash">{% ui_icon 'settings' %}</button>
+            <form method="post" action="{% url 'crm:partner_delete' partner.pk %}" data-secure-title="Hamkorni o‘chirish" data-secure-delete="Hamkor: {{ partner.name }}|Logotip va hamkorlik shartnomasi fayli ham o‘chiriladi">{% csrf_token %}<button class="icon-button is-danger" aria-label="O‘chirish" title="O‘chirish">{% ui_icon 'trash' %}</button></form>
+          </div>
+        </div>
+      </li>
+      {% endfor %}
+      <li><button type="button" class="pt-add" data-open-partner="new">{% ui_icon 'plus' %}<span>Yana hamkor qo‘shish</span></button></li>
+    </ul>
+    {% else %}
+    <div class="pt-empty">
+      <span class="pt-empty-icon">{% ui_icon 'handshake' %}</span>
+      <h2>Hali hamkorlar yo‘q</h2>
+      <p>Birinchi hamkoringizni qo‘shing: nomini yozing, logotip va hamkorlik shartnomasini yuklang. Logo darhol barcha xodimlar bedjigida paydo bo‘ladi.</p>
+      <button type="button" class="button primary" data-open-partner="new">{% ui_icon 'plus' %} Hamkor qo‘shish</button>
+    </div>
+    {% endif %}
+  </div>
+
+  <aside class="pt-side ep-badge">
+    <section class="pt-panel">
+      <header><h2>Bedjikda shunday ko‘rinadi</h2><span>Barcha xodimlarda bir xil</span></header>
+      {% include "boshqaruv/components/badge_card.html" with person=user %}
+      <div class="badge-actions">
+        <a class="button primary" href="{% url 'crm:employee_badge_pdf' user.pk %}" download>{% ui_icon 'file' %} PDF namunasi</a>
+        <a class="button" href="{% url 'crm:employees' %}">{% ui_icon 'people' %} Xodimlar</a>
+      </div>
+      <p class="badge-hint">Hamkor logolari bedjikning orqa tomonida, QR ostida o‘z ko‘rinishida chiqadi.</p>
+    </section>
+  </aside>
+</div>
+
+{% include "boshqaruv/operations/_partner_form.html" with form=new_form partner=None open=open_new %}
+{% for partner, form, is_open in rows %}{% include "boshqaruv/operations/_partner_form.html" with form=form partner=partner open=is_open %}{% endfor %}
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/employee-badge.js' %}?v=1" defer></script><script src="{% static 'boshqaruv/partners.js' %}?v=1" defer></script>{% endblock %}

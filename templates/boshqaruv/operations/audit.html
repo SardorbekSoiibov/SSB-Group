@@ -1,0 +1,88 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Audit tarixi va xavfsizlik jurnali{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / XAVFSIZLIK</span>
+    <h1>Xavfsizlik va audit jurnali</h1>
+    <p>Kompaniya tizimida amalga oshirilgan har bir operatsiya, ma’lumot o‘zgarishi va qarorlarning o‘zgarmas tarixi.</p>
+  </div>
+  <div class="heading-actions">
+    {% if user.is_owner %}
+    <form method="post" action="{% url 'crm:audit_clear' %}" class="audit-clear" data-secure-delete="Tanlangan davrdagi audit yozuvlari|Tozalashning o‘zi jurnalga yangi yozuv sifatida qayd etiladi" data-secure-title="Audit tarixi tozalansinmi?">
+      {% csrf_token %}
+      <label class="sr-only" for="audit-clear-period">Tozalash davri</label>
+      <select id="audit-clear-period" name="davr">{% for key, label in clear_periods %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select>
+      <button class="button danger">{% ui_icon 'trash' %} Tarixni tozalash</button>
+    </form>
+    {% endif %}
+  </div>
+</header>
+<style>.audit-clear{display:flex;align-items:center;gap:8px}.audit-clear select{height:38px;padding:0 10px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px}@media(max-width:720px){.audit-clear{width:100%;flex-wrap:wrap}.audit-clear select{flex:1 1 170px;min-width:0}.audit-clear .button{flex:1 1 auto;justify-content:center}}</style>
+
+<form class="filter-bar">
+  <label>Amal turi
+    <select name="amal">
+      <option value="">Barcha amallar</option>
+      {% for value,label in actions %}
+      <option value="{{ value }}" {% if request.GET.amal == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Mas’ul xodim
+    <select name="xodim">
+      <option value="">Barcha xodimlar</option>
+      {% for person in actors %}
+      <option value="{{ person.pk }}" {% if request.GET.xodim == person.pk|stringformat:'s' %}selected{% endif %}>{{ person }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Qidirish
+    <input name="q" value="{{ request.GET.q }}" placeholder="Obyekt yoki o‘zgarish bo‘yicha…">
+  </label>
+  <label>Sanadan<input type="date" name="dan" value="{{ request.GET.dan }}"></label><label>Sanagacha<input type="date" name="gacha" value="{{ request.GET.gacha }}"></label><button class="button primary">Filtrlash</button><a class="button" href="{% url 'crm:audit' %}">Tozalash</a>
+</form>
+
+<section class="panel">
+  <header class="panel-head">
+    <h2>O‘zgarmas audit yozuvlari</h2>
+    <span class="chart-key">{{ page.paginator.count }} ta qayd</span>
+  </header>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Sana va vaqt</th>
+          <th>Mas’ul shaxs</th>
+          <th>Amal turi</th>
+          <th>Obyekt</th>
+          <th>O‘zgarishlar tafsiloti</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in page %}
+        <tr>
+          <td><span class="text-xs font-mono">{{ item.created_at|date:app_datetime_format }}</span></td>
+          <td><strong>{{ item.actor|default:'Tizim avtomatik' }}</strong></td>
+          <td><span class="status compact" data-status="approved">{{ item.action|audit_label }}</span></td>
+          <td>
+            <strong>{{ item.target_repr }}</strong>
+            <small class="block text-tertiary">{{ item.target_type }} · ID: {{ item.target_id }}</small>
+          </td>
+          <td>
+            <details class="audit-details"><summary>Tafsilotlarni ko&#8216;rish</summary><pre>{{ item.changes|audit_changes }}</pre></details>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align:center; padding:32px 20px; color:var(--ink-tertiary);">
+            Filtr bo‘yicha audit yozuvlari topilmadi.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "boshqaruv/components/pagination.html" %}
+</section>
+{% endblock %}

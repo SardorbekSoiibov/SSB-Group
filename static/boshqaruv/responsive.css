@@ -1,0 +1,133 @@
+/* SSB Boshqaruv — barcha ekranlar uchun moslashuv va telefon/planshetdagi pastki tab-panel.
+   Faylda faqat qo'shimcha qoidalar bor: kompyuter (>=1024px) ko'rinishi o'zgarmaydi. */
+
+:root{--tabbar-h:66px;--tabbar-gap:calc(10px + env(safe-area-inset-bottom,0px));--tabbar-space:calc(var(--tabbar-h) + var(--tabbar-gap))}
+
+/* ---------------------------------------------------------------- pastki tab-panel
+   Suzib turuvchi kapsula; faol bo'lmagan tab — kulrang chiziqli ikonka,
+   faol tab — to'ldirilgan ikonka, ortida rangli "pill" va rangli yozuv. */
+.tabbar{display:none}
+
+@media (max-width:1023px){
+  .tabbar{
+    --tab-off:#8b8e99;--tab-on:var(--accent-custom,#007aff);--tab-bg:rgb(255 255 255/.84);--tab-edge:rgb(255 255 255/.9);
+    --tab-pill:color-mix(in srgb,var(--accent-custom,#007aff) 13%,transparent);
+    position:fixed;left:12px;right:12px;bottom:var(--tabbar-gap);z-index:50;
+    display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);
+    max-width:560px;height:var(--tabbar-h);margin:0 auto;padding:0 6px;
+    border:1px solid var(--tab-edge);border-radius:26px;background:var(--tab-bg);
+    -webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);
+    box-shadow:0 1px 0 rgb(255 255 255/.5) inset,0 18px 40px -16px rgb(15 23 42/.35),0 4px 12px -6px rgb(15 23 42/.18);
+  }
+  :root[data-theme="dark"] .tabbar{--tab-off:#8e8e93;--tab-bg:rgb(28 28 30/.8);--tab-edge:rgb(255 255 255/.08);box-shadow:0 1px 0 rgb(255 255 255/.06) inset,0 18px 40px -14px rgb(0 0 0/.7)}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tabbar{--tab-off:#8e8e93;--tab-bg:rgb(28 28 30/.8);--tab-edge:rgb(255 255 255/.08);box-shadow:0 1px 0 rgb(255 255 255/.06) inset,0 18px 40px -14px rgb(0 0 0/.7)}}
+
+  .tabbar-item{
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    min-width:0;height:var(--tabbar-h);padding:0 2px;margin:0;border:0;background:none;
+    color:var(--tab-off);font:inherit;text-decoration:none;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:color .25s ease;
+  }
+  .tabbar-item:focus-visible{outline:none}
+  .tabbar-item:focus-visible .tabbar-icon{box-shadow:0 0 0 2px var(--tab-on)}
+  .tabbar-icon{position:relative;display:grid;place-items:center;width:52px;height:32px;border-radius:16px;
+    transition:background-color .3s cubic-bezier(.2,.8,.2,1),transform .35s cubic-bezier(.34,1.4,.5,1)}
+  .tab-svg{width:22px;height:22px;overflow:visible}
+  .tab-svg .o{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .tab-svg .f{display:none;fill:currentColor;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+  .tabbar-label{max-width:100%;overflow:hidden;font-size:10.5px;font-weight:600;line-height:12px;letter-spacing:-.005em;white-space:nowrap;text-overflow:ellipsis}
+  .tabbar-item:active .tabbar-icon{transform:scale(.9)}
+  :is(.tabbar-item[aria-current="page"],.tabbar-item[data-current],body.nav-open .tabbar-item[data-open-nav]) .tabbar-icon{background:var(--tab-pill)}
+  body.nav-open .tabbar-item:not([data-open-nav]) .tabbar-icon{background:none}
+
+  /* faol tab: to'ldirilgan ikonka va rangli yozuv (menyu ochiq bo'lsa — faqat Bo'limlar) */
+  :is(.tabbar-item[aria-current="page"],.tabbar-item[data-current],body.nav-open .tabbar-item[data-open-nav]){color:var(--tab-on)}
+  :is(.tabbar-item[aria-current="page"],.tabbar-item[data-current],body.nav-open .tabbar-item[data-open-nav]) .tab-svg .o{display:none}
+  :is(.tabbar-item[aria-current="page"],.tabbar-item[data-current],body.nav-open .tabbar-item[data-open-nav]) .tab-svg .f{display:inline}
+  body.nav-open .tabbar-item:not([data-open-nav]){color:var(--tab-off)}
+  body.nav-open .tabbar-item:not([data-open-nav]) .tab-svg .o{display:inline}
+  body.nav-open .tabbar-item:not([data-open-nav]) .tab-svg .f{display:none}
+
+  .tabbar-badge{
+    position:absolute;top:-3px;left:calc(50% + 5px);min-width:17px;height:17px;padding:0 4px;box-sizing:border-box;
+    border:2px solid var(--surface,#fff);border-radius:999px;background:#ff3b30;color:#fff;
+    font-size:9.5px;font-weight:700;font-style:normal;line-height:13px;text-align:center;
+  }
+  .tabbar-badge[hidden]{display:none}
+
+  /* Tab-panel menyu tugmasi va suzuvchi chat tugmasi vazifasini bajaradi */
+  html body[data-app] .app-topbar:not(#_) [data-open-nav].mobile-only{display:none!important}
+  body:has(.tabbar [data-tab-chat]) .chat-launcher{display:none!important}
+
+  /* Kontent va xabarlar tab-panel ostida qolmasin */
+  html body[data-app] .page-container:not(#_){padding-bottom:calc(var(--tabbar-space) + 28px)!important}
+  body:has(.tabbar) .app-footer{display:none!important}
+  .toast-region{bottom:calc(var(--tabbar-space) + 14px)!important;right:12px!important;left:12px!important;max-width:none!important}
+
+  /* Menyu ochilganda tab-panel ko'rinib turadi (Bo'limlar faol, qayta bosilsa yopiladi); ochiq chatda yashirinadi */
+  body.chat-phone-open .tabbar{visibility:hidden}
+  html body[data-app] .app-rail:not(#_){bottom:calc(var(--tabbar-space) + 10px)!important}
+  body.nav-open .tabbar{z-index:58}
+  .app-rail .rail-search kbd{display:none!important}
+}
+
+/* ---------------------------------------------------------------- umumiy moslashuv */
+html body[data-app] .app-body:not(#_){min-width:0;overflow-x:clip}
+html body[data-app] .table-wrap:not(#_){max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+/* Nol kuchli (:where): rasm sahifadan chiqib ketmaydi, lekin o'z o'lchami belgilangan rasmlar (chat avatarlari, bedjik, logolar) buzilmaydi. */
+:where(html body[data-app] .page-container) :where(img,video){max-width:100%;height:auto}
+html body[data-app] .page-container:not(#_) :is(pre,code){overflow-wrap:anywhere;white-space:pre-wrap}
+
+@media (max-width:1023px){
+  html body[data-app] .page-heading:not(#_){flex-wrap:wrap;gap:14px}
+  html body[data-app] .heading-actions:not(#_){flex-wrap:wrap;max-width:100%;min-width:0}
+  html body[data-app] .heading-actions:not(#_)>form{max-width:100%;flex-wrap:wrap}
+  html body[data-app] .page-container:not(#_) select{min-width:0;max-width:100%}
+  html body[data-app] .panel-head:not(#_){flex-wrap:wrap;row-gap:10px}
+  html body[data-app] .command-dialog:not(#_),html body[data-app] .record-dialog:not(#_){width:calc(100vw - 24px)!important;max-width:calc(100vw - 24px)!important;max-height:calc(100dvh - 24px)}
+}
+
+@media (max-width:767px){
+  /* iOS kiritishda sahifani kattalashtirmasin */
+  html body[data-app] :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea):not(#_){font-size:16px!important}
+
+  /* Filtr panellari: maydonlar to'liq enda, sanalar yonma-yon, tugmalar bir qatorda */
+  html body[data-app] form.filter-bar:not(#_){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;align-items:end}
+  html body[data-app] form.filter-bar:not(#_)>label{grid-column:1/-1;min-width:0!important;width:auto!important}
+  html body[data-app] form.filter-bar:not(#_)>label:has(input[type=date]){grid-column:auto}
+  html body[data-app] form.filter-bar:not(#_)>label :is(input,select){width:100%!important;max-width:none!important;min-width:0!important}
+  html body[data-app] form.filter-bar:not(#_)>:is(.button,button,a.button){width:100%;justify-content:center;margin:0!important}
+  html body[data-app] form.filter-bar:not(#_)>:is(div,p,small,.segmented-control){grid-column:1/-1;min-width:0;max-width:100%}
+  html body[data-app] form.filter-bar:not(#_)>.segmented-control{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(0,1fr));width:100%!important}
+  html body[data-app] form.filter-bar:not(#_)>.segmented-control .button{justify-content:center;min-width:0;padding-inline:8px!important}
+  html body[data-app] form.filter-bar:not(#_):not(:has(>a.button))>button:only-of-type{grid-column:1/-1}
+
+  /* Formalar bitta ustunda */
+  html body[data-app] .form-grid:not(#_){grid-template-columns:minmax(0,1fr)!important}
+  html body[data-app] .form-grid:not(#_)>*{grid-column:1/-1!important;min-width:0}
+  html body[data-app] .form-footer:not(#_){flex-wrap:wrap}
+  html body[data-app] .form-footer:not(#_) .button{flex:1 1 auto;justify-content:center}
+
+  /* Bosish uchun qulay o'lcham */
+  html body[data-app] .page-container:not(#_) :is(.button,button.icon-button,.icon-button){min-height:40px}
+
+  /* Inline formalar (moliya qarorlari va h.k.) ustma-ust */
+  html body[data-app] .inline-form:not(#_){flex-wrap:wrap;width:100%}
+  html body[data-app] .inline-form:not(#_) input{flex:1 1 100%}
+  html body[data-app] .feed-row:not(#_){flex-wrap:wrap}
+
+  /* Jadval: kichik ekranda ham o'qiladigan zichlik */
+  html body[data-app] .data-table:not(#_) :is(th,td){padding-inline:12px}
+}
+
+@media (max-width:380px){
+  .tabbar-label{font-size:10px}
+  html body[data-app] form.filter-bar:not(#_)>label:has(input[type=date]){grid-column:1/-1}
+}
+
+@media (prefers-reduced-motion:reduce){.tabbar-item,.tabbar-icon{transition:none}}
+@media print{.tabbar{display:none!important}}
+
+/* Yozuv kursori (|) faqat yozish maydonlarida ko'rinadi — oddiy matnni bosganda chiqmaydi (Chrome "caret browsing" yoqilgan bo'lsa ham). */
+html body{caret-color:transparent}
+html body :is(input,textarea,select,[contenteditable]:not([contenteditable="false"])){caret-color:auto}

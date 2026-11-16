@@ -1,0 +1,118 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Kompaniya tuzilmasi{% endblock %}
+{% block head %}<style>
+.org-head{align-items:flex-end}
+.org-toolbar{display:flex;align-items:center;gap:8px}
+.org-seg{display:inline-flex;padding:3px;border-radius:10px;background:var(--surface-secondary,var(--canvas));border:1px solid var(--line)}
+.org-seg button{height:30px;padding:0 12px;border:0;border-radius:8px;background:none;color:var(--ink-secondary);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.org-seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgb(0 0 0/.1)}
+.org-legend{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 14px;color:var(--ink-tertiary);font-size:12px}
+.org-legend span{display:inline-flex;align-items:center;gap:6px}
+.org-legend i{width:10px;height:10px;border-radius:3px;background:var(--apple-blue)}
+.org-legend i.is-dept{background:color-mix(in srgb,var(--apple-blue) 35%,var(--surface))}
+.org-legend i.is-none{background:var(--line-strong)}
+.org-stage{position:relative;padding:34px 20px 48px;border:1px solid var(--line);border-radius:22px;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 0%,color-mix(in srgb,var(--apple-blue) 9%,transparent),transparent 60%),var(--surface);perspective:1600px}
+.org-stage::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(color-mix(in srgb,var(--ink) 6%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--ink) 6%,transparent) 1px,transparent 1px);
+  background-size:32px 32px;-webkit-mask:radial-gradient(ellipse at 50% 40%,#000 20%,transparent 75%);mask:radial-gradient(ellipse at 50% 40%,#000 20%,transparent 75%)}
+.org-tree{position:relative;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.org-stage.is-3d .org-tree{transform:rotateX(14deg)}
+.org-node{position:relative;transform-style:preserve-3d;border:1px solid var(--line);border-radius:16px;background:var(--surface);
+  box-shadow:0 1px 0 color-mix(in srgb,var(--ink) 4%,transparent),0 10px 24px -12px rgb(16 24 40/.25);transition:transform .25s ease,box-shadow .25s ease}
+.org-stage.is-3d .org-node{box-shadow:0 2px 0 color-mix(in srgb,var(--apple-blue) 35%,var(--line)),0 6px 0 -2px color-mix(in srgb,var(--apple-blue) 18%,var(--line)),0 22px 34px -14px rgb(16 24 40/.35)}
+.org-stage.is-3d .org-node:hover{transform:translateZ(26px) translateY(-3px)}
+.org-root{position:relative;display:flex;justify-content:center;gap:16px;margin-bottom:46px}
+.org-founder{display:flex;align-items:center;gap:12px;min-width:260px;padding:14px 18px;color:var(--ink);border-color:color-mix(in srgb,var(--apple-blue) 40%,var(--line));
+  background:linear-gradient(145deg,color-mix(in srgb,var(--apple-blue) 10%,var(--surface)),var(--surface))}
+.org-founder .avatar{width:44px;height:44px;flex:none}
+.org-founder strong{display:block;font-size:15px}
+.org-founder small{display:inline-flex;margin-top:3px;padding:2px 8px;border-radius:99px;background:var(--apple-blue);color:#fff;font-size:11px;font-weight:700;letter-spacing:.02em}
+.org-root::after{content:"";position:absolute;left:50%;bottom:-46px;width:2px;height:24px;background:color-mix(in srgb,var(--apple-blue) 45%,var(--line));transform:translateX(-1px)}
+.org-branches{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;padding-top:22px}
+.org-branches::before{content:"";position:absolute;top:0;left:115px;right:115px;height:2px;background:color-mix(in srgb,var(--apple-blue) 45%,var(--line))}
+.org-branch{position:relative}
+.org-branch::before{content:"";position:absolute;top:-22px;left:50%;width:2px;height:22px;background:color-mix(in srgb,var(--apple-blue) 45%,var(--line));transform:translateX(-1px)}
+.org-branch::after{content:"";position:absolute;top:-26px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--apple-blue);transform:translateX(-4px);box-shadow:0 0 0 3px var(--surface)}
+.org-dept>header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);
+  background:color-mix(in srgb,var(--apple-blue) 6%,var(--surface));border-radius:16px 16px 0 0}
+.org-dept>header strong{font-size:14px}
+.org-dept>header small{display:block;color:var(--ink-tertiary);font-size:11.5px;margin-top:1px}
+.org-dept>header a{flex:none;width:28px;height:28px;display:grid;place-items:center;border-radius:8px;color:var(--ink-secondary)}
+.org-dept>header a:hover{background:var(--surface);color:var(--apple-blue)}
+.org-dept>header a .ui-icon{width:15px;height:15px}
+.org-dept.is-none>header{background:var(--surface-secondary,var(--canvas))}
+.org-people{list-style:none;margin:0;padding:8px}
+.org-person a{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:10px;color:var(--ink)}
+.org-person a:hover{background:color-mix(in srgb,var(--apple-blue) 6%,transparent)}
+.org-person .avatar{width:30px;height:30px;flex:none;font-size:11px}
+.org-person span{flex:1;min-width:0}
+.org-person strong,.org-person small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.org-person strong{font-size:13px;font-weight:600}
+.org-person small{color:var(--ink-tertiary);font-size:11.5px}
+.org-person b{flex:none;min-width:24px;height:22px;padding:0 7px;display:grid;place-items:center;border-radius:99px;font-size:11px;font-weight:700;
+  background:color-mix(in srgb,var(--apple-blue) 12%,transparent);color:var(--apple-blue)}
+.org-person b.is-zero{background:var(--surface-secondary,var(--canvas));color:var(--ink-tertiary)}
+.org-empty{margin:0;padding:14px;color:var(--ink-tertiary);font-size:12.5px;text-align:center}
+.org-add{display:grid;place-items:center;min-height:120px;border:1.5px dashed var(--line-strong);border-radius:16px;color:var(--ink-secondary);font-size:13px;font-weight:600}
+.org-add:hover{border-color:var(--apple-blue);color:var(--apple-blue)}
+.org-branch.is-add::before,.org-branch.is-add::after{display:none}
+@media(max-width:720px){.org-branches::before,.org-branch::before,.org-branch::after,.org-root::after{display:none}.org-stage.is-3d .org-tree{transform:none}}
+@media(prefers-reduced-motion:reduce){.org-tree,.org-node{transition:none}}
+</style>{% endblock %}
+{% block content %}
+<header class="page-heading org-head">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / TUZILMA</span>
+    <h1>Kompaniya tuzilmasi</h1>
+    <p>Asoschi, bo‘limlar va xodimlar bitta sxemada. Raqam — xodimga ochilgan funksiyalar soni.</p>
+  </div>
+  <div class="heading-actions org-toolbar">
+    <div class="org-seg" role="group" aria-label="Ko‘rinish"><button type="button" data-org-view="3d" aria-pressed="true">3D</button><button type="button" data-org-view="flat" aria-pressed="false">Tekis</button></div>
+    <a href="{% url 'crm:department_create' %}" class="button primary">{% ui_icon 'plus' %} Bo‘lim qo‘shish</a>
+  </div>
+</header>
+
+<div class="org-legend"><span><i></i>Asoschi</span><span><i class="is-dept"></i>Bo‘lim</span><span><i class="is-none"></i>Bo‘limsiz xodimlar</span><span>Jami: {{ people_total }} nafar</span></div>
+
+<section class="org-stage is-3d" data-org-stage aria-label="Kompaniya tuzilmasi sxemasi">
+  <div class="org-tree">
+    <div class="org-root">
+      {% for person in founders %}
+      <a class="org-node org-founder" href="{% url 'crm:employee_detail' person.pk %}">
+        {% include 'boshqaruv/components/avatar.html' with person=person %}
+        <span><strong>{{ person.display_name }}</strong><small>ASOSCHI · barcha funksiyalar</small></span>
+      </a>
+      {% endfor %}
+    </div>
+
+    <div class="org-branches">
+      {% for dept in departments %}
+      <div class="org-branch">
+        <section class="org-node org-dept">
+          <header><div><strong>{{ dept.name }}</strong><small>{{ dept.people|length }} nafar{% if dept.head %} · rahbar: {{ dept.head.display_name }}{% endif %}</small></div><a href="{% url 'crm:department_edit' dept.pk %}" aria-label="{{ dept.name }} bo‘limini tahrirlash" title="Tahrirlash">{% ui_icon 'edit' %}</a></header>
+          {% if dept.people %}
+          <ul class="org-people">{% for person in dept.people %}<li class="org-person"><a href="{% url 'crm:employee_detail' person.pk %}">{% include 'boshqaruv/components/avatar.html' with person=person avatar_class='small' %}<span><strong>{{ person.display_name }}</strong><small>{{ person.job_title|default:'Xodim' }}</small></span><b class="{% if not person.function_count %}is-zero{% endif %}" title="Ochilgan funksiyalar">{{ person.function_count }}</b></a></li>{% endfor %}</ul>
+          {% else %}<p class="org-empty">Bo‘limda xodim yo‘q</p>{% endif %}
+        </section>
+      </div>
+      {% endfor %}
+      {% if unassigned %}
+      <div class="org-branch">
+        <section class="org-node org-dept is-none">
+          <header><div><strong>Bo‘limsiz</strong><small>{{ unassigned|length }} nafar · bo‘limga biriktirilmagan</small></div></header>
+          <ul class="org-people">{% for person in unassigned %}<li class="org-person"><a href="{% url 'crm:employee_detail' person.pk %}">{% include 'boshqaruv/components/avatar.html' with person=person avatar_class='small' %}<span><strong>{{ person.display_name }}</strong><small>{{ person.job_title|default:'Xodim' }}</small></span><b class="{% if not person.function_count %}is-zero{% endif %}" title="Ochilgan funksiyalar">{{ person.function_count }}</b></a></li>{% endfor %}</ul>
+        </section>
+      </div>
+      {% endif %}
+      <div class="org-branch is-add"><a class="org-add" href="{% url 'crm:department_create' %}">{% ui_icon 'plus' %} Yangi bo‘lim</a></div>
+    </div>
+  </div>
+</section>
+<script>
+(()=>{const stage=document.querySelector('[data-org-stage]');if(!stage)return;const key='ssb-org-view';
+const set=v=>{stage.classList.toggle('is-3d',v==='3d');document.querySelectorAll('[data-org-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.orgView===v)));try{localStorage.setItem(key,v)}catch{}};
+let v='3d';try{v=localStorage.getItem(key)||'3d'}catch{}set(v);
+document.querySelectorAll('[data-org-view]').forEach(b=>b.addEventListener('click',()=>set(b.dataset.orgView)));})();
+</script>
+{% endblock %}

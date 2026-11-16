@@ -1,0 +1,4 @@
+{% if field.is_hidden %}{{ field }}{% else %}<div class="field {% if field.errors %}invalid{% endif %}" data-field="{{ field.name }}">
+{% if field.field.people_picker %}<span class="field-label">{{ field.label }}{% if field.field.required %}<span>*</span>{% endif %}</span>{% include 'boshqaruv/components/people_picker.html' with field=field %}{% if field.help_text %}<small>{{ field.help_text|safe }}</small>{% endif %}
+{% else %}{% if field.id_for_label %}<label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span>*</span>{% endif %}</label>{% else %}<span class="field-label">{{ field.label }}{% if field.field.required %}<span>*</span>{% endif %}</span>{% endif %}{{ field }}{% if field.help_text %}<small>{{ field.help_text|safe }}</small>{% endif %}{% endif %}
+{% for error in field.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}</div>{% endif %}

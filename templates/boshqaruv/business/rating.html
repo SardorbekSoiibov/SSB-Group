@@ -1,0 +1,103 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Haftalik reyting{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/rating.css' %}?v=1">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / HAFTALIK REYTING</span>
+    <h1>Haftalik reyting</h1>
+    <p>Har yakshanba soat 00:00 da e’lon qilinadi. Keyingi e’lon: {{ next_label }}.</p>
+  </div>
+</header>
+
+{% if manager %}
+<nav class="rate-tabs" aria-label="Reyting bo‘limlari">
+  <a href="?" {% if not editing %}class="active" aria-current="page"{% endif %}>E’lon qilingan</a>
+  <a href="?belgilash=1" {% if editing %}class="active" aria-current="page"{% endif %}>O‘rinlarni belgilash</a>
+</nav>
+{% endif %}
+
+{% if editing %}
+  {% if overdue_week %}<p class="rate-alert">{{ overdue_label }} haftasi belgilanmagan. <a href="?belgilash=1&amp;hafta={{ overdue_week|date:'Y-m-d' }}">Hozir belgilash</a> — saqlashingiz bilan e’lon qilinadi.</p>{% endif %}
+  <form method="post" class="rate-form" id="rate-form">
+    {% csrf_token %}
+    <input type="hidden" name="hafta" value="{{ week|date:'Y-m-d' }}">
+    <section class="rate-steps">
+      <div class="rate-step">
+        <span>1</span>
+        <div><strong>Sovg‘ani yozing</strong><small>{{ week_label }} haftasining 1-o‘rni uchun</small></div>
+        <input name="prize" value="{{ prize }}" maxlength="200" required placeholder="Masalan: 500 000 so‘m bonus" aria-label="1-o‘rin uchun sovg‘a">
+      </div>
+      <div class="rate-step">
+        <span>2</span>
+        <div><strong>Xodimlarning ishini ko‘ring</strong><small>SSB AI quyida haqiqiy ma’lumotlarni ko‘rsatadi</small></div>
+        <button type="button" class="button" id="rate-suggest">{% ui_icon 'spark' %} SSB AI tartibini qo‘yish</button>
+      </div>
+      <div class="rate-step">
+        <span>3</span>
+        <div><strong>O‘rinlarni tanlang</strong><small id="rate-summary">Hali o‘rin tanlanmagan</small></div>
+        <button class="button primary">{% ui_icon 'check' %} Saqlash</button>
+      </div>
+    </section>
+
+    <div class="rate-list">
+      {% for row in rows %}
+      <article class="rate-row" data-suggested="{{ row.suggested }}">
+        <label class="rate-place">
+          <span>O‘rin</span>
+          <select name="place_{{ row.person.pk }}" aria-label="{{ row.person.display_name }} o‘rni">
+            <option value="">—</option>
+            {% for number in place_numbers %}<option value="{{ number }}"{% if number == row.chosen %} selected{% endif %}>{{ number }}</option>{% endfor %}
+          </select>
+        </label>
+        <div class="rate-person">
+          {% include 'boshqaruv/components/avatar.html' with person=row.person %}
+          <div><strong>{{ row.person.display_name }}</strong><small>{{ row.person.job_title|default:row.person.role }}</small></div>
+        </div>
+        <dl class="rate-facts">
+          <div><dt>Bajarilgan</dt><dd>{{ row.done }}</dd></div>
+          <div><dt>Vaqtida</dt><dd>{{ row.on_time }}</dd></div>
+          <div><dt>Kechikkan</dt><dd{% if row.late %} class="is-bad"{% endif %}>{{ row.late }}</dd></div>
+          <div><dt>Tuzatish</dt><dd{% if row.corrections %} class="is-bad"{% endif %}>{{ row.corrections }}</dd></div>
+          <div><dt>Muddati o‘tgan</dt><dd{% if row.overdue %} class="is-bad"{% endif %}>{{ row.overdue }}</dd></div>
+          <div><dt>AI bahosi</dt><dd class="is-score">{{ row.score }}</dd></div>
+        </dl>
+        <details class="rate-work">
+          <summary>{% if row.done %}Qilgan ishlari: {{ row.done }} ta vazifa, {{ row.projects|length }} ta loyiha{% else %}Bu hafta qabul qilingan ish yo‘q{% endif %}{% if row.waiting %} · tekshiruvda: {{ row.waiting }}{% endif %}</summary>
+          {% if row.projects %}<p><strong>Loyihalar:</strong> {{ row.projects|join:', ' }}</p>{% endif %}
+          {% if row.tasks %}<ul>{% for task in row.tasks %}<li><a href="{{ task.get_absolute_url }}">{{ task.title }}</a><small>{{ task.project.name }}</small><em class="{% if task.on_time %}is-good{% else %}is-bad{% endif %}">{% if task.on_time %}Vaqtida{% else %}Kechikkan{% endif %}</em>{% if task.corrections %}<em class="is-bad">Tuzatish: {{ task.corrections }}</em>{% endif %}</li>{% endfor %}</ul>{% endif %}
+        </details>
+      </article>
+      {% empty %}
+      <p class="rate-empty">Reytingga kiradigan faol xodim yo‘q.</p>
+      {% endfor %}
+    </div>
+    <p class="rate-note">AI bahosi faqat tavsiya: bajarilgan vazifa +10, vaqtida +5, tuzatish −2, muddati o‘tgan −3. Yakuniy o‘rinni siz tanlaysiz.</p>
+  </form>
+{% elif shown %}
+  <div class="rate-week">
+    {% if older %}<a class="icon-button rate-back" href="?hafta={{ older|date:'Y-m-d' }}" aria-label="Oldingi hafta">{% ui_icon 'arrow' %}</a>{% else %}<span class="rate-gap"></span>{% endif %}
+    <strong>{{ shown_label }}</strong>
+    {% if newer %}<a class="icon-button" href="?hafta={{ newer|date:'Y-m-d' }}" aria-label="Keyingi hafta">{% ui_icon 'arrow' %}</a>{% else %}<span class="rate-gap"></span>{% endif %}
+  </div>
+  {% if winner %}
+  <section class="rate-winner">
+    {% include 'boshqaruv/components/avatar.html' with person=winner.employee avatar_class='rate-face' %}
+    <div>
+      <span>1-o‘rin</span>
+      <h2>{{ winner.employee.display_name }}{% if winner.employee_id == user.pk %} <small>(siz)</small>{% endif %}</h2>
+      <p>{{ winner.employee.job_title|default:winner.employee.role }}</p>
+    </div>
+    <div class="rate-prize">{% ui_icon 'gift' %}<div><small>Sovg‘a</small><strong>{{ shown.prize }}</strong></div></div>
+  </section>
+  {% endif %}
+  {% if others %}
+  <ol class="rate-places">
+    {% for item in others %}<li{% if item.employee_id == user.pk %} class="is-me"{% endif %}><b>{{ item.place }}</b>{% include 'boshqaruv/components/avatar.html' with person=item.employee avatar_class='small' %}<div><strong>{{ item.employee.display_name }}{% if item.employee_id == user.pk %} (siz){% endif %}</strong><small>{{ item.employee.job_title|default:item.employee.role }}</small></div></li>{% endfor %}
+  </ol>
+  {% endif %}
+{% else %}
+  <section class="rate-wait">{% ui_icon 'gift' %}<h2>Birinchi reyting hali e’lon qilinmagan</h2><p>Natija {{ next_label }} da shu yerda chiqadi.</p></section>
+{% endif %}
+{% endblock %}
+{% block scripts %}{% if editing %}<script src="{% static 'boshqaruv/rating.js' %}?v=1" defer></script>{% endif %}{% endblock %}

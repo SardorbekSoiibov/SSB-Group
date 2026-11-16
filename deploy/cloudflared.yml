@@ -1,0 +1,9 @@
+tunnel: 10910e33-9f3d-4e0b-a39f-69df632812b9
+credentials-file: C:\Users\XD\.cloudflared\10910e33-9f3d-4e0b-a39f-69df632812b9.json
+no-autoupdate: true
+ingress:
+  - hostname: ssbgroup.uz
+    service: http://localhost:8080
+  - hostname: www.ssbgroup.uz
+    service: http://localhost:8080
+  - service: http_status:404

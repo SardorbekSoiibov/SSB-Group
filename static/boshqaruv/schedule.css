@@ -1,0 +1,141 @@
+/* Weekly work schedule: equal day columns, equal cards, editing in the shared record dialog. */
+.schedule-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.schedule-nav,.schedule-range{display:flex;align-items:center;gap:8px;min-width:0}
+.schedule-nav strong{min-width:170px;font-size:16px;text-align:center}
+.schedule-nav .button,.schedule-range .button{height:40px;min-height:40px}
+.schedule-nav .icon-button{width:40px;height:40px;flex:none}
+.schedule-back svg{transform:rotate(180deg)}
+.schedule-range span{color:var(--ink-secondary)}
+.schedule-range input{height:40px;min-width:0;padding:0 10px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font-size:13.5px}
+.schedule-range input:focus{outline:none;border-color:var(--apple-blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--apple-blue) 15%,transparent)}
+.schedule-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.schedule-stats>div{min-width:0;padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.schedule-stats dt{color:var(--ink-secondary);font-size:12px}
+.schedule-stats dd{margin:2px 0 0;font-size:22px;font-weight:650;line-height:1.2}
+.schedule-board{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:stretch}
+.schedule-day{display:flex;flex-direction:column;min-width:0;min-height:260px;border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden}
+.schedule-day.is-today{border-color:var(--apple-blue)}
+.schedule-day>header{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:58px;padding:10px 10px 10px 12px;border-bottom:1px solid var(--line)}
+.schedule-day>header>div{min-width:0}
+.schedule-day>header span{display:block;overflow:hidden;color:var(--ink-secondary);font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.schedule-day>header strong{display:block;overflow:hidden;font-size:14px;text-overflow:ellipsis;white-space:nowrap}
+.schedule-day.is-today>header span{color:var(--apple-blue)}
+.schedule-add{display:grid;flex:none;place-items:center;width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:9px;background:transparent;color:var(--ink-secondary);cursor:pointer;transition:background .15s ease,color .15s ease}
+.schedule-add:hover{background:var(--apple-blue);border-color:var(--apple-blue);color:#fff}
+.schedule-add svg{width:15px;height:15px}
+.schedule-list{display:grid;flex:1;grid-template-columns:minmax(0,1fr);align-content:start;gap:8px;padding:6px;min-width:0}
+.schedule-empty{margin:0;padding:18px 0;color:var(--ink-secondary);font-size:12.5px;text-align:center;opacity:.7}
+.shift-card{display:grid;gap:7px;min-width:0;padding:9px 10px;border-radius:12px;background:var(--canvas)}
+.shift-card.is-cancelled{opacity:.6}
+.shift-card.is-cancelled time{text-decoration:line-through}
+.shift-card time{font-size:12.5px;font-weight:650;white-space:nowrap}
+.shift-foot{display:flex;align-items:center;justify-content:space-between;gap:4px;min-width:0;min-height:24px}
+.shift-tools{display:flex;flex:none;gap:2px}
+.shift-tools form{display:inline-flex;margin:0}
+.shift-tools a,.shift-tools button{display:grid;place-items:center;width:24px;height:24px;padding:0;border:0;border-radius:7px;background:transparent;color:var(--ink-secondary);cursor:pointer}
+.shift-tools a:hover{background:var(--line);color:var(--ink)}
+.shift-tools button:hover{background:color-mix(in srgb,#e5484d 18%,transparent);color:#e5484d}
+.shift-tools svg{width:14px;height:14px}
+.shift-person{display:flex;align-items:center;gap:7px;min-width:0}
+.shift-person strong{display:-webkit-box;min-width:0;overflow:hidden;font-size:13px;font-weight:600;line-height:1.25;overflow-wrap:anywhere;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.shift-place{min-width:0;overflow:hidden;color:var(--apple-blue);font-size:11.5px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+.shift-card.is-cancelled .shift-place{color:#e5484d}
+.shift-card small{overflow:hidden;color:var(--ink-secondary);font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.shift-form .field[data-field=employee],.shift-form .field[data-field=location],.shift-form .field[data-field=notes]{grid-column:1/-1}
+.shift-chips{display:flex;flex-wrap:wrap;gap:6px}
+.shift-chips button{padding:5px 11px;border:1px solid var(--line-strong);border-radius:999px;background:transparent;color:var(--ink-secondary);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.shift-chips button:hover,.shift-chips button[aria-pressed=true]{border-color:var(--apple-blue);color:var(--apple-blue)}
+@media(max-width:1180px){.schedule-board{grid-template-columns:minmax(0,1fr)}.schedule-day{min-height:0}.schedule-day>header{min-height:0}.schedule-list{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}.schedule-empty{padding:6px 4px;text-align:left}}
+@media(max-width:640px){.schedule-toolbar{align-items:stretch;flex-direction:column}.schedule-nav strong{flex:1;min-width:0}.schedule-range{flex-wrap:wrap}.schedule-range input{flex:1 1 120px}.schedule-range .button{flex-basis:100%}.schedule-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.schedule-list{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.schedule-add{transition:none}}
+/* SSB AI side panel */
+.ai-panel{position:fixed;inset:0 0 0 auto;width:min(440px,100vw);height:100dvh;max-height:none;margin:0;padding:0;border:0;border-left:1px solid var(--line);background:var(--surface);color:var(--ink);box-shadow:var(--shadow-dialog)}
+.ai-panel[open]{display:flex;flex-direction:column}
+.ai-panel::backdrop{background:#070b1540}
+.ai-panel header{display:flex;flex:none;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.ai-panel h2{margin:0;font-size:17px}
+.ai-panel header small{color:var(--ink-secondary);font-size:12.5px}
+.ai-log{display:flex;flex:1;flex-direction:column;gap:8px;min-height:0;padding:16px 18px;overflow-y:auto}
+.ai-message{max-width:88%;margin:0;padding:9px 13px;border-radius:14px;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+.ai-message.bot{align-self:flex-start;background:var(--canvas)}
+.ai-message.me{align-self:flex-end;background:var(--apple-blue);color:#fff}
+.ai-message.is-waiting{color:var(--ink-secondary)}
+.ai-examples{display:grid;gap:6px}
+.ai-examples button{padding:8px 12px;border:1px solid var(--line-strong);border-radius:12px;background:transparent;color:var(--ink-secondary);font:inherit;font-size:13px;text-align:left;cursor:pointer}
+.ai-examples button:hover{border-color:var(--apple-blue);color:var(--apple-blue)}
+.ai-plan{display:grid;gap:10px;padding:10px;border:1px solid var(--line);border-radius:14px}
+.ai-plan ul{display:grid;gap:6px;max-height:260px;margin:0;padding:0;overflow-y:auto;list-style:none}
+.ai-plan li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 8px;padding:7px 10px;border-radius:10px;background:var(--canvas)}
+.ai-plan li strong{grid-column:1;font-size:13.5px}
+.ai-plan li span{grid-column:1;color:var(--ink-secondary);font-size:12.5px}
+.ai-plan li em{grid-column:2;grid-row:1/3;align-self:center;color:#e5484d;font-size:12px;font-style:normal;font-weight:600}
+.ai-plan li.is-busy{opacity:.65}
+.ai-plan-actions{display:flex;justify-content:flex-end;gap:8px}
+#ai-form{display:flex;flex:none;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
+#ai-input{flex:1;min-width:0;height:44px;padding:0 14px;border:1px solid var(--line-strong);border-radius:12px;background:var(--canvas);color:var(--ink);font-size:14px}
+#ai-input:focus{outline:none;border-color:var(--apple-blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--apple-blue) 15%,transparent)}
+#ai-form .button{flex:none;width:44px;height:44px;min-height:44px;padding:0;justify-content:center}
+
+/* Ishga kela olmaslik so‘rovlari */
+.absence-panel{margin:0 0 18px;padding:18px 20px}
+.absence-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.absence-head h2{margin:0;font-size:17px;letter-spacing:-.02em}
+.absence-head p{margin:4px 0 0;color:var(--ink-secondary);font-size:13px}
+.absence-count{display:grid;place-items:center;min-width:30px;height:30px;padding:0 9px;border-radius:999px;background:var(--canvas);color:var(--ink-secondary);font-weight:700;font-size:13px}
+.absence-count.has-items{background:#ff3b30;color:#fff}
+.absence-list{display:grid;gap:10px;margin:16px 0 0;padding:0;list-style:none}
+.absence-item{display:grid;grid-template-columns:minmax(180px,240px) 1fr auto;align-items:center;gap:10px 18px;padding:14px;border-radius:16px;background:var(--canvas)}
+.absence-who{display:flex;align-items:center;gap:10px;min-width:0}
+.absence-who strong{display:block;font-size:14px}
+.absence-who small{display:block;color:var(--ink-secondary);font-size:12px}
+.absence-reason{margin:0;font-size:13.5px;line-height:1.45;overflow-wrap:anywhere}
+.absence-decide{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:flex-end}
+.absence-decide input{height:36px;min-width:170px;padding:0 12px;border:1px solid transparent;border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px}
+.absence-decide input:focus{outline:0;border-color:var(--apple-blue);box-shadow:0 0 0 4px color-mix(in srgb,var(--apple-blue) 18%,transparent)}
+.absence-empty{margin:14px 0 0;color:var(--ink-secondary);font-size:13px}
+.absence-history{margin-top:14px}
+.absence-history summary{cursor:pointer;color:var(--apple-blue);font-size:13px;font-weight:600}
+.absence-history ul,.absence-mine{display:grid;gap:6px;margin:10px 0 0;padding:0;list-style:none}
+.absence-history li,.absence-mine li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:10px 12px;border-radius:12px;background:var(--canvas);font-size:13px}
+.absence-history small,.absence-mine small{flex-basis:100%;color:var(--ink-secondary);overflow-wrap:anywhere}
+.absence-status{padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700}
+.absence-status.is-pending{background:rgb(255 149 0/.14);color:#c93400}
+.absence-status.is-approved{background:rgb(52 199 89/.15);color:#248a3d}
+.absence-status.is-rejected{background:rgb(255 59 48/.12);color:#d70015}
+.absence-request>summary{display:flex;align-items:center;gap:14px;list-style:none;cursor:pointer}
+.absence-request>summary::-webkit-details-marker{display:none}
+.absence-summary-icon{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:12px;background:var(--apple-blue-light);color:var(--apple-blue)}
+.absence-request>summary strong{display:block;font-size:15px}
+.absence-request>summary small{display:block;color:var(--ink-secondary);font-size:12.5px}
+.absence-open{margin-left:auto;pointer-events:none}
+.absence-request[open] .absence-open{visibility:hidden}
+.absence-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.absence-form .field{display:grid;gap:6px;font-size:13px;font-weight:600}
+.absence-form :is(input,textarea){width:100%;padding:10px 12px;border:1px solid transparent;border-radius:12px;background:var(--canvas);color:var(--ink);font:inherit;font-weight:400}
+.absence-form :is(input,textarea):focus{outline:0;border-color:var(--apple-blue);box-shadow:0 0 0 4px color-mix(in srgb,var(--apple-blue) 18%,transparent)}
+.absence-reason-field,.absence-actions{grid-column:1/-1}
+.absence-actions{display:flex;justify-content:flex-end}
+.shift-absent{margin-left:auto;padding:4px 9px;border:0;border-radius:999px;background:rgb(255 59 48/.1);color:#d70015;font:inherit;font-size:11.5px;font-weight:600;cursor:pointer}
+.shift-absent:hover{background:rgb(255 59 48/.16)}
+@media(max-width:860px){.absence-item{grid-template-columns:1fr}.absence-decide{justify-content:flex-start}.absence-decide input{flex:1 1 100%}.absence-form{grid-template-columns:1fr}.absence-open span{display:none}}
+
+/* ---------- Haftalik jadval: hafta tanlash, nusxa, takrorlash */
+.schedule-nav strong{display:grid;gap:1px;line-height:1.2}
+.schedule-nav strong small{color:var(--ink-secondary);font-size:11.5px;font-weight:600}
+.schedule-now{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:999px;background:color-mix(in srgb,#30a46c 15%,transparent);color:#30a46c;font-size:12.5px;font-weight:700}
+.schedule-tools{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px}
+.schedule-tools form{margin:0}
+.schedule-range label{display:grid;gap:4px;color:var(--ink-secondary);font-size:11.5px;font-weight:600}
+.shift-form .field[data-field=days],.shift-form .field[data-field=repeat]{grid-column:1/-1}
+.shift-form .field[data-field=days] ul,.shift-form .field[data-field=days]>div{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.shift-form .field[data-field=days] li{margin:0}
+.shift-form .field[data-field=days] label{position:relative;display:grid;place-items:center;min-width:46px;height:40px;padding:0 10px;border:1.5px solid var(--line);border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;user-select:none}
+.shift-form .field[data-field=days] input{position:absolute;opacity:0;pointer-events:none}
+.shift-form .field[data-field=days] label:has(input:checked){border-color:var(--accent,var(--apple-blue));background:var(--accent,var(--apple-blue));color:#fff}
+.shift-form .field[data-field=days] label:has(input:focus-visible){box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,var(--apple-blue)) 30%,transparent)}
+.absence-compact{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:0 0 16px;padding:10px 14px;border:1px solid var(--line);border-radius:18px;background:var(--surface)}
+.absence-compact .absence-summary-icon{width:32px;height:32px;border-radius:10px}
+.absence-compact strong{font-size:13.5px}
+.absence-compact small{color:var(--ink-secondary);font-size:12.5px}
+.absence-compact .absence-history{flex-basis:100%;margin:0}
+@media(max-width:640px){.schedule-tools{flex-direction:column;align-items:stretch}.schedule-tools .button{width:100%;justify-content:center}.schedule-range input{width:100%}}

@@ -1,0 +1,53 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}{% if project %}{{ project.name }} / {% endif %}Loyihalar holati{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/work-views.css' %}?v=2">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / LOYIHALAR</span>
+    <h1>{% if project %}{{ project.name }} / {% endif %}Loyihalar holati</h1>
+    <p>Har bir ustun · loyihaning hozirgi bosqichi. Tafsilotlar va holatni o‘zgartirish uchun loyiha nomini bosing. Ruxsat bo‘lsa, kartani boshqa bosqichga sudrash ham mumkin.</p>
+  </div>
+  <div class="heading-actions">
+    {% if can_create %}
+    <a href="{% url 'crm:project_create' %}" class="button primary">{% ui_icon 'plus' %} Yangi loyiha</a>
+    {% endif %}
+  </div>
+</header>
+
+{% include 'boshqaruv/operations/projects/_views.html' with active_view='board' %}
+
+<form class="filter-bar" method="get">
+  <label>Loyiha qidirish<input name="q" value="{{ request.GET.q }}" placeholder="Loyiha nomi yoki kodi"></label>
+  <button class="button" type="submit">Qidirish</button>
+  {% if request.GET.q %}<a href="{% url 'crm:project_board' %}" class="button">Tozalash</a>{% endif %}
+</form>
+<p class="work-view-hint">{{ board_total }} ta loyiha · Barcha bosqichlar quyida ko‘rsatilgan.</p>
+{% if not board_total %}<div class="work-view-empty"><strong>Loyiha topilmadi</strong><p>{% if request.GET.q %}Boshqa nom bilan qidiring yoki qidiruvni tozalang.{% else %}Sizga ko‘rinadigan loyihalar yaratilganda shu yerda bosqichlarga ajratiladi.{% endif %}</p></div>{% endif %}
+<div class="board project-status-board">
+  {% for column in columns %}
+  <section class="board-column" data-board-column="{{ column.status }}">
+    <header>
+      <strong>{{ column.label }}</strong>
+      <span class="badge-number">{{ column.items|length }} ta</span>
+    </header>
+    <p class="stage-description">{{ column.description }}</p>
+    {% for item in column.items %}
+    <article class="board-card" data-board-card data-id="{{ item.pk }}" data-url="{% url 'crm:project_transition' item.pk %}" data-allowed="{{ item.actions|join:' ' }}" {% if item.actions %}draggable="true"{% endif %}>
+      <a href="{{ item.get_absolute_url }}">
+        <small>{% if item.code %}{{ item.code }}{% else %}{{ item.project.code }}{% endif %}</small>
+        <h3>{{ item.name }}</h3>
+      </a>
+      <p class="board-owner">Rahbar: {{ item.manager.display_name|default:"Belgilanmagan" }}</p>
+      <footer>
+        <small>Muddat: {{ item.deadline|date:app_date_format|default:'Belgilanmagan' }}</small>
+        <span class="status" data-status="{{ item.status }}">{{ item.get_status_display }}</span>
+      </footer>
+    </article>
+    {% empty %}
+    <p class="empty-inline">Hozircha loyiha yo‘q.</p>
+    {% endfor %}
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

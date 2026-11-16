@@ -1,0 +1,1 @@
+{% load boshqaruv %}<div class="empty-state"><span>{% ui_icon 'project' %}</span><h3>{{ empty_title|default:'Hozircha ma’lumot yo‘q' }}</h3><p>{{ empty_text|default:'Yangi yozuvlar shu yerda ko‘rsatiladi.' }}</p>{% if empty_url %}<a class="button primary" href="{{ empty_url }}">{{ empty_action|default:'Yaratish' }} {% ui_icon 'arrow' %}</a>{% endif %}</div>

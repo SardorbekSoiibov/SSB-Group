@@ -1,0 +1,116 @@
+{% extends "boshqaruv/base.html" %}{% load boshqaruv static %}
+{% block title %}Mening profilim va sozlamalar{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'boshqaruv/profile.css' %}?v=2"><link rel="stylesheet" href="{% static 'boshqaruv/equipment.css' %}?v=4">{% endblock %}
+{% block content %}
+<header class="page-heading">
+  <div>
+    <span class="eyebrow">SSB BOSHQARUV / SOZLAMALAR</span>
+    <h1>Mening profilim</h1>
+    <p>Shaxsiy ma’lumotlaringiz, rasmingiz va hisob xavfsizligi.</p>
+  </div>
+</header>
+
+<div class="profile-page">
+  <section class="profile-hero" aria-label="Profil">
+    <div class="profile-photo">
+      {% include 'boshqaruv/components/avatar.html' with person=user avatar_class='profile-face' %}
+      <button type="button" class="profile-photo-edit" data-photo-pick aria-label="Rasmni o‘zgartirish" title="Rasmni o‘zgartirish">{% ui_icon 'camera' %}</button>
+    </div>
+    <div class="profile-identity">
+      <h2><span>{{ user.display_name }}</span>{% if user.is_verified %}<span class="profile-verified" title="Tasdiqlangan hisob" aria-label="Tasdiqlangan hisob"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.6 2 3.3-.3 1 3.1 2.8 1.8-1 3.2 1 3.2-2.8 1.8-1 3.1-3.3-.3L12 22l-2.6-2-3.3.3-1-3.1-2.8-1.8 1-3.2-1-3.2 2.8-1.8 1-3.1 3.3.3z"/><path class="tick" d="m8 12 3 3 5-6"/></svg></span>{% endif %}</h2>
+      <p>{{ user.job_title|default:user.role.name }} · {{ user.department|default:'Kompaniya' }}</p>
+      <div class="profile-photo-actions">
+        <span class="status" data-status="approved">{{ user.get_status_display }}</span>
+        <button type="button" class="profile-link" data-photo-pick>{% if user.photo %}Rasmni o‘zgartirish{% else %}Rasm qo‘shish{% endif %}</button>
+        {% if user.photo %}<form method="post" action="{% url 'crm:profile_photo' %}" data-confirm="Profil rasmi o‘chiriladi. Davom etasizmi?">{% csrf_token %}<input type="hidden" name="action" value="remove"><button class="profile-link is-danger">Rasmni o‘chirish</button></form>{% endif %}
+      </div>
+    </div>
+    <div class="profile-actions">
+      <button type="button" class="button primary" data-record-template="profile-form">{% ui_icon 'settings' %} Profilni tahrirlash</button>
+      <a href="{% url 'accounts:password_change' %}" class="button">{% ui_icon 'lock' %} Parolni o‘zgartirish</a>
+      <a href="{% url 'accounts:devices' %}" class="button" data-open-devices>{% ui_icon 'desktop' %} Qurilmalar</a>
+      {% if user.is_owner %}<a href="{% url 'crm:partners' %}" class="button">{% ui_icon 'handshake' %} Hamkorlar qo‘shish</a>{% endif %}
+    </div>
+    <form id="photo-form" method="post" action="{% url 'crm:profile_photo' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input id="photo-input" class="photo-input" type="file" name="photo" accept="image/jpeg,image/png,image/webp" aria-label="Profil rasmi">
+      <noscript><style>.photo-input{display:block}</style><button class="button">Rasmni saqlash</button></noscript>
+    </form>
+  </section>
+
+  <div class="profile-columns">
+    <section class="panel">
+      <header class="panel-head"><h2>Shaxsiy ma’lumotlar</h2></header>
+      <div class="panel-body">
+        <dl class="profile-details">
+          <div>{% ui_icon 'people' %}<dt>Ism</dt><dd>{{ user.first_name|default:'Qo‘shilmagan' }}</dd></div>
+          <div>{% ui_icon 'people' %}<dt>Familiya</dt><dd>{{ user.last_name|default:'Qo‘shilmagan' }}</dd></div>
+          <div>{% ui_icon 'mail' %}<dt>Elektron pochta</dt><dd>{{ user.email|default:'Qo‘shilmagan' }}</dd></div>
+          <div>{% ui_icon 'phone' %}<dt>Telefon</dt><dd>{{ user.phone|default:'Qo‘shilmagan' }}</dd></div>
+          <div>{% ui_icon 'send' %}<dt>Telegram</dt><dd>{{ user.telegram|default:'Qo‘shilmagan' }}</dd></div>
+          <div>{% ui_icon 'star' %}<dt>Ko‘nikmalar</dt><dd>{{ user.skills|join:', '|default:'Qo‘shilmagan' }}</dd></div>
+        </dl>
+        <noscript><style>.profile-form-fallback{display:block!important}</style></noscript>
+      </div>
+      <div id="profile-form" class="profile-form-fallback" data-record-template-source>
+        <form data-modal-source method="post" enctype="multipart/form-data" class="form-grid">
+          {% csrf_token %}
+          {% include "boshqaruv/components/form.html" with form=form %}
+          <div class="form-footer"><button class="button primary" type="submit">{% ui_icon 'check' %} Profilni saqlash</button></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel">
+      <header class="panel-head"><h2>Hisob holati</h2></header>
+      <div class="panel-body">
+        <dl class="profile-account">
+          <div>{% ui_icon 'shield' %}<dt>Xavfsizlik roli</dt><dd>{{ user.role.name }}</dd></div>
+          <div>{% ui_icon 'people' %}<dt>Boshqaruv ko‘lami</dt><dd>{{ user.role.get_scope_display }}</dd></div>
+          <div>{% ui_icon 'overview' %}<dt>Bosh sahifa turi</dt><dd>{{ user.role.get_dashboard_display }}</dd></div>
+          <div>{% ui_icon 'calendar' %}<dt>Ishga kirgan sana</dt><dd>{{ user.joined_on|date:app_date_format|default:'Ko‘rsatilmagan' }}</dd></div>
+          {% if user.contract %}<div>{% ui_icon 'file' %}<dt>Mehnat shartnomasi</dt><dd><a href="{% url 'crm:employee_contract' user.pk %}">{% if user.contract_number %}№ {{ user.contract_number }}{% else %}Yuklab olish{% endif %} · {{ user.contract_extension }}</a>{% if user.contract_ends_on %} · {{ user.contract_ends_on|date:app_date_format }} gacha{% endif %}</dd></div>{% endif %}
+        </dl>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Mening jihozlarim</h2>
+      <a class="chart-key" href="{% url 'crm:equipment' %}">{{ my_equipment|length }} ta · Barchasi</a>
+    </header>
+    {% include "boshqaruv/operations/equipment/_mini_list.html" with items=my_equipment empty_text="Sizga hali jihoz biriktirilmagan." %}
+  </section>
+
+  <section class="panel">
+    <header class="panel-head">
+      <h2>Ishga tushirilgan loyihalar</h2>
+      <span class="chart-key">{{ completed_projects|length }} ta</span>
+    </header>
+    <ul class="feed">
+      {% for item in completed_projects %}
+      <li>
+        <div class="feed-body">
+          <a href="{{ item.get_absolute_url }}"><strong>{{ item.name }}</strong></a>
+          <small>{{ item.code }} · {{ item.completed_at|date:app_date_format|default:'Tugallangan' }}</small>
+        </div>
+      </li>
+      {% empty %}
+      <li><p class="empty-inline">Hozircha tugallangan loyihalar yo‘q.</p></li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+
+<dialog id="photo-dialog" class="photo-dialog" aria-labelledby="photo-dialog-title">
+  <header><h2 id="photo-dialog-title">Yangi profil rasmi</h2><button type="button" class="icon-button" data-photo-cancel aria-label="Yopish">{% ui_icon 'close' %}</button></header>
+  <div class="photo-preview"><img id="photo-preview" alt="Tanlangan rasm"></div>
+  <p>Rasm hamma joyda shu ko‘rinishda chiqadi. JPG, PNG yoki WEBP, 8 MB gacha.</p>
+  <footer>
+    <button type="button" class="button" data-photo-pick>Boshqa rasm</button>
+    <button type="button" class="button primary" id="photo-save">{% ui_icon 'check' %} Saqlash</button>
+  </footer>
+</dialog>
+{% endblock %}
+{% block scripts %}<script src="{% static 'boshqaruv/profile.js' %}?v=1" defer></script>{% endblock %}

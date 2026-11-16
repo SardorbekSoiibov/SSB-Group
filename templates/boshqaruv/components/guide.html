@@ -1,0 +1,156 @@
+{% load boshqaruv %}
+{# Foydalanuvchi yo'riqnomasi: faqat foydalanuvchining lavozimi va berilgan vakolatlariga tegishli bo'limlar chiqariladi. #}
+{% with is_owner=user.is_owner %}
+{% with g_projects=user|can:'projects.create' g_projects2=user|can:'projects.edit' g_projects3=user|can:'projects.assign' g_fin=user|can:'finance.view' g_fin2=user|can:'finance.manage' g_hr=user|can:'employees.manage' g_hr2=user|can:'schedule.manage' g_hr3=user|can:'performance.manage' g_cl=user|can:'clients.view' g_cl2=user|can:'inquiries.manage' g_site=user|can:'cms.edit' g_site2=user|can:'team.manage' g_site3=user|can:'announcements.manage' %}
+<dialog class="guide-dialog" id="guide-dialog" aria-labelledby="guide-title" data-default-tab="{% if is_owner %}founder{% else %}employee{% endif %}">
+  <div class="guide-shell">
+    <header class="guide-head">
+      <div>
+        <span class="guide-eyebrow">Foydalanuvchi yo‘riqnomasi</span>
+        <h2 id="guide-title">SSB Boshqaruv platformasidan foydalanish tartibi</h2>
+        <p>Lavozim: <b>{% if is_owner %}Asoschi{% else %}{{ user.job_title|default:'Xodim' }}{% endif %}</b>. Ushbu yo‘riqnomada faqat Sizga berilgan vakolatlar doirasidagi bo‘limlar keltirilgan.</p>
+      </div>
+      <button type="button" class="icon-button" data-guide-close aria-label="Yopish">{% ui_icon 'close' %}</button>
+    </header>
+
+    {% if not is_owner %}{% if g_projects or g_projects2 or g_projects3 or g_fin or g_fin2 or g_hr or g_hr2 or g_hr3 or g_cl or g_cl2 or g_site or g_site2 or g_site3 %}
+    <nav class="guide-tabs" role="tablist" aria-label="Yo‘riqnoma bo‘limlari">
+      <button type="button" role="tab" data-guide-tab="employee">Shaxsiy kabinet</button>
+      {% if g_projects or g_projects2 or g_projects3 %}<button type="button" role="tab" data-guide-tab="projects">Loyihalarni boshqarish</button>{% endif %}
+      {% if g_fin or g_fin2 %}<button type="button" role="tab" data-guide-tab="finance">Moliya</button>{% endif %}
+      {% if g_hr or g_hr2 or g_hr3 %}<button type="button" role="tab" data-guide-tab="hr">Xodimlar bilan ishlash</button>{% endif %}
+      {% if g_cl or g_cl2 %}<button type="button" role="tab" data-guide-tab="clients">Mijozlar bilan ishlash</button>{% endif %}
+      {% if g_site or g_site2 or g_site3 %}<button type="button" role="tab" data-guide-tab="site">Sayt va e’lonlar</button>{% endif %}
+    </nav>
+    {% endif %}{% endif %}
+
+    <div class="guide-body">
+
+    {% if is_owner %}
+      {# ------------------------------------------------------------ ASOSCHI #}
+      <section class="guide-panel" data-guide-panel="founder" role="tabpanel">
+        <p class="guide-lead">Asoschi platformaning barcha bo‘limlariga to‘liq kirish huquqiga ega va xodimlar, vakolatlar, loyihalar hamda moliyaviy operatsiyalar bo‘yicha yakuniy qaror qabul qiladi.</p>
+        <ol class="guide-steps">
+          <li><h3>Xodimlarni ro‘yxatga olish va vakolat berish</h3>
+            <p>«Xodimlar» bo‘limida yangi xodim qo‘shiladi: F.I.Sh., login, lavozim va fotosurat kiritiladi. So‘ngra xodim sahifasida unga zarur funksiyalar ochiladi. Xodim faqat Siz ruxsat bergan bo‘limlardan foydalana oladi.</p>
+            <p>«Kompaniya tuzilmasi» bo‘limida bo‘limlar va rollar boshqariladi.</p></li>
+          <li><h3>Xodim guvohnomasi (bedjik)</h3>
+            <p>Har bir xodim uchun guvohnoma avtomatik shakllantiriladi: fotosurat, lavozim, QR-kod va hamkorlar logotiplari. Guvohnomani PDF shaklida yuklab olish va chop etish mumkin.</p></li>
+          <li><h3>Loyihalarni tashkil etish</h3>
+            <p>Yangi loyiha yuqori paneldagi «Yaratish» tugmasi orqali ochiladi. Loyiha rahbari, ijrochilar, muddat va mijoz belgilanadi. Loyiha bosqichlari «Holat taxtasi»da kuzatiladi. Ishlar yakunlangach, natija tekshirilib, loyiha yakunlangan deb tasdiqlanadi.</p></li>
+          <li><h3>Moliyaviy operatsiyalar tartibi</h3>
+            <p>«Moliyaviy reyestr» sahifasidagi «Nima qilmoqchisiz?» bloki orqali quyidagi ketma-ketlikda amalga oshiriladi:</p>
+            <p><b>1. Loyiha kelishuvi</b> — loyiha boshida bir marta kiritiladi: shartnoma summasi, kompaniya ulushi va ulush oluvchi xodimlar (jami 100%).</p>
+            <p><b>2. Mijozdan tushum</b> — har bir to‘lov alohida kiritiladi. Tushum kelishuvdagi ulushlar bo‘yicha avtomatik taqsimlanadi.</p>
+            <p><b>3. Xodimga to‘lov</b> — pul amalda topshirilgandan so‘ng qayd etiladi. Xodim to‘lovni olganini tasdiqlaydi.</p>
+            <p>Ish haqi, mukofot va kompaniya xarajatlari «Boshqa» bo‘limidagi tegishli tugmalar orqali kiritiladi.</p></li>
+          <li><h3>Moliyaviy operatsiyalarni tasdiqlash</h3>
+            <p>Moliyaviy operatsiyalar faqat Asoschi tomonidan tasdiqlanadi. Asoschi kiritgan operatsiyalar darhol kuchga kiradi; boshqa vakolatli xodimlar kiritgan operatsiyalar «Tasdiqlash navbati»da ko‘rib chiqiladi.</p></li>
+          <li><h3>Moliyaviy reyestr</h3>
+            <p>Reyestrda har bir pul harakati turi bo‘yicha belgilanadi: <span class="g-in">kirim</span>, <span class="g-out">chiqim</span>, <span class="g-acc">hisoblangan</span>. Yozuvlar o‘chirilmaydi; xatolar faqat tuzatish operatsiyasi orqali to‘g‘rilanadi.</p>
+            <p>Xodimga to‘lov qayd etilgach, xodim uni olganini tasdiqlaydi. Javob kutilayotgan to‘lov uchun «To‘lovlar tarixi»da «Eslatma yuborish» tugmasi mavjud.</p></li>
+          <li><h3>Jihozlar hisobi</h3>
+            <p>«Jihozlar» bo‘limida kompaniya mol-mulki ro‘yxatga olinadi va mas’ul xodimga biriktiriladi. Xodim jihozni qabul qilganini tasdiqlaydi; biriktirish, qaytarish va nosozliklar tarixi saqlanadi.</p></li>
+          <li><h3>Hamkorlar</h3>
+            <p>«Hamkorlar» bo‘limida hamkor tashkilotning logotipi va hamkorlik shartnomasi yuklanadi. «Bedjikda ko‘rsatish» belgilansa, logotip barcha xodimlar guvohnomasida aks etadi.</p></li>
+          <li><h3>Kompaniyani boshqarish</h3>
+            <p>«Hackaton e’lonlari» — hackatonlar haqidagi e’lonlar: sana, ro‘yxatdan o‘tish muddati va mukofot. «Murojaatlar (CRM)» — mijozlardan kelib tushgan so‘rovlar. «Sayt va Portfolio» — kompaniya sayti kontenti.</p>
+            <p>«Tizim sozlamalari» — kompaniya rekvizitlari, asosiy valyuta va standart ulush foizi. «Audit tarixi» — tizimda bajarilgan barcha amallar jurnali.</p></li>
+          <li><h3>Hisob xavfsizligi</h3>
+            <p>Profil menyusidagi «Qurilmalar» bo‘limida hisobingizga kirilgan qurilmalar ro‘yxati ko‘rsatiladi. Notanish qurilma aniqlansa, undan darhol chiqish amalga oshirilishi tavsiya etiladi.</p></li>
+        </ol>
+      </section>
+    {% else %}
+      {# ------------------------------------------------------------ XODIM (shaxsiy kabinet) #}
+      <section class="guide-panel" data-guide-panel="employee" role="tabpanel">
+        <p class="guide-lead">Shaxsiy kabinet xodimning asosiy ish joyi hisoblanadi. Unda biriktirilgan vazifalar, ish jadvali, moliyaviy hisob va xizmat jihozlari jamlangan.</p>
+        <ol class="guide-steps">
+          <li><h3>Tizimga kirish va hisob xavfsizligi</h3>
+            <p>Tizimga Sizga berilgan login va parol orqali kiriladi. Shaxsiy qurilmadan foydalanilganda «Meni eslab qol» belgisini qo‘yish mumkin — bunda tizim 30 kun davomida qayta kirishni talab qilmaydi.</p>
+            <p>Yuqori o‘ng burchakdagi profil rasmi orqali «Profilni boshqarish», «Parolni o‘zgartirish» va «Qurilmalar» bo‘limlariga o‘tiladi. Parolni boshqa shaxslarga berish taqiqlanadi. Notanish qurilma aniqlansa, undan darhol chiqish lozim.</p></li>
+          <li><h3>Bosh sahifa</h3>
+            <p>Ish kuni bosh sahifadan boshlanadi: unda joriy vazifalar, muddati yaqinlashgan ishlar va so‘nggi e’lonlar aks etadi.</p></li>
+          <li><h3>Loyihalar va vazifalar</h3>
+            <p>«Loyihalar» bo‘limida Sizga biriktirilgan loyihalar ko‘rsatiladi. Vazifa holati bajarilish bosqichiga muvofiq yangilab boriladi: «Qabul qilindi» → «Jarayonda» → «Tekshiruvga yuborildi». Ish bajarilishiga to‘sqinlik mavjud bo‘lsa, «To‘siq bor» holati belgilanadi.</p>
+            <p>Rahbar tomonidan qaytarilgan vazifa «Qayta ishlash kerak» holatida bo‘ladi va izohga muvofiq qayta bajariladi.</p></li>
+          <li><h3>Ish jadvali</h3>
+            <p>«Ish jadvali» bo‘limida Sizning ish kunlaringiz va smenalaringiz ko‘rsatiladi. Jadvaldagi o‘zgarishlar haqida bildirishnoma yuboriladi.</p></li>
+          <li><h3>Baholash va reyting</h3>
+            <p>Bajarilgan ishlar har hafta baholanadi. Natijalar yakshanba kunidan so‘ng «Baholash va reyting» bo‘limida e’lon qilinadi.</p></li>
+          <li><h3>Xodimlar chati</h3>
+            <p>Ish yuzasidan yozishmalar «Xodimlar chati» orqali olib boriladi. Chat ekranning pastki o‘ng burchagidagi tugma orqali ham ochiladi.</p></li>
+          <li><h3>Shaxsiy hisob</h3>
+            <p>«Shaxsiy hisobim» bo‘limida hisoblangan daromad, to‘lanishi lozim bo‘lgan qoldiq va amalga oshirilgan to‘lovlar aks etadi.</p>
+            <p>Sizga to‘lov qayd etilganda, uni olganingizni tasdiqlash so‘raladi: mablag‘ olingan bo‘lsa — «Ha, oldim»; olinmagan bo‘lsa — «Yo‘q, olmadim» tugmasi bosilib, sabab ko‘rsatiladi.</p></li>
+          <li><h3>Xizmat jihozlari</h3>
+            <p>Sizga biriktirilgan jihozlar «Jihozlar» bo‘limida ko‘rsatiladi. Jihozni olgach, uning sahifasida «Qabul qildim» tugmasi bosiladi — shu paytdan boshlab jihozning butligi uchun Siz javobgar hisoblanasiz.</p>
+            <p>Jihozda nosozlik aniqlansa, «Muammo xabar qilish» bo‘limi orqali darhol xabar beriladi.</p></li>
+          <li><h3>E’lonlar va bildirishnomalar</h3>
+            <p>Yangi bildirishnomalar yuqori paneldagi qo‘ng‘iroqcha belgisida, bo‘limlardagi yangiliklar esa chap menyudagi raqamlarda ko‘rsatiladi. Hackatonlar haqidagi xabarlar «Hackaton e’lonlari» bo‘limida chiqadi.</p></li>
+          <li><h3>Qo‘shimcha imkoniyatlar</h3>
+            <p><kbd>Ctrl</kbd> + <kbd>K</kbd> — bo‘lim va loyihalarni tezkor qidirish. Mobil qurilmada bo‘limlar orasida ekranning pastki paneli orqali o‘tiladi.</p></li>
+        </ol>
+        <p class="guide-note">Zarur bo‘lim menyuda ko‘rinmasa, u Sizga hali ochilmagan. Bunday holatda Asoschiga murojaat qiling.</p>
+      </section>
+
+      {% if g_projects or g_projects2 or g_projects3 %}
+      <section class="guide-panel" data-guide-panel="projects" role="tabpanel" hidden>
+        <p class="guide-lead">Loyihalarni boshqarish vakolati loyihani ochish, ijrochilarni biriktirish, vazifalarni taqsimlash va natijani topshirishni o‘z ichiga oladi.</p>
+        <ol class="guide-steps">
+          <li><h3>Loyiha yaratish</h3><p>«Yaratish» tugmasi orqali loyiha ochiladi: nomi, tavsifi, mijoz, boshlanish va topshirish sanalari hamda ustuvorlik darajasi kiritiladi.</p></li>
+          <li><h3>Ijrochilarni biriktirish</h3><p>Loyiha sahifasidagi «Jamoa» bo‘limida ijrochi xodimlar qo‘shiladi. Loyihani faqat jamoa a’zolari ko‘radi va undan ulush oladi.</p></li>
+          <li><h3>Bosqichlar va vazifalar</h3><p>Ish bosqichlarga ajratiladi; har bir vazifa uchun ijrochi, muddat va qabul qilish mezonlari belgilanadi.</p></li>
+          <li><h3>Nazorat</h3><p>«Holat taxtasi» — loyihalarning joriy bosqichi, «Kalendar» — muddatlar, «Yuklama» — xodimlarning bandligi.</p></li>
+          <li><h3>Qabul qilish va yakunlash</h3><p>«Tekshiruvga yuborildi» holatidagi vazifa qabul qilinadi yoki izoh bilan qayta ishlashga qaytariladi. Barcha ishlar bajarilgach, loyiha yakunlanadi; tasdiqlangandan so‘ng xodimlar ulushi avtomatik hisoblanadi.</p></li>
+        </ol>
+      </section>
+      {% endif %}
+
+      {% if g_fin or g_fin2 %}
+      <section class="guide-panel" data-guide-panel="finance" role="tabpanel" hidden>
+        <p class="guide-lead">Moliya vakolati pul harakatlarini qayd etish va nazorat qilishni o‘z ichiga oladi. Moliyaviy operatsiyalar Asoschi tomonidan tasdiqlanadi.</p>
+        <ol class="guide-steps">
+          <li><h3>Reyestr yozuvlari</h3><p>«Moliyaviy reyestr»da har bir yozuv turi bo‘yicha belgilanadi: <span class="g-in">kirim</span> — kassaga tushum, <span class="g-out">chiqim</span> — kassadan chiqim, <span class="g-acc">hisoblangan</span> — xodimga hisoblangan, ammo hali to‘lanmagan mablag‘.</p></li>
+          {% if g_fin2 %}<li><h3>Operatsiya kiritish</h3><p>Reyestr sahifasidagi «Nima qilmoqchisiz?» blokidan amal turi tanlanadi. Shaklda faqat zarur maydonlar ko‘rsatiladi, natija esa o‘ng tomonda oldindan hisoblab beriladi. Izohda asos bo‘luvchi hujjat aniq ko‘rsatilishi shart. Kiritilgan operatsiya Asoschi tasdig‘iga yuboriladi.</p></li>
+          <li><h3>Xatolarni tuzatish</h3><p>Reyestr yozuvlari o‘chirilmaydi. Noto‘g‘ri yozuv «Tuzatish» operatsiyasi orqali to‘g‘rilanadi; asl yozuv va tuzatish tarixi saqlanadi.</p></li>{% endif %}
+        </ol>
+      </section>
+      {% endif %}
+
+      {% if g_hr or g_hr2 or g_hr3 %}
+      <section class="guide-panel" data-guide-panel="hr" role="tabpanel" hidden>
+        <p class="guide-lead">Xodimlar bilan ishlash vakolati jamoa tarkibi, ish jadvali va faoliyatni baholashni o‘z ichiga oladi.</p>
+        <ol class="guide-steps">
+          {% if g_hr %}<li><h3>Xodimlar ro‘yxati</h3><p>«Xodimlar» bo‘limida yangi xodim qo‘shiladi, lavozimi va bo‘limi belgilanadi. Kirish ma’lumotlari xodimga shaxsan topshiriladi.</p></li>{% endif %}
+          {% if g_hr2 %}<li><h3>Ish jadvali</h3><p>«Ish jadvali» bo‘limida smenalar tuziladi. Bir xodimga bir vaqtda ikki smena belgilanishiga tizim yo‘l qo‘ymaydi.</p></li>{% endif %}
+          {% if g_hr3 %}<li><h3>Faoliyatni baholash</h3><p>«Baholash va reyting» bo‘limida haftalik natijalar ko‘rib chiqiladi va baholanadi. Pul mukofotlari moliyaviy operatsiya sifatida rasmiylashtiriladi.</p></li>{% endif %}
+        </ol>
+      </section>
+      {% endif %}
+
+      {% if g_cl or g_cl2 %}
+      <section class="guide-panel" data-guide-panel="clients" role="tabpanel" hidden>
+        <p class="guide-lead">Mijozlar bilan ishlash vakolati murojaatlarni qabul qilish va mijozni shartnoma tuzilgunga qadar olib borishni o‘z ichiga oladi.</p>
+        <ol class="guide-steps">
+          {% if g_cl2 %}<li><h3>Murojaatlar (CRM)</h3><p>Saytdan kelib tushgan har bir so‘rov ushbu bo‘limda ro‘yxatga olinadi. Murojaatga mas’ul belgilanadi va bosqichi yangilab boriladi: «Yangi» → «Bog‘lanildi» → «Muhokama» → «Taklif yuborildi» → «Kelishildi» → «Loyihaga aylandi».</p></li>
+          <li><h3>Qayta aloqa</h3><p>«Qayta aloqa sanasi» belgilansa, belgilangan kuni eslatma yuboriladi. Har bir muloqot natijasi izoh sifatida qayd etiladi.</p></li>{% endif %}
+          {% if g_cl %}<li><h3>Mijozlar bazasi</h3><p>Kelishuvga erishilgan mijoz «Mijozlar bazasi»ga kiritiladi: tashkilot nomi, telefon, Telegram va mas’ul menejer.</p></li>{% endif %}
+        </ol>
+      </section>
+      {% endif %}
+
+      {% if g_site or g_site2 or g_site3 %}
+      <section class="guide-panel" data-guide-panel="site" role="tabpanel" hidden>
+        <p class="guide-lead">Sayt va e’lonlar vakolati kompaniya saytini yuritish va jamoaga rasmiy xabarlarni tarqatishni o‘z ichiga oladi.</p>
+        <ol class="guide-steps">
+          {% if g_site %}<li><h3>Sayt va Portfolio</h3><p>Sayt matnlari, xizmatlar va portfolio ishlari tahrir qilinadi. O‘zgarishlar dastlab qoralama sifatida saqlanadi va nashr etilgach saytda aks etadi.</p></li>{% endif %}
+          {% if g_site2 %}<li><h3>Saytdagi jamoa</h3><p>Saytda ko‘rsatiladigan jamoa a’zolari, ularning fotosurati va lavozimlari boshqariladi.</p></li>{% endif %}
+          {% if g_site3 %}<li><h3>Hackaton e’lonlari</h3><p>«Hackaton e’lonlari»da yangi hackaton e’lon qilinadi. Muhim e’lon yuqoriga qadaladi, barcha xodimlarga bildirishnoma boradi va xohlasangiz Telegram kanallarga ham chiqadi. Lavozimi hackaton bilan bog‘liq xodim ham e’lon yoza oladi.</p></li>{% endif %}
+        </ol>
+      </section>
+      {% endif %}
+    {% endif %}
+    </div>
+  </div>
+</dialog>
+{% endwith %}{% endwith %}
